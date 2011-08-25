@@ -32,15 +32,29 @@
 using namespace libtorrent;
 
 namespace libtorrent {
-	class torrent;
+class torrent;
 }
 
 namespace bivod {
 
 class VideoTorrentPlugin: public torrent_plugin {
 public:
+	VideoTorrentPlugin();
 	virtual void on_piece_pass(int index);
 
+	virtual void start_playback();
+
+private:
+	// Size of the playback buffer in chunks.
+	const static int BUFFER_SIZE = 5;
+
+	// Identifies where the playback is paused or not.
+	bool paused;
+
+	int playback_position;
+
+	// Number of chunks in the playback buffer.
+	int buffer_count;
 };
 
 boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void*);

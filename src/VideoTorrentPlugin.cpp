@@ -27,8 +27,27 @@
 
 namespace bivod {
 
+VideoTorrentPlugin::VideoTorrentPlugin() :
+		paused(true) {
+}
+
 void VideoTorrentPlugin::on_piece_pass(int index) {
 	std::cout << index << std::endl;
+
+	if (index < playback_position + BUFFER_SIZE) {
+		buffer_count++;
+
+		if (buffer_count == BUFFER_SIZE) {
+			start_playback();
+		}
+	}
+}
+
+void VideoTorrentPlugin::start_playback() {
+	paused = false;
+	buffer_count = 0;
+
+	std::cout << "Playing!" << std::endl;
 }
 
 boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void*) {
