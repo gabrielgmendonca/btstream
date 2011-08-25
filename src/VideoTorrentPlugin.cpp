@@ -16,46 +16,23 @@
  * along with BIVoD.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * simpleclient.cpp
+ * VideoTorrentPlugin.cpp
  *
  *  Created on: 24/08/2011
  *      Author: gabriel
  */
 
 #include <iostream>
-#include <libtorrent/session.hpp>
-
 #include "VideoTorrentPlugin.h"
 
-int main(int argc, char **argv) {
+namespace bivod {
 
-	if (argc != 2) {
-		std::cerr << "usage: ./BIVoD torrent-file\n";
-		return 1;
-	}
-
-	session s;
-	s.add_extension(bivod::create_video_plugin);
-
-	add_torrent_params p;
-	p.save_path = "./";
-	error_code ec;
-	p.ti = new torrent_info(argv[1], ec);
-
-	if (ec) {
-		std::cout << ec.message() << std::endl;
-		return 1;
-	}
-	s.add_torrent(p, ec);
-	if (ec) {
-		std::cerr << ec.message() << std::endl;
-		return 1;
-	}
-
-	// wait for the user to end
-	char a;
-	std::cin.unsetf(std::ios_base::skipws);
-	std::cin >> a;
-
-	return 0;
+void VideoTorrentPlugin::on_piece_pass(int index) {
+	std::cout << index << std::endl;
 }
+
+boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void*) {
+	return boost::shared_ptr<torrent_plugin>(new VideoTorrentPlugin());
+}
+
+} /* namespace bivod */
