@@ -16,33 +16,19 @@
  * along with BIVoD.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * VideoTorrentPlugin.cpp
+ * VideoPlayer.h
  *
- *  Created on: 24/08/2011
+ *  Created on: 06/09/2011
  *      Author: gabriel
  */
 
-#include <iostream>
-#include <libtorrent/torrent.hpp>
+#ifndef VIDEOPLAYER_H_
+#define VIDEOPLAYER_H_
 
-#include "VideoTorrentPlugin.h"
-#include "VideoPeerPlugin.h"
+class VideoPlayer {
+public:
+	VideoPlayer();
+	virtual ~VideoPlayer();
+};
 
-namespace bivod {
-
-VideoTorrentPlugin::VideoTorrentPlugin(torrent* t) :
-		m_torrent(t) {}
-
-boost::shared_ptr<peer_plugin> VideoTorrentPlugin::new_connection(peer_connection* pc) {
-	return boost::shared_ptr<peer_plugin>(new VideoPeerPlugin(pc));
-}
-
-void VideoTorrentPlugin::on_piece_pass(int index) {
-	m_torrent->read_piece(index);
-}
-
-boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void*) {
-	return boost::shared_ptr<torrent_plugin>(new VideoTorrentPlugin(t));
-}
-
-} /* namespace bivod */
+#endif /* VIDEOPLAYER_H_ */

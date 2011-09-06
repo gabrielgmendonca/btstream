@@ -16,49 +16,35 @@
  * along with BIVoD.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * VideoTorrentPlugin.h
+ * VideoPeerPlugin.h
  *
- *  Created on: 24/08/2011
+ *  Created on: 06/09/2011
  *      Author: gabriel
  */
 
-#ifndef VIDEOTORRENTPLUGIN_H_
-#define VIDEOTORRENTPLUGIN_H_
-
-#include <boost/shared_ptr.hpp>
+#ifndef VIDEOPEERPLUGIN_H_
+#define VIDEOPEERPLUGIN_H_
 
 #include <libtorrent/extensions.hpp>
 
 using namespace libtorrent;
 
-namespace libtorrent {
-class torrent;
-}
-
 namespace bivod {
 
-class VideoTorrentPlugin: public torrent_plugin {
+class VideoPeerPlugin: public peer_plugin {
 public:
-	VideoTorrentPlugin(torrent* t);
+	VideoPeerPlugin(peer_connection* pc);
 
 	/**
-	 * Returns a VideoPeerPlugin.
-	 * Called when a new peer is connected to the torrent.
+	 * Requests a new piece from peer.
+	 * Called when peer sends an unchoke message.
 	 */
-	virtual boost::shared_ptr<peer_plugin> new_connection(peer_connection* pc);
-
-	/**
-	 * Informs torrent that the received piece will be read.
-	 * Called when a piece is received and pass the hash check.
-	 */
-	virtual void on_piece_pass(int index);
+	virtual bool on_unchoke();
 
 private:
-	torrent* m_torrent;
+	peer_connection* m_peer_connection;
 };
-
-boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void* params);
 
 } /* namespace bivod */
 
-#endif /* VIDEOTORRENTPLUGIN_H_ */
+#endif /* VIDEOPEERPLUGIN_H_ */
