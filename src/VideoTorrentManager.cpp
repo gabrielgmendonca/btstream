@@ -24,12 +24,15 @@
 
 #include "VideoTorrentManager.h"
 
+#include <boost/function.hpp>
+
+#include "VideoTorrentPlugin.h"
+
+namespace bivod {
+
 VideoTorrentManager::VideoTorrentManager() {
-	// TODO Auto-generated constructor stub
-
+	TorrentPluginFactory f(&create_video_plugin);
+	m_session.add_extension(f);
 }
 
-VideoTorrentManager::~VideoTorrentManager() {
-	// TODO Auto-generated destructor stub
-}
-
+} /* namespace bivod */

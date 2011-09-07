@@ -23,7 +23,6 @@
  */
 
 #include <iostream>
-#include <libtorrent/torrent.hpp>
 
 #include "VideoTorrentPlugin.h"
 #include "VideoPeerPlugin.h"
@@ -41,7 +40,7 @@ void VideoTorrentPlugin::on_piece_pass(int index) {
 	m_torrent->read_piece(index);
 }
 
-boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void*) {
+boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void* params) {
 	return boost::shared_ptr<torrent_plugin>(new VideoTorrentPlugin(t));
 }
 

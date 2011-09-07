@@ -28,12 +28,9 @@
 #include <boost/shared_ptr.hpp>
 
 #include <libtorrent/extensions.hpp>
+#include <libtorrent/torrent.hpp>
 
 using namespace libtorrent;
-
-namespace libtorrent {
-class torrent;
-}
 
 namespace bivod {
 
@@ -57,6 +54,18 @@ private:
 	torrent* m_torrent;
 };
 
+/**
+ * Function template for a torrent_plugin factory function.
+ */
+typedef boost::function<boost::shared_ptr<libtorrent::torrent_plugin> (libtorrent::torrent *, void *)> TorrentPluginFactory;
+
+/**
+ * Returns a new VideoTorrentPlugin.
+ * In order to add VideoTorrentPlugin as an extension, a
+ * TorrentPluginFactory should be instantiated with this function
+ * as a parameter. The TorrentPluginFactory object should then be
+ * passed at add_extension method call.
+ */
 boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void* params);
 
 } /* namespace bivod */

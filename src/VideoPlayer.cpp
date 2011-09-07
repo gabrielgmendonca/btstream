@@ -24,6 +24,8 @@
 
 #include "VideoPlayer.h"
 
+namespace bivod {
+
 VideoPlayer::VideoPlayer() {
 	// TODO Auto-generated constructor stub
 
@@ -33,3 +35,4 @@ VideoPlayer::~VideoPlayer() {
 	// TODO Auto-generated destructor stub
 }
 
+} /* namespace bivod */

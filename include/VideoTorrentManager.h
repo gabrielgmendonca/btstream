@@ -8,10 +8,20 @@
 #ifndef VIDEOTORRENTMANAGER_H_
 #define VIDEOTORRENTMANAGER_H_
 
+#include <libtorrent/session.hpp>
+
+using namespace libtorrent;
+
+namespace bivod {
+
 class VideoTorrentManager {
 public:
 	VideoTorrentManager();
-	virtual ~VideoTorrentManager();
+
+private:
+	session m_session;
 };
+
+} /* namespace bivod */
 
 #endif /* VIDEOTORRENTMANAGER_H_ */

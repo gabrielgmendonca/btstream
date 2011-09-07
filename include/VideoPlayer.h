@@ -25,10 +25,14 @@
 #ifndef VIDEOPLAYER_H_
 #define VIDEOPLAYER_H_
 
+namespace bivod {
+
 class VideoPlayer {
 public:
 	VideoPlayer();
 	virtual ~VideoPlayer();
 };
+
+} /* namespace bivod */
 
 #endif /* VIDEOPLAYER_H_ */
