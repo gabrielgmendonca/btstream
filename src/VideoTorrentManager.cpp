@@ -40,8 +40,6 @@ VideoTorrentManager::VideoTorrentManager(VideoPlayer* video_player) :
 	m_session.add_extension(f);
 }
 
-void asd() {};
-
 void VideoTorrentManager::add_torrent(std::string file_name,
 		std::string save_path) {
 	add_torrent_params params;
