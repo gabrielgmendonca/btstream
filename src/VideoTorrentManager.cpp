@@ -24,15 +24,39 @@
 
 #include "VideoTorrentManager.h"
 
-#include <boost/function.hpp>
+#include <libtorrent/session.hpp>
+#include <libtorrent/torrent.hpp>
 
 #include "VideoTorrentPlugin.h"
 
+using libtorrent::torrent_info;
+
 namespace bivod {
 
-VideoTorrentManager::VideoTorrentManager() {
+VideoTorrentManager::VideoTorrentManager(VideoPlayer* video_player) :
+		m_video_player(video_player) {
+
 	TorrentPluginFactory f(&create_video_plugin);
 	m_session.add_extension(f);
+}
+
+void asd() {};
+
+void VideoTorrentManager::add_torrent(std::string file_name,
+		std::string save_path) {
+	add_torrent_params params;
+	params.ti = new torrent_info((const boost::filesystem::path) file_name);
+	params.save_path = save_path;
+
+	// Starts torrent.
+	m_session.add_torrent(params);
+
+	// Starts VideoPlayer feeding thread that calls the feed_video_player method.
+	boost::thread feeding_thread(&VideoTorrentManager::feed_video_player, this);
+}
+
+void VideoTorrentManager::feed_video_player() {
+
 }
 
 } /* namespace bivod */
