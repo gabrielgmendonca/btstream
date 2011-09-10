@@ -31,8 +31,8 @@ VideoPlayer::VideoPlayer() {
 
 }
 
-VideoPlayer::~VideoPlayer() {
-	// TODO Auto-generated destructor stub
+void VideoPlayer::add_piece(int index, boost::shared_array<char>, int size) {
+
 }
 
 } /* namespace bivod */

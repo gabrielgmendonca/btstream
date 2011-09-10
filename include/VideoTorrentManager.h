@@ -42,7 +42,7 @@ public:
 	VideoTorrentManager(VideoPlayer* video_player);
 
 	/**
-	 * Starts the download of the specified torrent.
+	 * Starts the download of specified torrent.
 	 * The feeding thread will be started.
 	 */
 	void add_torrent(std::string file_name, std::string save_path);
@@ -55,7 +55,9 @@ public:
 
 private:
 	session m_session;
+    torrent_handle m_torrent_handle;
 	VideoPlayer* m_video_player;
+    int m_pieces_to_play;
 };
 
 } /* namespace bivod */

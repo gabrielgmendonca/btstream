@@ -25,12 +25,18 @@
 #ifndef VIDEOPLAYER_H_
 #define VIDEOPLAYER_H_
 
+#include <boost/shared_array.hpp>
+
 namespace bivod {
 
 class VideoPlayer {
 public:
 	VideoPlayer();
-	virtual ~VideoPlayer();
+
+	/**
+	 * Adds a downloaded piece to buffer.
+	 */
+	void add_piece(int index, boost::shared_array<char> data, int size);
 };
 
 } /* namespace bivod */
