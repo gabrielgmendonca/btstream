@@ -45,7 +45,7 @@ void VideoBuffer::add_piece(unsigned index, boost::shared_array<char> data, unsi
 	}
 }
 
-boost::shared_ptr<Piece> VideoBuffer::get_next_piece() {
+boost::shared_ptr<Piece> VideoBuffer::get_next_piece() const {
 	boost::unique_lock<boost::mutex> lock(m_mutex);
 
 	boost::shared_ptr<Piece> piece = m_pieces[m_next_piece_index];

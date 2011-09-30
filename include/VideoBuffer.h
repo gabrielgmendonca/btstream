@@ -76,13 +76,14 @@ public:
 	 * Returns a pointer to the next piece that should be played.
 	 * This method will block until the piece is available.
 	 */
-	boost::shared_ptr<Piece> get_next_piece();
+	boost::shared_ptr<Piece> get_next_piece() const;
 
 private:
 	std::vector<boost::shared_ptr<Piece> > m_pieces;
-	unsigned m_next_piece_index;
+	mutable unsigned m_next_piece_index;
+
 	mutable boost::mutex m_mutex;
-	boost::condition_variable m_condition;
+	mutable boost::condition_variable m_condition;
 };
 
 } /* namespace bivod */
