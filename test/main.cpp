@@ -16,16 +16,17 @@
  * along with BiVoD.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * VideoBufferTest.cpp
+ * main.cpp
  *
- *  Created on: 29/09/2011
+ *  Created on: 30/09/2011
  *      Author: gabriel
  */
 
-#include "VideoBuffer.h"
-
 #include <gtest/gtest.h>
 
-namespace bivod {
+int main(int argc, char **argv) {
+	::testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
+}
 
-} /* namespace bivod */
+
