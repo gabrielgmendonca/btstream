@@ -26,4 +26,18 @@
 
 namespace bivod {
 
+VideoBuffer::VideoBuffer(int num_pieces) :
+		m_pieces(num_pieces) {}
+
+void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size) {
+	boost::shared_ptr<Piece> piece(new Piece(index, data, size));
+
+	{
+		boost::lock_guard lock(m_mutex);
+		m_pieces[index] = piece;
+	}
+
+	m_condition.notify_all();
+}
+
 } /* namespace bivod */

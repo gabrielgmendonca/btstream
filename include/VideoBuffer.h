@@ -86,4 +86,5 @@ private:
 };
 
 } /* namespace bivod */
+
 #endif /* VIDEOBUFFER_H_ */
