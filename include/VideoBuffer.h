@@ -38,12 +38,12 @@ namespace bivod {
  * Data object that represents a torrent piece.
  */
 struct Piece {
-	Piece(int index, boost::shared_array<char> data, int size) :
+	Piece(unsigned index, boost::shared_array<char> data, unsigned size) :
 			index(index), data(data), size(size) {}
 
-	int index;
+	unsigned index;
 	boost::shared_array<char> data;
-	int size;
+	unsigned size;
 };
 
 /**
@@ -60,7 +60,7 @@ public:
 	 * Constructor.
 	 * @param num_pieces Number of pieces in the video file.
 	 */
-	VideoBuffer(int num_pieces);
+	VideoBuffer(unsigned num_pieces);
 
 	/**
 	 * Adds a piece reference to the buffer.
@@ -70,7 +70,7 @@ public:
 	 * @param data a char array with piece data.
 	 * @param size the size of the data array.
 	 */
-	void add_piece(int index, boost::shared_array<char> data, int size);
+	void add_piece(unsigned index, boost::shared_array<char> data, unsigned size);
 
 	/**
 	 * Returns a pointer to the next piece that should be played.
@@ -80,7 +80,7 @@ public:
 
 private:
 	std::vector<boost::shared_ptr<Piece> > m_pieces;
-	int m_next_piece_index;
+	unsigned m_next_piece_index;
 	mutable boost::mutex m_mutex;
 	boost::condition_variable m_condition;
 };

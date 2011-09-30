@@ -26,10 +26,10 @@
 
 namespace bivod {
 
-VideoBuffer::VideoBuffer(int num_pieces) :
+VideoBuffer::VideoBuffer(unsigned num_pieces) :
 		m_pieces(num_pieces) {}
 
-void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size) {
+void VideoBuffer::add_piece(unsigned index, boost::shared_array<char> data, unsigned size) {
 	boost::shared_ptr<Piece> piece(new Piece(index, data, size));
 	bool is_next_piece;
 
