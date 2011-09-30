@@ -31,13 +31,31 @@ VideoBuffer::VideoBuffer(int num_pieces) :
 
 void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size) {
 	boost::shared_ptr<Piece> piece(new Piece(index, data, size));
+	bool is_next_piece;
 
 	{
-		boost::lock_guard lock(m_mutex);
+		boost::lock_guard<boost::mutex> lock(m_mutex);
 		m_pieces[index] = piece;
+
+		is_next_piece = (index == m_next_piece_index);
 	}
 
-	m_condition.notify_all();
+	if (is_next_piece) {
+		m_condition.notify_all();
+	}
+}
+
+boost::shared_ptr<Piece> VideoBuffer::get_next_piece() {
+	boost::unique_lock<boost::mutex> lock(m_mutex);
+
+	boost::shared_ptr<Piece> piece = m_pieces[m_next_piece_index];
+	while (piece.get() == 0) {
+		m_condition.wait(lock);
+		piece = m_pieces[m_next_piece_index];
+	}
+
+	m_next_piece_index++;
+	return piece;
 }
 
 } /* namespace bivod */
