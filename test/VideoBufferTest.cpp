@@ -26,6 +26,12 @@
 
 #include <gtest/gtest.h>
 
+#include "Exception.h"
+
 namespace bivod {
+
+TEST(VideoBufferTest, CreateWithNegativeSize) {
+	ASSERT_THROW(VideoBuffer videoBuffer(-5), Exception);
+}
 
 } /* namespace bivod */
