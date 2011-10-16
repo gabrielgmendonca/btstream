@@ -60,7 +60,7 @@ public:
 	 * Constructor.
 	 * @param num_pieces Number of pieces in the video file.
 	 */
-	VideoBuffer(unsigned num_pieces);
+	VideoBuffer(int num_pieces);
 
 	/**
 	 * Adds a piece reference to the buffer.
@@ -70,17 +70,17 @@ public:
 	 * @param data a char array with piece data.
 	 * @param size the size of the data array.
 	 */
-	void add_piece(unsigned index, boost::shared_array<char> data, unsigned size);
+	void add_piece(int index, boost::shared_array<char> data, unsigned size);
 
 	/**
 	 * Returns a pointer to the next piece that should be played.
 	 * This method will block until the piece is available.
 	 */
-	boost::shared_ptr<Piece> get_next_piece() const;
+	boost::shared_ptr<Piece> get_next_piece();
 
 private:
 	std::vector<boost::shared_ptr<Piece> > m_pieces;
-	mutable unsigned m_next_piece_index;
+	int m_next_piece_index;
 
 	mutable boost::mutex m_mutex;
 	mutable boost::condition_variable m_condition;

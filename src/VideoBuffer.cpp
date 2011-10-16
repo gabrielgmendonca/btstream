@@ -24,12 +24,20 @@
 
 #include "VideoBuffer.h"
 
+#include "Exception.h"
+
 namespace bivod {
 
-VideoBuffer::VideoBuffer(unsigned num_pieces) :
-		m_pieces(num_pieces) {}
+VideoBuffer::VideoBuffer(int num_pieces) {
+	if (num_pieces > 0) {
+		m_pieces = std::vector<boost::shared_ptr<bivod::Piece> >(num_pieces);
 
-void VideoBuffer::add_piece(unsigned index, boost::shared_array<char> data, unsigned size) {
+	} else {
+		throw Exception("Invalid buffer size.");
+	}
+}
+
+void VideoBuffer::add_piece(int index, boost::shared_array<char> data, unsigned size) {
 	boost::shared_ptr<Piece> piece(new Piece(index, data, size));
 	bool is_next_piece;
 
@@ -45,7 +53,7 @@ void VideoBuffer::add_piece(unsigned index, boost::shared_array<char> data, unsi
 	}
 }
 
-boost::shared_ptr<Piece> VideoBuffer::get_next_piece() const {
+boost::shared_ptr<Piece> VideoBuffer::get_next_piece() {
 	boost::unique_lock<boost::mutex> lock(m_mutex);
 
 	boost::shared_ptr<Piece> piece = m_pieces[m_next_piece_index];
