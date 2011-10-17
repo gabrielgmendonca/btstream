@@ -26,13 +26,13 @@
 
 namespace bivod {
 
-Exception::Exception(const char* message) throw():
+Exception::Exception(std::string message) throw():
 		m_message(message) {}
 
 Exception::~Exception() throw() {}
 
 const char* Exception::what() const throw() {
-	return m_message;
+	return m_message.c_str();
 }
 
 } /* namespace bivod */

@@ -26,6 +26,7 @@
 #define EXCEPTION_H_
 
 #include <exception>
+#include <string>
 
 namespace bivod {
 
@@ -34,12 +35,12 @@ namespace bivod {
  */
 class Exception: public std::exception {
 public:
-	Exception(const char* message) throw();
+	Exception(std::string message) throw();
 	virtual ~Exception() throw();
 	virtual const char* what() const throw();
 
 private:
-	const char* m_message;
+	std::string m_message;
 };
 
 } /* namespace bivod */
