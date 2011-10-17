@@ -64,4 +64,23 @@ TEST(VideoBufferTest, AddPieceInvalidSize) {
 	EXPECT_THROW(videoBuffer.add_piece(index, data, -1), Exception);
 }
 
+TEST(VideoBufferTest, AddPieceOne) {
+	VideoBuffer videoBuffer(1);
+
+	int index = 0;
+	int size = 1;
+	boost::shared_array<char> data(new char[size]);
+	data[0] = 7;
+
+	videoBuffer.add_piece(index, data, size);
+
+	boost::shared_ptr<Piece> piece = videoBuffer.get_next_piece();
+
+	ASSERT_NE((Piece*) 0, piece.get());
+	EXPECT_EQ(index, piece->index);
+	ASSERT_NE((char*) 0, piece->data.get());
+	EXPECT_EQ(data[0], piece->data[0]);
+	EXPECT_EQ(size, piece->size);
+}
+
 } /* namespace bivod */
