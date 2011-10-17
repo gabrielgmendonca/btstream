@@ -34,14 +34,16 @@ TEST(VideoBufferTest, CreateWithNegativeSize) {
 	ASSERT_THROW(VideoBuffer videoBuffer(-1), Exception);
 }
 
-TEST(VideoBufferTest, AddPieceNegativeIndex) {
-	VideoBuffer videoBuffer(1);
+TEST(VideoBufferTest, AddPieceInvalidIndex) {
+	int buffer_length = 1;
+	VideoBuffer videoBuffer(buffer_length);
 
 	int size = 1;
 	boost::shared_array<char> data(new char[size]);
 
 	ASSERT_NO_THROW(videoBuffer.add_piece(0, data, size));
 	EXPECT_THROW(videoBuffer.add_piece(-1, data, size), Exception);
+	EXPECT_THROW(videoBuffer.add_piece(buffer_length, data, size), Exception);
 }
 
 TEST(VideoBufferTest, AddPieceNoData) {

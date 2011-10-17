@@ -42,7 +42,7 @@ VideoBuffer::VideoBuffer(int num_pieces) :
 }
 
 void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size) {
-	if (index >= 0 && data.get() != 0 && size > 0) {
+	if (index >= 0 && index < m_pieces.size() && data.get() != 0 && size > 0) {
 		boost::shared_ptr<Piece> piece(new Piece(index, data, size));
 		bool is_next_piece;
 
