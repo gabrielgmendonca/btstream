@@ -24,6 +24,8 @@
 
 #include "VideoBuffer.h"
 
+#include <boost/lexical_cast.hpp>
+
 #include "Exception.h"
 
 namespace bivod {
@@ -33,23 +35,32 @@ VideoBuffer::VideoBuffer(int num_pieces) {
 		m_pieces = std::vector<boost::shared_ptr<bivod::Piece> >(num_pieces);
 
 	} else {
-		throw Exception("Invalid buffer size.");
+		throw Exception("Invalid buffer size: " +
+				boost::lexical_cast<std::string>(num_pieces));
 	}
 }
 
-void VideoBuffer::add_piece(int index, boost::shared_array<char> data, unsigned size) {
-	boost::shared_ptr<Piece> piece(new Piece(index, data, size));
-	bool is_next_piece;
+void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size) {
+	if (index >= 0 && data.get() != 0 && size > 0) {
+		boost::shared_ptr<Piece> piece(new Piece(index, data, size));
+		bool is_next_piece;
 
-	{
-		boost::lock_guard<boost::mutex> lock(m_mutex);
-		m_pieces[index] = piece;
+		{
+			boost::lock_guard<boost::mutex> lock(m_mutex);
+			m_pieces[index] = piece;
 
-		is_next_piece = (index == m_next_piece_index);
-	}
+			is_next_piece = (index == m_next_piece_index);
+		}
 
-	if (is_next_piece) {
-		m_condition.notify_all();
+		if (is_next_piece) {
+			m_condition.notify_all();
+		}
+
+	} else {
+		throw Exception("Invalid piece: " +
+				boost::lexical_cast<std::string>(index) + ", " +
+				boost::lexical_cast<std::string>(data.get()) + ", " +
+				boost::lexical_cast<std::string>(size));
 	}
 }
 

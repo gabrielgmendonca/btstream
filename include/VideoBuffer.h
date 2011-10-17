@@ -38,12 +38,12 @@ namespace bivod {
  * Data object that represents a torrent piece.
  */
 struct Piece {
-	Piece(unsigned index, boost::shared_array<char> data, unsigned size) :
+	Piece(int index, boost::shared_array<char> data, int size) :
 			index(index), data(data), size(size) {}
 
-	unsigned index;
+	int index;
 	boost::shared_array<char> data;
-	unsigned size;
+	int size;
 };
 
 /**
@@ -70,7 +70,7 @@ public:
 	 * @param data a char array with piece data.
 	 * @param size the size of the data array.
 	 */
-	void add_piece(int index, boost::shared_array<char> data, unsigned size);
+	void add_piece(int index, boost::shared_array<char> data, int size);
 
 	/**
 	 * Returns a pointer to the next piece that should be played.
