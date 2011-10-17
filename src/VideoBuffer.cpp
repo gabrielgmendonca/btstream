@@ -30,7 +30,8 @@
 
 namespace bivod {
 
-VideoBuffer::VideoBuffer(int num_pieces) {
+VideoBuffer::VideoBuffer(int num_pieces) :
+				m_next_piece_index(0) {
 	if (num_pieces > 0) {
 		m_pieces = std::vector<boost::shared_ptr<bivod::Piece> >(num_pieces);
 
@@ -59,7 +60,7 @@ void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size)
 	} else {
 		throw Exception("Invalid piece: " +
 				boost::lexical_cast<std::string>(index) + ", " +
-				boost::lexical_cast<std::string>(data.get()) + ", " +
+				boost::lexical_cast<std::string>(int(data.get())) + ", " +
 				boost::lexical_cast<std::string>(size));
 	}
 }

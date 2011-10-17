@@ -31,7 +31,37 @@
 namespace bivod {
 
 TEST(VideoBufferTest, CreateWithNegativeSize) {
-	ASSERT_THROW(VideoBuffer videoBuffer(-5), Exception);
+	ASSERT_THROW(VideoBuffer videoBuffer(-1), Exception);
+}
+
+TEST(VideoBufferTest, AddPieceNegativeIndex) {
+	VideoBuffer videoBuffer(1);
+
+	int size = 1;
+	boost::shared_array<char> data(new char[size]);
+
+	ASSERT_NO_THROW(videoBuffer.add_piece(0, data, size));
+	EXPECT_THROW(videoBuffer.add_piece(-1, data, size), Exception);
+}
+
+TEST(VideoBufferTest, AddPieceNoData) {
+	VideoBuffer videoBuffer(1);
+
+	int index = 0;
+	int size = 1;
+	boost::shared_array<char> data;
+
+	EXPECT_THROW(videoBuffer.add_piece(index, data, size), Exception);
+}
+
+TEST(VideoBufferTest, AddPieceInvalidSize) {
+	VideoBuffer videoBuffer(1);
+
+	int index = 0;
+	boost::shared_array<char> data(new char[1]);
+
+	EXPECT_THROW(videoBuffer.add_piece(index, data, 0), Exception);
+	EXPECT_THROW(videoBuffer.add_piece(index, data, -1), Exception);
 }
 
 } /* namespace bivod */
