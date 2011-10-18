@@ -85,4 +85,39 @@ TEST(VideoBufferTest, AddPieceOne) {
 	EXPECT_EQ(size, piece->size);
 }
 
+TEST(VideoBufferTest, AddPieceTwo) {
+	VideoBuffer videoBuffer(2);
+
+	int index2 = 1;
+	int size2 = 2;
+	boost::shared_array<char> data2(new char[size2]);
+	data2[0] = 3;
+	data2[1] = 5;
+
+	videoBuffer.add_piece(index2, data2, size2);
+
+	int index1 = 0;
+	int size1 = 1;
+	boost::shared_array<char> data1(new char[size1]);
+	data1[0] = 7;
+
+	videoBuffer.add_piece(index1, data1, size1);
+
+	boost::shared_ptr<Piece> piece1 = videoBuffer.get_next_piece();
+	boost::shared_ptr<Piece> piece2 = videoBuffer.get_next_piece();
+
+	ASSERT_NE((Piece*) 0, piece1.get());
+	EXPECT_EQ(index1, piece1->index);
+	ASSERT_NE((char*) 0, piece1->data.get());
+	EXPECT_EQ(data1[0], piece1->data[0]);
+	EXPECT_EQ(size1, piece1->size);
+
+	ASSERT_NE((Piece*) 0, piece2.get());
+	EXPECT_EQ(index2, piece2->index);
+	ASSERT_NE((char*) 0, piece2->data.get());
+	EXPECT_EQ(data2[0], piece2->data[0]);
+	EXPECT_EQ(data2[1], piece2->data[1]);
+	EXPECT_EQ(size2, piece2->size);
+}
+
 } /* namespace bivod */
