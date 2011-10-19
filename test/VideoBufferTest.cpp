@@ -107,9 +107,9 @@ TEST(VideoBufferTest, AddPieceOne) {
 
 	boost::shared_ptr<Piece> piece = video_buffer.get_next_piece();
 
-	ASSERT_NE((Piece*) 0, piece.get());
+	ASSERT_TRUE(piece);
 	EXPECT_EQ(index, piece->index);
-	ASSERT_NE((char*) 0, piece->data.get());
+	ASSERT_TRUE((bool) piece->data);
 	EXPECT_EQ(data[0], piece->data[0]);
 	EXPECT_EQ(size, piece->size);
 }
@@ -135,15 +135,15 @@ TEST(VideoBufferTest, AddPieceTwo) {
 	boost::shared_ptr<Piece> piece1 = video_buffer.get_next_piece();
 	boost::shared_ptr<Piece> piece2 = video_buffer.get_next_piece();
 
-	ASSERT_NE((Piece*) 0, piece1.get());
+	ASSERT_TRUE(piece1);
 	EXPECT_EQ(index1, piece1->index);
-	ASSERT_NE((char*) 0, piece1->data.get());
+	ASSERT_TRUE((bool) piece1->data);
 	EXPECT_EQ(data1[0], piece1->data[0]);
 	EXPECT_EQ(size1, piece1->size);
 
-	ASSERT_NE((Piece*) 0, piece2.get());
+	ASSERT_TRUE(piece2);
 	EXPECT_EQ(index2, piece2->index);
-	ASSERT_NE((char*) 0, piece2->data.get());
+	ASSERT_TRUE((bool) piece2->data);
 	EXPECT_EQ(data2[0], piece2->data[0]);
 	EXPECT_EQ(data2[1], piece2->data[1]);
 	EXPECT_EQ(size2, piece2->size);
@@ -173,9 +173,9 @@ TEST(VideoBufferTest, AddPieceConcurrent) {
 	// Reading last piece.
 	boost::shared_ptr<Piece> last_piece = video_buffer.get_next_piece();
 
-	ASSERT_NE((Piece*) 0, last_piece.get());
+	ASSERT_TRUE(last_piece);
 	EXPECT_EQ(index, last_piece->index);
-	ASSERT_NE((char*) 0, last_piece->data.get());
+	ASSERT_TRUE((bool) last_piece->data);
 	EXPECT_EQ(data[0], last_piece->data[0]);
 	EXPECT_EQ(size, last_piece->size);
 }
