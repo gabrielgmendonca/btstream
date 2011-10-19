@@ -66,15 +66,19 @@ void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size)
 }
 
 boost::shared_ptr<Piece> VideoBuffer::get_next_piece() {
-	boost::unique_lock<boost::mutex> lock(m_mutex);
+	boost::shared_ptr<Piece> piece;
 
-	boost::shared_ptr<Piece> piece = m_pieces[m_next_piece_index];
-	while (!piece) {
-		m_condition.wait(lock);
+	boost::unique_lock<boost::mutex> lock(m_mutex);
+	if (m_next_piece_index < (int) m_pieces.size()) {
 		piece = m_pieces[m_next_piece_index];
+		while (!piece) {
+			m_condition.wait(lock);
+			piece = m_pieces[m_next_piece_index];
+		}
+
+		m_next_piece_index++;
 	}
 
-	m_next_piece_index++;
 	return piece;
 }
 

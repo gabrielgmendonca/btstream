@@ -196,4 +196,18 @@ TEST(VideoBufferTest, AddPieceDeadlock) {
 	EXPECT_TRUE(consumer_thread.timed_join(td));
 }
 
+
+TEST(VideoBufferTest, GetNextPieceOverflow) {
+	VideoBuffer video_buffer(1);
+
+	boost::shared_array<char> data(new char[1]);
+	video_buffer.add_piece(0, data, 1);
+
+	boost::shared_ptr<Piece> valid_piece = video_buffer.get_next_piece();
+	boost::shared_ptr<Piece> invalid_piece = video_buffer.get_next_piece();
+
+	ASSERT_TRUE(valid_piece);
+	ASSERT_FALSE(invalid_piece);
+}
+
 } /* namespace bivod */
