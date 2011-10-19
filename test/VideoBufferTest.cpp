@@ -32,14 +32,17 @@
 namespace bivod {
 
 /**
- * Fills given buffer with pieces.
+ * Fills given buffer with pieces in pseudo-random order.
  */
-void fill_buffer(VideoBuffer *video_buffer, int buffer_size, char piece_data) {
+void fill_buffer(VideoBuffer *video_buffer, int buffer_size) {
+	int prime = 131071;
+	int index = random() % buffer_size;
 	for (int i = 0; i < buffer_size; i++) {
 		boost::shared_array<char> data(new char[1]);
-		data[0] = piece_data;
+		data[0] = index;
 
-		video_buffer->add_piece(i, data, 1);
+		video_buffer->add_piece(index, data, 1);
+		index = (index + prime) % buffer_size;
 	}
 }
 
@@ -49,7 +52,10 @@ void fill_buffer(VideoBuffer *video_buffer, int buffer_size, char piece_data) {
  */
 void read_pieces(VideoBuffer *video_buffer, int buffer_size) {
 	for (int i = 0; i < buffer_size; i++) {
-		video_buffer->get_next_piece();
+		boost::shared_ptr<Piece> piece = video_buffer->get_next_piece();
+
+		char expected_data = piece->index;
+		EXPECT_EQ(expected_data, piece->data[0]);
 	}
 }
 
@@ -144,13 +150,12 @@ TEST(VideoBufferTest, AddPieceTwo) {
 }
 
 TEST(VideoBufferTest, AddPieceConcurrent) {
-	int buffer_size = 5000;
+	int buffer_size = 50000;
 	VideoBuffer video_buffer(buffer_size + 1);
 
-	char piece_data = 7;
-	fill_buffer(&video_buffer, buffer_size, piece_data);
+	fill_buffer(&video_buffer, buffer_size);
 
-	// Consumer thread. Will read all pieces.
+	// Consumer thread. Will read all pieces and check their values.
 	boost::thread consumer_thread(read_pieces, &video_buffer, buffer_size);
 
 	// Adding last piece in parallel.
@@ -173,6 +178,22 @@ TEST(VideoBufferTest, AddPieceConcurrent) {
 	ASSERT_NE((char*) 0, last_piece->data.get());
 	EXPECT_EQ(data[0], last_piece->data[0]);
 	EXPECT_EQ(size, last_piece->size);
+}
+
+TEST(VideoBufferTest, AddPieceDeadlock) {
+	int buffer_size = 50000;
+	VideoBuffer video_buffer(buffer_size);
+
+	// Consumer thread. Will read all pieces and check their values.
+	boost::thread consumer_thread(read_pieces, &video_buffer, buffer_size);
+
+	// Producer thread. Will add pieces to VideoBuffer.
+	boost::thread producer_thread(fill_buffer, &video_buffer, buffer_size);
+
+	// Threads shoudn't take to long to stop.
+	boost::posix_time::time_duration td = boost::posix_time::seconds(1);
+	EXPECT_TRUE(producer_thread.timed_join(td));
+	EXPECT_TRUE(consumer_thread.timed_join(td));
 }
 
 } /* namespace bivod */
