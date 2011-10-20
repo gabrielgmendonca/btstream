@@ -30,9 +30,7 @@
 
 namespace bivod {
 
-VideoTorrentManager::VideoTorrentManager(VideoPlayer* video_player) :
-		m_video_player(video_player) {
-
+VideoTorrentManager::VideoTorrentManager() {
 	TorrentPluginFactory f(&create_video_plugin);
 	m_session.add_extension(f);
 
@@ -40,45 +38,58 @@ VideoTorrentManager::VideoTorrentManager(VideoPlayer* video_player) :
 	m_session.set_alert_mask(alert::storage_notification);
 }
 
-void VideoTorrentManager::add_torrent(std::string file_name,
+int VideoTorrentManager::add_torrent(std::string file_name,
 		std::string save_path) {
 
 	add_torrent_params params;
 	params.ti = new torrent_info((const boost::filesystem::path) file_name);
 	params.save_path = save_path;
+	params.paused = true;
+	params.auto_managed = false;
 
-	// Starts torrent.
 	m_torrent_handle = m_session.add_torrent(params);
-
-	// Starts VideoPlayer feeding thread that calls the feed_video_player method.
-	boost::thread feeding_thread(&VideoTorrentManager::feed_video_player, this);
 
 	// Gets the number of pieces that will be downloaded and played.
 	m_pieces_to_play = params.ti.get()->num_pieces();
+
+	return m_pieces_to_play;
 }
 
-void VideoTorrentManager::feed_video_player() {
+void VideoTorrentManager::start_download(VideoBuffer* video_buffer) {
+	m_video_buffer = video_buffer;
+
+	// Starts torrent download.
+	m_torrent_handle.auto_managed(true);
+
+	// Starts VideoBuffer feeding thread that calls the feed_video_buffer method.
+	boost::thread feeding_thread(&VideoTorrentManager::feed_video_buffer, this);
+}
+
+void VideoTorrentManager::feed_video_buffer() {
 	while (m_pieces_to_play > 0) {
-		std::auto_ptr<alert> a = m_session.pop_alert();
 
-		if (a.get()) {
-			// Casts alert pointer to read_piece_alert pointer.
-			std::auto_ptr<read_piece_alert> piece_alert(alert_cast<read_piece_alert>(a.release()));
+		// Tries to get an alert from alert queue.
+		time_duration max_wait_time(boost::posix_time::seconds(30).ticks());
+		const alert* new_alert = m_session.wait_for_alert(max_wait_time);
 
-			if (piece_alert.get()) {
-				// Sends piece to VideoPlayer.
+		if (new_alert) {
+			// Tries to cast alert pointer to read_piece_alert pointer.
+			const read_piece_alert* piece_alert = alert_cast<read_piece_alert>(new_alert);
+
+			if (piece_alert) {
+				// Adds piece to VideoBuffer.
 				int index = piece_alert->piece;
 				boost::shared_array<char> data = piece_alert->buffer;
 				int size = piece_alert->size;
 
-				m_video_player->add_piece(index, data, size);
+				m_video_buffer->add_piece(index, data, size);
 			}
 
 			m_pieces_to_play--;
-		}
 
-		// Sleeps thread for 250 milliseconds.
-		boost::this_thread::sleep(boost::posix_time::milliseconds(250));
+			// Removes alert from queue.
+			m_session.pop_alert();
+		}
 	}
 }
 

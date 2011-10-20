@@ -27,7 +27,7 @@
 
 #include <libtorrent/session.hpp>
 
-#include "VideoPlayer.h"
+#include "VideoBuffer.h"
 
 using namespace libtorrent;
 
@@ -35,28 +35,35 @@ namespace bivod {
 
 /**
  * Manages video torrents through libtorrent.
- * Sends downloaded pieces to a VideoPlayer in order to be played.
+ * Sends downloaded pieces to a VideoBuffer in order to be played.
  */
 class VideoTorrentManager {
 public:
-	VideoTorrentManager(VideoPlayer* video_player);
+	VideoTorrentManager();
 
 	/**
-	 * Starts the download of specified torrent.
-	 * The feeding thread will be started.
+	 * Initializes session for specified torrent download and returns the
+	 * number of pieces.
 	 */
-	void add_torrent(std::string file_name, std::string save_path);
+	int add_torrent(std::string file_name, std::string save_path);
 
 	/**
-	 * Sends downloaded pieces to VideoPlayer.
+	 * Starts download of the video file.
+	 * The downloaded pieces will be added to the given VideoBuffer.
+	 * A feeding thread will be started.
+	 */
+	void start_download(VideoBuffer* video_buffer);
+
+	/**
+	 * Adds downloaded pieces to VideoBuffer.
 	 * Pieces will be get through a libtorrent alert.
 	 */
-	void feed_video_player();
+	void feed_video_buffer();
 
 private:
 	session m_session;
     torrent_handle m_torrent_handle;
-	VideoPlayer* m_video_player;
+	VideoBuffer* m_video_buffer;
     int m_pieces_to_play;
 };
 
