@@ -39,23 +39,29 @@ VideoTorrentManager::VideoTorrentManager() {
 }
 
 int VideoTorrentManager::add_torrent(std::string file_name,
-		std::string save_path) {
+		std::string save_path) throw(Exception) {
 
-	add_torrent_params params;
-	params.ti = new torrent_info((const boost::filesystem::path) file_name);
-	params.save_path = save_path;
-	params.paused = true;
-	params.auto_managed = false;
+	try {
+		add_torrent_params params;
+		params.ti = new torrent_info((const boost::filesystem::path) file_name);
+		params.save_path = save_path;
+		params.paused = true;
+		params.auto_managed = false;
 
-	m_torrent_handle = m_session.add_torrent(params);
+		m_torrent_handle = m_session.add_torrent(params);
 
-	// Gets the number of pieces that will be downloaded and played.
-	m_pieces_to_play = params.ti.get()->num_pieces();
+		// Gets the number of pieces that will be downloaded and played.
+		m_pieces_to_play = params.ti.get()->num_pieces();
+
+	} catch (std::exception& e) {
+		throw Exception(e.what());
+	}
 
 	return m_pieces_to_play;
 }
 
-void VideoTorrentManager::start_download(VideoBuffer* video_buffer) {
+void VideoTorrentManager::start_download(VideoBuffer* video_buffer)
+		throw(Exception) {
 	m_video_buffer = video_buffer;
 
 	// Starts torrent download.

@@ -26,11 +26,10 @@
 
 #include <boost/lexical_cast.hpp>
 
-#include "Exception.h"
 
 namespace bivod {
 
-VideoBuffer::VideoBuffer(int num_pieces) :
+VideoBuffer::VideoBuffer(int num_pieces) throw(Exception) :
 				m_next_piece_index(0) {
 	if (num_pieces > 0) {
 		m_pieces = std::vector<boost::shared_ptr<bivod::Piece> >(num_pieces);
@@ -41,7 +40,8 @@ VideoBuffer::VideoBuffer(int num_pieces) :
 	}
 }
 
-void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size) {
+void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size)
+				throw(Exception) {
 	if (index >= 0 && index < ((int) m_pieces.size()) && data && size > 0) {
 		boost::shared_ptr<Piece> piece(new Piece(index, data, size));
 		bool is_next_piece;

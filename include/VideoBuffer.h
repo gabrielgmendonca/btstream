@@ -31,6 +31,7 @@
 #include <boost/shared_array.hpp>
 #include <boost/thread.hpp>
 
+#include "Exception.h"
 
 namespace bivod {
 
@@ -60,7 +61,7 @@ public:
 	 * Constructor.
 	 * @param num_pieces Number of pieces in the video file.
 	 */
-	VideoBuffer(int num_pieces);
+	VideoBuffer(int num_pieces) throw (Exception);
 
 	/**
 	 * Adds a piece reference to the buffer.
@@ -70,7 +71,8 @@ public:
 	 * @param data a char array with piece data.
 	 * @param size the size of the data array.
 	 */
-	void add_piece(int index, boost::shared_array<char> data, int size);
+	void add_piece(int index, boost::shared_array<char> data, int size)
+			throw (Exception);
 
 	/**
 	 * Returns a pointer to the next piece that should be played.

@@ -28,6 +28,7 @@
 #include <libtorrent/session.hpp>
 
 #include "VideoBuffer.h"
+#include "Exception.h"
 
 using namespace libtorrent;
 
@@ -45,14 +46,15 @@ public:
 	 * Initializes session for specified torrent download and returns the
 	 * number of pieces.
 	 */
-	int add_torrent(std::string file_name, std::string save_path);
+	int add_torrent(std::string file_name, std::string save_path = ".")
+			throw (Exception);
 
 	/**
 	 * Starts download of the video file.
 	 * The downloaded pieces will be added to the given VideoBuffer.
 	 * A feeding thread will be started.
 	 */
-	void start_download(VideoBuffer* video_buffer);
+	void start_download(VideoBuffer* video_buffer) throw (Exception);
 
 	/**
 	 * Adds downloaded pieces to VideoBuffer.
@@ -62,9 +64,9 @@ public:
 
 private:
 	session m_session;
-    torrent_handle m_torrent_handle;
+	torrent_handle m_torrent_handle;
 	VideoBuffer* m_video_buffer;
-    int m_pieces_to_play;
+	int m_pieces_to_play;
 };
 
 } /* namespace bivod */
