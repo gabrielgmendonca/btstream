@@ -76,8 +76,8 @@ public:
 
 	/**
 	 * Returns a pointer to the next piece that should be played.
-	 * If all pieces have been already returned, returns a default
-	 * constructed shared_ptr.
+	 * If all pieces have already been returned, returns a default
+	 * constructed (NULL) shared_ptr.
 	 * This method will block until the piece is available.
 	 */
 	boost::shared_ptr<Piece> get_next_piece();
