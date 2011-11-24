@@ -40,7 +40,16 @@ namespace bivod {
  */
 class VideoTorrentManager {
 public:
+
+	/**
+	 * Default constructor.
+	 */
 	VideoTorrentManager();
+
+	/**
+	 * Destructor.
+	 */
+	~VideoTorrentManager();
 
 	/**
 	 * Initializes session for specified torrent download and returns the
@@ -67,6 +76,8 @@ private:
 	torrent_handle m_torrent_handle;
 	VideoBuffer* m_video_buffer;
 	int m_pieces_to_play;
+
+	boost::shared_ptr<boost::thread> m_feeding_thread;
 };
 
 } /* namespace bivod */

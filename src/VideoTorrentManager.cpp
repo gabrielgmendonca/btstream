@@ -38,8 +38,16 @@ VideoTorrentManager::VideoTorrentManager() {
 	m_session.set_alert_mask(alert::storage_notification);
 }
 
+VideoTorrentManager::~VideoTorrentManager() {
+	if (m_feeding_thread) {
+		// Stops feeding thread.
+		m_feeding_thread->interrupt();
+		m_feeding_thread->join();
+	}
+}
+
 int VideoTorrentManager::add_torrent(std::string file_name,
-		std::string save_path) throw(Exception) {
+		std::string save_path) throw (Exception) {
 
 	try {
 		add_torrent_params params;
@@ -61,41 +69,48 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 }
 
 void VideoTorrentManager::start_download(VideoBuffer* video_buffer)
-		throw(Exception) {
+		throw (Exception) {
 	m_video_buffer = video_buffer;
 
 	// Starts torrent download.
 	m_torrent_handle.auto_managed(true);
 
 	// Starts VideoBuffer feeding thread that calls the feed_video_buffer method.
-	boost::thread feeding_thread(&VideoTorrentManager::feed_video_buffer, this);
+	m_feeding_thread = boost::shared_ptr<boost::thread>(
+			new boost::thread(&VideoTorrentManager::feed_video_buffer, this));
 }
 
 void VideoTorrentManager::feed_video_buffer() {
-	while (m_pieces_to_play > 0) {
+	try {
+		while (m_pieces_to_play > 0) {
 
-		// Tries to get an alert from alert queue.
-		time_duration max_wait_time(boost::posix_time::seconds(30).ticks());
-		const alert* new_alert = m_session.wait_for_alert(max_wait_time);
+			// Tries to get an alert from alert queue.
+			time_duration max_wait_time(boost::posix_time::seconds(30).ticks());
+			const alert* new_alert = m_session.wait_for_alert(max_wait_time);
 
-		if (new_alert) {
-			// Tries to cast alert pointer to read_piece_alert pointer.
-			const read_piece_alert* piece_alert = alert_cast<read_piece_alert>(new_alert);
+			if (new_alert) {
+				// Tries to cast alert pointer to read_piece_alert pointer.
+				const read_piece_alert* piece_alert = alert_cast<read_piece_alert>(
+						new_alert);
 
-			if (piece_alert) {
-				// Adds piece to VideoBuffer.
-				int index = piece_alert->piece;
-				boost::shared_array<char> data = piece_alert->buffer;
-				int size = piece_alert->size;
+				if (piece_alert) {
+					// Adds piece to VideoBuffer.
+					int index = piece_alert->piece;
+					boost::shared_array<char> data = piece_alert->buffer;
+					int size = piece_alert->size;
 
-				m_video_buffer->add_piece(index, data, size);
+					m_video_buffer->add_piece(index, data, size);
+				}
+
+				m_pieces_to_play--;
+
+				// Removes alert from queue.
+				m_session.pop_alert();
 			}
-
-			m_pieces_to_play--;
-
-			// Removes alert from queue.
-			m_session.pop_alert();
 		}
+	}
+	catch (boost::thread_interrupted& e) {
+		// Thread will stop.
 	}
 }
 
