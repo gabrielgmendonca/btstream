@@ -1,19 +1,19 @@
 /*
  * Copyright 2011 Gabriel Mendonça
  *
- * This file is part of BiVoD.
- * BiVoD is free software: you can redistribute it and/or modify
+ * This file is part of BTStream.
+ * BTStream is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * BiVoD is distributed in the hope that it will be useful,
+ * BTStream is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with BiVoD.  If not, see <http://www.gnu.org/licenses/>.
+ * along with BTStream.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
  * VideoBuffer.cpp
@@ -27,12 +27,12 @@
 #include <boost/lexical_cast.hpp>
 
 
-namespace bivod {
+namespace btstream {
 
 VideoBuffer::VideoBuffer(int num_pieces) throw(Exception) :
 				m_next_piece_index(0) {
 	if (num_pieces > 0) {
-		m_pieces = std::vector<boost::shared_ptr<bivod::Piece> >(num_pieces);
+		m_pieces = std::vector<boost::shared_ptr<btstream::Piece> >(num_pieces);
 
 	} else {
 		throw Exception("Invalid buffer size: " +
@@ -82,4 +82,4 @@ boost::shared_ptr<Piece> VideoBuffer::get_next_piece() {
 	return piece;
 }
 
-} /* namespace bivod */
+} /* namespace btstream */

@@ -1,19 +1,19 @@
 /*
  * Copyright 2011 Gabriel Mendonça
  *
- * This file is part of BiVoD.
- * BiVoD is free software: you can redistribute it and/or modify
+ * This file is part of BTStream.
+ * BTStream is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * BiVoD is distributed in the hope that it will be useful,
+ * BTStream is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with BiVoD.  If not, see <http://www.gnu.org/licenses/>.
+ * along with BTStream.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
  * VideoTorrentPlugin.h
@@ -32,7 +32,7 @@
 
 using namespace libtorrent;
 
-namespace bivod {
+namespace btstream {
 
 class VideoTorrentPlugin: public torrent_plugin {
 public:
@@ -68,6 +68,6 @@ typedef boost::function<boost::shared_ptr<libtorrent::torrent_plugin> (libtorren
  */
 boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void* params);
 
-} /* namespace bivod */
+} /* namespace btstream */
 
 #endif /* VIDEOTORRENTPLUGIN_H_ */
