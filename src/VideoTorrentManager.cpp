@@ -57,6 +57,7 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 		params.auto_managed = false;
 
 		m_torrent_handle = m_session.add_torrent(params);
+		m_torrent_handle.set_sequential_download(true);
 
 		// Gets the number of pieces that will be downloaded and played.
 		m_pieces_to_play = params.ti.get()->num_pieces();
@@ -68,7 +69,7 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 	return m_pieces_to_play;
 }
 
-void VideoTorrentManager::start_download(VideoBuffer* video_buffer)
+void VideoTorrentManager::start_download(boost::shared_ptr<VideoBuffer> video_buffer)
 		throw (Exception) {
 	m_video_buffer = video_buffer;
 
@@ -79,6 +80,8 @@ void VideoTorrentManager::start_download(VideoBuffer* video_buffer)
 	m_feeding_thread = boost::shared_ptr<boost::thread>(
 			new boost::thread(&VideoTorrentManager::feed_video_buffer, this));
 }
+
+#include <iostream>
 
 void VideoTorrentManager::feed_video_buffer() {
 	try {

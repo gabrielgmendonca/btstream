@@ -25,7 +25,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.cross.exe.debug.2081936520." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.exe.debug.720690035" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.exe.debug">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.1035756652" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<builder buildPath="${workspace_loc:/bivod/Debug}" id="cdt.managedbuild.builder.gnu.cross.136891664" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<builder buildPath="${workspace_loc:/btstream/Debug}" id="cdt.managedbuild.builder.gnu.cross.136891664" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.395318413" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.316480195" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.272657037" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
@@ -85,7 +85,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.cross.exe.release.128581063." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.exe.release.1968511994" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.exe.release">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.2111781470" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<builder buildPath="${workspace_loc:/bivod/Release}" id="cdt.managedbuild.builder.gnu.cross.1268555655" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<builder buildPath="${workspace_loc:/btstream/Release}" id="cdt.managedbuild.builder.gnu.cross.1268555655" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.1564774396" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
 								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.option.optimization.level.345356445" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.1995996660" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
@@ -135,7 +135,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.cross.exe.debug.2081936520.447494151." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.exe.debug.63394533" name="Cross GCC" resourceTypeBasedDiscovery="true" superClass="cdt.managedbuild.toolchain.gnu.cross.exe.debug">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.256213208" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
-							<builder buildPath="${workspace_loc:/bivod/Debug}" id="cdt.managedbuild.builder.gnu.cross.2021947239" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<builder buildPath="${workspace_loc:/btstream/Debug}" id="cdt.managedbuild.builder.gnu.cross.2021947239" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.builder.gnu.cross"/>
 							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.1695873915" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.1632339937" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.debugging.level.2012599312" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
@@ -174,7 +174,7 @@
 		</cconfiguration>
 	</storageModule>
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="BiVoD.cdt.managedbuild.target.gnu.cross.exe.1317837201" name="Executable" projectType="cdt.managedbuild.target.gnu.cross.exe"/>
+		<project id="btstream.cdt.managedbuild.target.gnu.cross.exe.1317837201" name="Executable" projectType="cdt.managedbuild.target.gnu.cross.exe"/>
 	</storageModule>
 	<storageModule moduleId="refreshScope" versionNumber="1">
 		<resource resourceType="PROJECT" workspacePath="/BTStream"/>
@@ -182,22 +182,22 @@
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.2081936520.447494151;cdt.managedbuild.config.gnu.cross.exe.debug.2081936520.447494151.;cdt.managedbuild.tool.gnu.cross.c.compiler.1695873915;cdt.managedbuild.tool.gnu.c.compiler.input.79694087">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.release.128581063;cdt.managedbuild.config.gnu.cross.exe.release.128581063.;cdt.managedbuild.tool.gnu.cross.c.compiler.1564774396;cdt.managedbuild.tool.gnu.c.compiler.input.689668590">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.2081936520.447494151;cdt.managedbuild.config.gnu.cross.exe.debug.2081936520.447494151.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1840135735;cdt.managedbuild.tool.gnu.cpp.compiler.input.1530075376">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.2081936520;cdt.managedbuild.config.gnu.cross.exe.debug.2081936520.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1975828953;cdt.managedbuild.tool.gnu.cpp.compiler.input.570779972">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.release.128581063;cdt.managedbuild.config.gnu.cross.exe.release.128581063.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1460088017;cdt.managedbuild.tool.gnu.cpp.compiler.input.1598127482">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.release.128581063;cdt.managedbuild.config.gnu.cross.exe.release.128581063.;cdt.managedbuild.tool.gnu.cross.c.compiler.1564774396;cdt.managedbuild.tool.gnu.c.compiler.input.689668590">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.2081936520.447494151;cdt.managedbuild.config.gnu.cross.exe.debug.2081936520.447494151.;cdt.managedbuild.tool.gnu.cross.c.compiler.1695873915;cdt.managedbuild.tool.gnu.c.compiler.input.79694087">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.2081936520;cdt.managedbuild.config.gnu.cross.exe.debug.2081936520.;cdt.managedbuild.tool.gnu.cross.c.compiler.395318413;cdt.managedbuild.tool.gnu.c.compiler.input.2053220987">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.release.128581063;cdt.managedbuild.config.gnu.cross.exe.release.128581063.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1460088017;cdt.managedbuild.tool.gnu.cpp.compiler.input.1598127482">
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.exe.debug.2081936520;cdt.managedbuild.config.gnu.cross.exe.debug.2081936520.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1975828953;cdt.managedbuild.tool.gnu.cpp.compiler.input.570779972">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
 		</scannerConfigBuildInfo>
 	</storageModule>

@@ -26,9 +26,19 @@
 
 namespace btstream {
 
-BTStream::BTStream(std::string& torrent_path) {
-	// TODO Auto-generated constructor stub
+BTStream::BTStream(std::string& torrent_path) :
+		m_video_torrent_manager(new VideoTorrentManager) {
 
+	int num_pieces;
+	num_pieces = m_video_torrent_manager->add_torrent(torrent_path);
+
+	m_video_buffer = boost::shared_ptr<VideoBuffer>(new VideoBuffer(num_pieces));
+
+	m_video_torrent_manager->start_download(m_video_buffer);
+}
+
+boost::shared_ptr<Piece> BTStream::get_next_piece() {
+	return m_video_buffer->get_next_piece();
 }
 
 } /* namespace btstream */

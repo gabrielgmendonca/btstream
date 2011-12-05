@@ -30,8 +30,6 @@
 
 namespace btstream {
 
-std::string TEST_TORRENT = "test/big_buck_bunny.torrent";
-
 TEST(VideoTorrentManagerTest, AddTorrentInvalid) {
 	VideoTorrentManager video_torrent_manager;
 
@@ -42,6 +40,7 @@ TEST(VideoTorrentManagerTest, AddTorrentValid) {
 	VideoTorrentManager video_torrent_manager;
 
 	int piece_number = 1273;
+	std::string TEST_TORRENT = "test/big_buck_bunny.torrent";
 	ASSERT_EQ(piece_number, video_torrent_manager.add_torrent(TEST_TORRENT));
 }
 

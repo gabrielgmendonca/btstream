@@ -26,6 +26,32 @@
 
 #include <gtest/gtest.h>
 
+#include "Exception.h"
+
 namespace btstream {
+
+TEST(BTStreamTest, CreateWithInvalidTorrent) {
+	std::string path = "";
+	ASSERT_THROW(BTStream btstream(path), Exception);
+}
+
+TEST(BTStreamTest, CreateWithValidTorrent) {
+	std::string TEST_TORRENT = "test/big_buck_bunny.torrent";
+	ASSERT_NO_THROW(BTStream btstream(TEST_TORRENT));
+}
+
+TEST(BTStreamTest, GetPiece) {
+	std::string TEST_TORRENT = "test/big_buck_bunny.torrent";
+	BTStream btstream(TEST_TORRENT);
+
+	boost::shared_ptr<Piece> piece;
+	piece = btstream.get_next_piece();
+	ASSERT_TRUE(piece);
+	EXPECT_EQ(0, piece->index);
+
+	piece = btstream.get_next_piece();
+	ASSERT_TRUE(piece);
+	EXPECT_EQ(1, piece->index);
+}
 
 } /* namespace btstream */

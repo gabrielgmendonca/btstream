@@ -26,12 +26,40 @@
 #define BTSTREAM_H_
 
 #include <string>
+#include <boost/shared_ptr.hpp>
+
+#include "VideoTorrentManager.h"
+#include "VideoBuffer.h"
 
 namespace btstream {
 
+/**
+ * This is BTStream library's base class.
+ * In order to receive a stream from a BitTorrent swarm, one just need
+ * to provide a path to a valid torrent file at the constructor and,
+ * after that, call the get_next_piece method regularly to read
+ * downloaded pieces.
+ */
 class BTStream {
 public:
+
+	/**
+	 * Constructor.
+	 * @param torrent_path Path to a valid torrent file.
+	 */
 	BTStream(std::string& torrent_path);
+
+	/**
+	 * Returns a pointer to the next piece that should be played.
+	 * If all pieces have already been returned, returns a default
+	 * constructed (NULL) shared_ptr.
+	 * This method will block until the piece is available.
+	 */
+	boost::shared_ptr<Piece> get_next_piece();
+
+private:
+	boost::shared_ptr<VideoTorrentManager> m_video_torrent_manager;
+	boost::shared_ptr<VideoBuffer> m_video_buffer;
 };
 
 } /* namespace btstream */

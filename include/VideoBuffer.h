@@ -61,7 +61,7 @@ public:
 	 * Constructor.
 	 * @param num_pieces Number of pieces in the video file.
 	 */
-	VideoBuffer(int num_pieces) throw (Exception);
+	VideoBuffer(int num_pieces=1) throw (Exception);
 
 	/**
 	 * Adds a piece reference to the buffer.

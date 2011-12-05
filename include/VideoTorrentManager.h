@@ -26,6 +26,7 @@
 #define VIDEOTORRENTMANAGER_H_
 
 #include <libtorrent/session.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include "VideoBuffer.h"
 #include "Exception.h"
@@ -63,7 +64,7 @@ public:
 	 * The downloaded pieces will be added to the given VideoBuffer.
 	 * A feeding thread will be started.
 	 */
-	void start_download(VideoBuffer* video_buffer) throw (Exception);
+	void start_download(boost::shared_ptr<VideoBuffer> video_buffer) throw (Exception);
 
 	/**
 	 * Adds downloaded pieces to VideoBuffer.
@@ -74,7 +75,7 @@ public:
 private:
 	session m_session;
 	torrent_handle m_torrent_handle;
-	VideoBuffer* m_video_buffer;
+	boost::shared_ptr<VideoBuffer> m_video_buffer;
 	int m_pieces_to_play;
 
 	boost::shared_ptr<boost::thread> m_feeding_thread;
