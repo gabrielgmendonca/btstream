@@ -60,7 +60,6 @@ void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size)
 	} else {
 		throw Exception("Invalid piece: " +
 				boost::lexical_cast<std::string>(index) + ", " +
-				boost::lexical_cast<std::string>(int(data.get())) + ", " +
 				boost::lexical_cast<std::string>(size));
 	}
 }
