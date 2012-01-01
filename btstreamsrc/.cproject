@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="cdt.managedbuild.config.gnu.cross.so.debug.681880656">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cross.so.debug.681880656" moduleId="org.eclipse.cdt.core.settings" name="DebugBuild">
+				<externalSettings>
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/btstreamsrc"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/btstreamsrc/Debug"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/btstreamsrc/DebugBuild"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="btstreamsrc"/>
+					</externalSetting>
+				</externalSettings>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="so" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.cross.so.debug.681880656" name="DebugBuild" parent="cdt.managedbuild.config.gnu.cross.so.debug">
+					<folderInfo id="cdt.managedbuild.config.gnu.cross.so.debug.681880656." name="/" resourcePath="">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.so.debug.1285890980" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.so.debug">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.1583909891" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
+							<builder buildPath="${workspace_loc:/btstreamsrc/Debug}" id="cdt.managedbuild.builder.gnu.cross.1093339687" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="2" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.1380428945" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
+								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.option.optimization.level.457823254" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.debugging.level.953544138" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.include.paths.1395232271" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/btstream}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/x86_64-linux-gnu"/>
+									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include-fixed"/>
+									<listOptionValue builtIn="false" value="/usr/local/include"/>
+									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/backward"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/x86_64-linux-gnu"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.6"/>
+									<listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
+									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu/glib-2.0/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/gstreamer-0.10"/>
+									<listOptionValue builtIn="false" value="/usr/include/libxml2"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.955385609" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.773125327" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
+								<option id="gnu.cpp.compiler.option.optimization.level.1983996955" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.debugging.level.555690871" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.include.paths.581271585" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/usr/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/x86_64-linux-gnu"/>
+									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include-fixed"/>
+									<listOptionValue builtIn="false" value="/usr/local/include"/>
+									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/backward"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/x86_64-linux-gnu"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.6"/>
+									<listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
+									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu/glib-2.0/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/gstreamer-0.10"/>
+									<listOptionValue builtIn="false" value="/usr/include/libxml2"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/btstreamsrc/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/btstream/include}&quot;"/>
+								</option>
+								<option id="gnu.cpp.compiler.option.other.other.1184267195" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -pthread" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.pic.415345274" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1279672320" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.547885257" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker">
+								<option defaultValue="true" id="gnu.c.link.option.shared.1900162323" name="Shared (-shared)" superClass="gnu.c.link.option.shared" valueType="boolean"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.476778180" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
+								<option defaultValue="true" id="gnu.cpp.link.option.shared.1312316438" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.libs.228481592" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="gstreamer-0.10"/>
+									<listOptionValue builtIn="false" value="gobject-2.0"/>
+									<listOptionValue builtIn="false" value="gmodule-2.0"/>
+									<listOptionValue builtIn="false" value="xml2"/>
+									<listOptionValue builtIn="false" value="gthread-2.0"/>
+									<listOptionValue builtIn="false" value="rt"/>
+									<listOptionValue builtIn="false" value="glib-2.0"/>
+									<listOptionValue builtIn="false" value="gstbase-0.10"/>
+									<listOptionValue builtIn="false" value="gstreamer-0.10"/>
+									<listOptionValue builtIn="false" value="gobject-2.0"/>
+									<listOptionValue builtIn="false" value="gmodule-2.0"/>
+									<listOptionValue builtIn="false" value="xml2"/>
+									<listOptionValue builtIn="false" value="gthread-2.0"/>
+									<listOptionValue builtIn="false" value="rt"/>
+									<listOptionValue builtIn="false" value="glib-2.0"/>
+									<listOptionValue builtIn="false" value="gstbase-0.10"/>
+								</option>
+								<option id="gnu.cpp.link.option.paths.853102922" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/btstream/DebugBuild}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.2105246913" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.1913773473" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.201126955" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
+								<option id="gnu.both.asm.option.include.paths.468180930" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/btstream}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/x86_64-linux-gnu"/>
+									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include-fixed"/>
+									<listOptionValue builtIn="false" value="/usr/local/include"/>
+									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/backward"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/x86_64-linux-gnu"/>
+									<listOptionValue builtIn="false" value="/usr/include/c++/4.6"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1268669900" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding="src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
+				<externalSettings containerId="org.eclipse.cdt.managedbuilder.pkgconfig.extSettings" factoryId="org.eclipse.cdt.core.extension.container.factory">
+					<externalSetting contentTypes="org.eclipse.cdt.managedbuilder.core.compiledObjectFile">
+						<entry flags="" kind="libraryFile" name="gstreamer-0.10"/>
+						<entry flags="" kind="libraryFile" name="gobject-2.0"/>
+						<entry flags="" kind="libraryFile" name="gmodule-2.0"/>
+						<entry flags="" kind="libraryFile" name="xml2"/>
+						<entry flags="" kind="libraryFile" name="gthread-2.0"/>
+						<entry flags="" kind="libraryFile" name="rt"/>
+						<entry flags="" kind="libraryFile" name="glib-2.0"/>
+						<entry flags="" kind="libraryFile" name="gstbase-0.10"/>
+					</externalSetting>
+					<externalSetting contentTypes="org.eclipse.cdt.core.cxxSource">
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/glib-2.0"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/lib/x86_64-linux-gnu/glib-2.0/include"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/gstreamer-0.10"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/libxml2"/>
+					</externalSetting>
+					<externalSetting contentTypes="org.eclipse.cdt.core.cSource">
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/glib-2.0"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/lib/x86_64-linux-gnu/glib-2.0/include"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/gstreamer-0.10"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/libxml2"/>
+					</externalSetting>
+				</externalSettings>
+				<externalSettings containerId="btstream;cdt.managedbuild.config.gnu.cross.exe.debug.2081936520" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/btstream"/>
+						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include"/>
+						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/x86_64-linux-gnu"/>
+						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include-fixed"/>
+						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/local/include"/>
+						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
+						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/c++/4.6/backward"/>
+						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/c++/4.6/x86_64-linux-gnu"/>
+						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/c++/4.6"/>
+					</externalSetting>
+				</externalSettings>
+			</storageModule>
+			<storageModule banshee-collection-indexer="false" banshee-core="false" banshee-hyena="false" banshee-hyena-data-sqlite="false" banshee-hyena-gui="false" banshee-lastfm="false" banshee-lastfm-gui="false" banshee-mono-media="false" banshee-musicbrainz="false" banshee-nowplaying="false" banshee-services="false" banshee-thickclient="false" banshee-webbrowser="false" dbus-python="false" fontutil="false" geoip="false" ginn="false" gio-2.0="false" gio-unix-2.0="false" glib-2.0="false" gmodule-2.0="false" gmodule-export-2.0="false" gmodule-no-export-2.0="false" gnome-icon-theme="false" gobject-2.0="false" gstreamer-0.10="true" gstreamer-base-0.10="true" gstreamer-check-0.10="false" gstreamer-controller-0.10="false" gstreamer-dataprotocol-0.10="false" gstreamer-net-0.10="false" gthread-2.0="false" ibus-table="false" ice="false" inputproto="false" iso-codes="false" kbproto="false" libcrypto="false" libgdiplus="false" libssl="false" libtorrent-rasterbar="false" libxml-2.0="false" mobile-broadband-provider-info="false" moduleId="packages" nautilus-sendto="false" notify-python="false" openssl="false" pm-utils="false" pthread-stubs="false" python="false" python-2.7="false" shared-mime-info="false" sm="false" tomboy-addins="false" udev="false" udisks="false" usbutils="false" x11="false" xau="false" xbitmaps="false" xcb="false" xdmcp="false" xorg-sgml-doctools="false" xorg-wacom="false" xproto="false" xt="false" xtrans="false" yelp-xsl="false" zeitgeist-daemon="false" zlib="false"/>
+		</cconfiguration>
+		<cconfiguration id="cdt.managedbuild.config.gnu.cross.so.release.1099008189">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.config.gnu.cross.so.release.1099008189" moduleId="org.eclipse.cdt.core.settings" name="ReleaseBuild">
+				<externalSettings>
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/btstreamsrc"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/btstreamsrc/Release"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/btstreamsrc/ReleaseBuild"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="btstreamsrc"/>
+					</externalSetting>
+				</externalSettings>
+				<extensions>
+					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="so" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.sharedLib" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.cross.so.release.1099008189" name="ReleaseBuild" parent="cdt.managedbuild.config.gnu.cross.so.release">
+					<folderInfo id="cdt.managedbuild.config.gnu.cross.so.release.1099008189." name="/" resourcePath="">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.cross.so.release.1699899203" name="Cross GCC" superClass="cdt.managedbuild.toolchain.gnu.cross.so.release">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.targetPlatform.gnu.cross.1771300247" isAbstract="false" osList="all" superClass="cdt.managedbuild.targetPlatform.gnu.cross"/>
+							<builder buildPath="${workspace_loc:/btstreamsrc/Release}" id="cdt.managedbuild.builder.gnu.cross.1287452050" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="2" superClass="cdt.managedbuild.builder.gnu.cross"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.compiler.1868723829" name="Cross GCC Compiler" superClass="cdt.managedbuild.tool.gnu.cross.c.compiler">
+								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.option.optimization.level.1940943437" name="Optimization Level" superClass="gnu.c.compiler.option.optimization.level" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.debugging.level.876702543" name="Debug Level" superClass="gnu.c.compiler.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.include.paths.981779462" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
+									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu/glib-2.0/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/gstreamer-0.10"/>
+									<listOptionValue builtIn="false" value="/usr/include/libxml2"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/btstream}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1253515289" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.compiler.1008671031" name="Cross G++ Compiler" superClass="cdt.managedbuild.tool.gnu.cross.cpp.compiler">
+								<option id="gnu.cpp.compiler.option.optimization.level.466962242" name="Optimization Level" superClass="gnu.cpp.compiler.option.optimization.level" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.debugging.level.2090282676" name="Debug Level" superClass="gnu.cpp.compiler.option.debugging.level" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.include.paths.1884044887" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
+									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu/glib-2.0/include"/>
+									<listOptionValue builtIn="false" value="/usr/include/gstreamer-0.10"/>
+									<listOptionValue builtIn="false" value="/usr/include/libxml2"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/btstreamsrc/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/btstream/include}&quot;"/>
+								</option>
+								<option id="gnu.cpp.compiler.option.other.other.99449876" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" value="-c -fmessage-length=0 -pthread" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.pic.17735664" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" value="true" valueType="boolean"/>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1862047683" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.c.linker.580590990" name="Cross GCC Linker" superClass="cdt.managedbuild.tool.gnu.cross.c.linker">
+								<option defaultValue="true" id="gnu.c.link.option.shared.1479652036" name="Shared (-shared)" superClass="gnu.c.link.option.shared" valueType="boolean"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.cpp.linker.2077494784" name="Cross G++ Linker" superClass="cdt.managedbuild.tool.gnu.cross.cpp.linker">
+								<option defaultValue="true" id="gnu.cpp.link.option.shared.795722106" name="Shared (-shared)" superClass="gnu.cpp.link.option.shared" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.paths.1225655179" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/btstream/ReleaseBuild}&quot;"/>
+								</option>
+								<option id="gnu.cpp.link.option.libs.1805654227" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="gstreamer-0.10"/>
+									<listOptionValue builtIn="false" value="gobject-2.0"/>
+									<listOptionValue builtIn="false" value="gmodule-2.0"/>
+									<listOptionValue builtIn="false" value="xml2"/>
+									<listOptionValue builtIn="false" value="gthread-2.0"/>
+									<listOptionValue builtIn="false" value="rt"/>
+									<listOptionValue builtIn="false" value="glib-2.0"/>
+									<listOptionValue builtIn="false" value="gstbase-0.10"/>
+									<listOptionValue builtIn="false" value="btstream"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1299147997" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.cross.archiver.138669215" name="Cross GCC Archiver" superClass="cdt.managedbuild.tool.gnu.cross.archiver"/>
+							<tool id="cdt.managedbuild.tool.gnu.cross.assembler.1395076608" name="Cross GCC Assembler" superClass="cdt.managedbuild.tool.gnu.cross.assembler">
+								<option id="gnu.both.asm.option.include.paths.1745465395" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/btstream}&quot;"/>
+								</option>
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.67166636" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings">
+				<externalSettings containerId="btstream;cdt.managedbuild.config.gnu.cross.exe.release.128581063" factoryId="org.eclipse.cdt.core.cfg.export.settings.sipplier">
+					<externalSetting>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="includePath" name="/btstream"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="libraryPath" name="/btstream/ReleaseBuild"/>
+						<entry flags="RESOLVED" kind="libraryFile" name="btstream"/>
+					</externalSetting>
+				</externalSettings>
+				<externalSettings containerId="org.eclipse.cdt.managedbuilder.pkgconfig.extSettings" factoryId="org.eclipse.cdt.core.extension.container.factory">
+					<externalSetting contentTypes="org.eclipse.cdt.managedbuilder.core.compiledObjectFile">
+						<entry flags="" kind="libraryFile" name="gstreamer-0.10"/>
+						<entry flags="" kind="libraryFile" name="gobject-2.0"/>
+						<entry flags="" kind="libraryFile" name="gmodule-2.0"/>
+						<entry flags="" kind="libraryFile" name="xml2"/>
+						<entry flags="" kind="libraryFile" name="gthread-2.0"/>
+						<entry flags="" kind="libraryFile" name="rt"/>
+						<entry flags="" kind="libraryFile" name="glib-2.0"/>
+						<entry flags="" kind="libraryFile" name="gstbase-0.10"/>
+					</externalSetting>
+					<externalSetting contentTypes="org.eclipse.cdt.core.cxxSource">
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/glib-2.0"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/lib/x86_64-linux-gnu/glib-2.0/include"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/gstreamer-0.10"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/libxml2"/>
+					</externalSetting>
+					<externalSetting contentTypes="org.eclipse.cdt.core.cSource">
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/glib-2.0"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/lib/x86_64-linux-gnu/glib-2.0/include"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/gstreamer-0.10"/>
+						<entry flags="BUILTIN" kind="includePath" name="/usr/include/libxml2"/>
+					</externalSetting>
+				</externalSettings>
+			</storageModule>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="btstreamsrc.cdt.managedbuild.target.gnu.cross.so.131172855" name="Shared Library" projectType="cdt.managedbuild.target.gnu.cross.so"/>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.so.release.1099008189;cdt.managedbuild.config.gnu.cross.so.release.1099008189.;cdt.managedbuild.tool.gnu.cross.c.compiler.1868723829;cdt.managedbuild.tool.gnu.c.compiler.input.1253515289">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.so.debug.681880656;cdt.managedbuild.config.gnu.cross.so.debug.681880656.;cdt.managedbuild.tool.gnu.cross.c.compiler.1380428945;cdt.managedbuild.tool.gnu.c.compiler.input.955385609">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.so.debug.681880656;cdt.managedbuild.config.gnu.cross.so.debug.681880656.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.773125327;cdt.managedbuild.tool.gnu.cpp.compiler.input.1279672320">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="cdt.managedbuild.config.gnu.cross.so.release.1099008189;cdt.managedbuild.config.gnu.cross.so.release.1099008189.;cdt.managedbuild.tool.gnu.cross.cpp.compiler.1008671031;cdt.managedbuild.tool.gnu.cpp.compiler.input.1862047683">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileCPP"/>
+		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="refreshScope" versionNumber="1">
+		<resource resourceType="PROJECT" workspacePath="/btstreamsrc"/>
+	</storageModule>
+</cproject>
