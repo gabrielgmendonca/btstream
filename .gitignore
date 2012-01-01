@@ -1,0 +1,8 @@
+# Eclipse settings files
+.settings
+
+# Build directories
+DebugBuild
+ReleaseBuild
+TestBuild
+
