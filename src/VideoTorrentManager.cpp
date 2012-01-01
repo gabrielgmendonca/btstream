@@ -1,19 +1,19 @@
 /*
  * Copyright 2011 Gabriel Mendonça
  *
- * This file is part of BiVoD.
- * BiVoD is free software: you can redistribute it and/or modify
+ * This file is part of BTStream.
+ * BTStream is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * BiVoD is distributed in the hope that it will be useful,
+ * BTStream is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with BiVoD.  If not, see <http://www.gnu.org/licenses/>.
+ * along with BTStream.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
  * VideoTorrentManager.cpp
@@ -28,7 +28,7 @@
 
 #include "VideoTorrentPlugin.h"
 
-namespace bivod {
+namespace btstream {
 
 VideoTorrentManager::VideoTorrentManager() {
 	TorrentPluginFactory f(&create_video_plugin);
@@ -57,6 +57,7 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 		params.auto_managed = false;
 
 		m_torrent_handle = m_session.add_torrent(params);
+		m_torrent_handle.set_sequential_download(true);
 
 		// Gets the number of pieces that will be downloaded and played.
 		m_pieces_to_play = params.ti.get()->num_pieces();
@@ -68,7 +69,7 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 	return m_pieces_to_play;
 }
 
-void VideoTorrentManager::start_download(VideoBuffer* video_buffer)
+void VideoTorrentManager::start_download(boost::shared_ptr<VideoBuffer> video_buffer)
 		throw (Exception) {
 	m_video_buffer = video_buffer;
 
@@ -79,6 +80,8 @@ void VideoTorrentManager::start_download(VideoBuffer* video_buffer)
 	m_feeding_thread = boost::shared_ptr<boost::thread>(
 			new boost::thread(&VideoTorrentManager::feed_video_buffer, this));
 }
+
+#include <iostream>
 
 void VideoTorrentManager::feed_video_buffer() {
 	try {
@@ -114,4 +117,4 @@ void VideoTorrentManager::feed_video_buffer() {
 	}
 }
 
-} /* namespace bivod */
+} /* namespace btstream */

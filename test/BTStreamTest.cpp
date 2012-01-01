@@ -16,13 +16,13 @@
  * along with BTStream.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * VideoTorrentManagerTest.cpp
+ * BTStreamTest.cpp
  *
- *  Created on: 29/09/2011
+ *  Created on: 04/12/2011
  *      Author: gabriel
  */
 
-#include "VideoTorrentManager.h"
+#include "BTStream.h"
 
 #include <gtest/gtest.h>
 
@@ -30,18 +30,28 @@
 
 namespace btstream {
 
-TEST(VideoTorrentManagerTest, AddTorrentInvalid) {
-	VideoTorrentManager video_torrent_manager;
-
-	ASSERT_THROW(video_torrent_manager.add_torrent(""), Exception);
+TEST(BTStreamTest, CreateWithInvalidTorrent) {
+	std::string path = "";
+	ASSERT_THROW(BTStream btstream(path), Exception);
 }
 
-TEST(VideoTorrentManagerTest, AddTorrentValid) {
-	VideoTorrentManager video_torrent_manager;
-
-	int piece_number = 1273;
+TEST(BTStreamTest, CreateWithValidTorrent) {
 	std::string TEST_TORRENT = "test/big_buck_bunny.torrent";
-	ASSERT_EQ(piece_number, video_torrent_manager.add_torrent(TEST_TORRENT));
+	ASSERT_NO_THROW(BTStream btstream(TEST_TORRENT));
+}
+
+TEST(BTStreamTest, GetPiece) {
+	std::string TEST_TORRENT = "test/big_buck_bunny.torrent";
+	BTStream btstream(TEST_TORRENT);
+
+	boost::shared_ptr<Piece> piece;
+	piece = btstream.get_next_piece();
+	ASSERT_TRUE(piece);
+	EXPECT_EQ(0, piece->index);
+
+	piece = btstream.get_next_piece();
+	ASSERT_TRUE(piece);
+	EXPECT_EQ(1, piece->index);
 }
 
 } /* namespace btstream */
