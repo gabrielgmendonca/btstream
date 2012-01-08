@@ -57,6 +57,12 @@ public:
 	 */
 	boost::shared_ptr<Piece> get_next_piece();
 
+	/**
+	 * Returns a Status object with statistics like download rate,
+	 * upload rate, progress and current class.
+	 */
+	Status get_status();
+
 private:
 	boost::shared_ptr<VideoTorrentManager> m_video_torrent_manager;
 	boost::shared_ptr<VideoBuffer> m_video_buffer;

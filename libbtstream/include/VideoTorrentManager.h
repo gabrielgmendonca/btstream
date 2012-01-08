@@ -35,6 +35,12 @@ using namespace libtorrent;
 
 namespace btstream {
 
+struct Status {
+	int download_rate;
+	int upload_rate;
+	float progress;
+};
+
 /**
  * Manages video torrents through libtorrent.
  * Sends downloaded pieces to a VideoBuffer in order to be played.
@@ -71,6 +77,12 @@ public:
 	 * Pieces will be get through a libtorrent alert.
 	 */
 	void feed_video_buffer();
+
+	/**
+	 * Returns a Status object with statistics like download rate,
+	 * upload rate, progress and current class.
+	 */
+	Status get_status();
 
 private:
 	session m_session;

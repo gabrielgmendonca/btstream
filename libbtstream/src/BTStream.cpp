@@ -41,4 +41,8 @@ boost::shared_ptr<Piece> BTStream::get_next_piece() {
 	return m_video_buffer->get_next_piece();
 }
 
+Status BTStream::get_status() {
+	return m_video_torrent_manager->get_status();
+}
+
 } /* namespace btstream */
