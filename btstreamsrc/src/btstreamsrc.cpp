@@ -1,0 +1,283 @@
+/*
+ * GStreamer
+ * Copyright (C) 2005 Thomas Vander Stichele <thomas@apestaart.org>
+ * Copyright (C) 2005 Ronald S. Bultje <rbultje@ronald.bitfreak.net>
+ * Copyright (C) 2011-2012 Gabriel Mendonça <gabrielgmendonca@gmail.com>
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ *
+ * Alternatively, the contents of this file may be used under the
+ * GNU Lesser General Public License Version 2.1 (the "LGPL"), in
+ * which case the following provisions apply instead of the ones
+ * mentioned above:
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/**
+ * SECTION:element-btstreamsrc
+ *
+ * Read from a BitTorrent swarm
+ *
+ * <refsect2>
+ * <title>Example launch line</title>
+ * |[
+ * gst-launch -v btstreamsrc ! fakesink silent=TRUE
+ * ]|
+ * </refsect2>
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include "btstreamsrc.h"
+
+#include <string.h>
+#include <time.h>
+
+GST_DEBUG_CATEGORY_STATIC(gst_btstream_src_debug);
+#define GST_CAT_DEFAULT gst_btstream_src_debug
+
+/* Filter signals and args */
+enum {
+	/* FILL ME */
+	LAST_SIGNAL
+};
+
+enum {
+	PROP_0, PROP_TORRENT
+};
+
+GST_BOILERPLATE(GstBTStreamSrc, gst_btstream_src, GstPushSrc,
+		GST_TYPE_PUSH_SRC);
+
+/* the capabilities of the inputs and outputs.
+ *
+ * describe the real formats here.
+ */
+static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
+		GST_PAD_SRC,
+		GST_PAD_ALWAYS,
+		GST_STATIC_CAPS ("ANY")
+);
+
+static GstFlowReturn gst_btstream_src_create(GstPushSrc * psrc,
+		GstBuffer ** buffer);
+static gboolean gst_btstream_src_start(GstBaseSrc * basesrc);
+static gboolean gst_btstream_src_stop(GstBaseSrc * basesrc);
+
+static void gst_btstream_src_set_property(GObject * object, guint prop_id,
+		const GValue * value, GParamSpec * pspec);
+static void gst_btstream_src_get_property(GObject * object, guint prop_id,
+		GValue * value, GParamSpec * pspec);
+
+/* GObject vmethod implementations */
+static void gst_btstream_src_base_init(gpointer gclass) {
+	GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
+
+	gst_element_class_set_details_simple(element_class, "BTStreamSrc",
+			"FIXME:Generic", "FIXME:Generic Template Element",
+			"Gabriel Mendonça <<gabrielgmendonca@poli.ufrj.br>>");
+
+	gst_element_class_add_pad_template(element_class,
+			gst_static_pad_template_get(&src_factory));
+}
+
+/* initialize the btstreamsrc's class */
+static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
+	GObjectClass *gobject_class;
+	GstBaseSrcClass *gstbasesrc_class;
+	GstPushSrcClass *gstpushsrc_class;
+	GParamSpec* pspec;
+	GParamFlags pflags;
+
+	gobject_class = (GObjectClass *) klass;
+	gstbasesrc_class = (GstBaseSrcClass *) klass;
+	gstpushsrc_class = (GstPushSrcClass *) klass;
+
+	// Overrided methods
+	// FIXME: Need to override other methods?
+	gobject_class->set_property = gst_btstream_src_set_property;
+	gobject_class->get_property = gst_btstream_src_get_property;
+
+	gstbasesrc_class->start = gst_btstream_src_start;
+	gstbasesrc_class->stop = gst_btstream_src_stop;
+
+	gstpushsrc_class->create = gst_btstream_src_create;
+
+	// Properties
+	pflags = static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+	pspec = g_param_spec_string("torrent", "Torrent", "Torrent file path", "",
+			pflags);
+
+	g_object_class_install_property(gobject_class, PROP_TORRENT, pspec);
+}
+
+/*
+ * initialize the new element
+ * instantiate pads and add them to element
+ * set pad callback functions
+ * initialize instance structure
+ */
+static void gst_btstream_src_init(GstBTStreamSrc * src,
+		GstBTStreamSrcClass * gclass) {
+
+	// FIXME: Add Pads?
+//	src->srcpad = gst_pad_new_from_static_template(&src_factory, "src");
+//	gst_pad_set_getcaps_function(src->srcpad,
+//			GST_DEBUG_FUNCPTR(gst_pad_proxy_getcaps));
+//
+//	gst_element_add_pad(GST_ELEMENT (src), src->srcpad);
+}
+
+static void gst_btstream_src_set_property(GObject * object, guint prop_id,
+		const GValue * value, GParamSpec * pspec) {
+	GstBTStreamSrc* src = GST_BTSTREAM_SRC (object);
+
+	switch (prop_id) {
+	case PROP_TORRENT:
+		g_free(src->m_torrent);
+		src->m_torrent = g_value_dup_string(value);
+		break;
+
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+		break;
+	}
+}
+
+static void gst_btstream_src_get_property(GObject * object, guint prop_id,
+		GValue * value, GParamSpec * pspec) {
+	GstBTStreamSrc* src = GST_BTSTREAM_SRC (object);
+
+	switch (prop_id) {
+	case PROP_TORRENT:
+		g_value_set_string(value, src->m_torrent);
+		break;
+
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+		break;
+	}
+}
+
+/* GstElement vmethod implementations */
+
+static GstFlowReturn gst_btstream_src_create(GstPushSrc* psrc,
+		GstBuffer** buffer) {
+	GstBTStreamSrc* src;
+	GstFlowReturn res;
+
+	src = GST_BTSTREAM_SRC(psrc);
+
+	boost::shared_ptr < btstream::Piece > piece;
+
+	piece = src->m_btstream->get_next_piece();
+
+	if (piece) {
+		res = gst_pad_alloc_buffer(GST_BASE_SRC_PAD(psrc),
+				GST_BUFFER_OFFSET_NONE, piece->size,
+				GST_PAD_CAPS(GST_BASE_SRC_PAD(psrc)), buffer);
+
+		if (res == GST_FLOW_OK) {
+			unsigned char* data = GST_BUFFER_DATA(*buffer);
+
+			mempcpy(data, piece->data.get(), piece->size);
+
+		} else {
+			g_print("Flow Error: %d!\r\n", res);
+		}
+
+	} else {
+		// All pieces have already been returned.
+		res = GST_FLOW_UNEXPECTED;
+	}
+
+	return res;
+}
+
+static gboolean gst_btstream_src_start(GstBaseSrc * basesrc) {
+	GstBTStreamSrc *src = GST_BTSTREAM_SRC(basesrc);
+
+	std::string path = src->m_torrent;
+	src->m_btstream = new btstream::BTStream(path);
+
+	return (src->m_btstream != 0);
+}
+
+static gboolean gst_btstream_src_stop(GstBaseSrc * basesrc) {
+	GstBTStreamSrc *src = GST_BTSTREAM_SRC(basesrc);
+
+	if (src->m_btstream) {
+		delete src->m_btstream;
+	}
+
+	return TRUE;
+}
+
+/*
+ * entry point to initialize the plug-in
+ * initialize the plug-in itself
+ * register the element factories and other features
+ */
+static gboolean btstreamsrc_init(GstPlugin * btstreamsrc) {
+	/* debug category for fltering log messages
+	 *
+	 * exchange the string 'Template btstreamsrc' with your description
+	 */
+	GST_DEBUG_CATEGORY_INIT(gst_btstream_src_debug, "btstreamsrc", 0,
+			"Template btstreamsrc");
+
+	return gst_element_register(btstreamsrc, "btstreamsrc", GST_RANK_NONE,
+			GST_TYPE_BTSTREAM_SRC);
+}
+
+/*
+ * PACKAGE: this is usually set by autotools depending on some _INIT macro
+ * in configure.ac and then written into and defined in config.h, but we can
+ * just set it ourselves here in case someone doesn't use autotools to
+ * compile this code. GST_PLUGIN_DEFINE needs PACKAGE to be defined.
+ */
+#ifndef PACKAGE
+#define PACKAGE "btstream"
+#endif
+
+#define VERSION "0.1"
+
+/* gstreamer looks for this structure to register btstreamsrcs
+ *
+ * exchange the string 'Template btstreamsrc' with your btstreamsrc description
+ */
+GST_PLUGIN_DEFINE( GST_VERSION_MAJOR, GST_VERSION_MINOR, "btstreamsrc",
+		"Template btstreamsrc", btstreamsrc_init, VERSION, "LGPL", "GStreamer",
+		"http://gstreamer.net/");
