@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 Gabriel Mendonça
+ * Copyright (C) 2011-2012 Gabriel Mendonça
  *
  * This file is part of BTStream.
  * BTStream is free software: you can redistribute it and/or modify
