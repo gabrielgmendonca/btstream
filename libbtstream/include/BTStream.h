@@ -59,7 +59,7 @@ public:
 
 	/**
 	 * Returns a Status object with statistics like download rate,
-	 * upload rate, progress and current class.
+	 * upload rate and progress.
 	 */
 	Status get_status();
 
