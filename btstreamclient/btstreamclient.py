@@ -51,7 +51,10 @@ class Main:
 
         # Starting playback
         print "Starting download..."
-        self.pipeline.set_state(gst.STATE_PLAYING)
+        self.pipeline.set_state(gst.STATE_PAUSED)
+        #self.audio_sink.set_state(gst.STATE_PAUSED)
+        #self.video_sink.set_state(gst.STATE_PAUSED)
+
 
     def create_pipeline(self):
         pipeline =  gst.Pipeline("video-player-pipeline")
@@ -65,6 +68,7 @@ class Main:
         # Configuring elements
         self.src.set_property("torrent", self.args[0])
         self.decoder.set_property("use-buffering", True)
+        self.decoder.set_property("low-percent", 5)
 
         # Configuring callbacks
         self.decoder.connect("new-decoded-pad", self.handle_decoded_pad)
