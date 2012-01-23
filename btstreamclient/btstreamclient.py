@@ -26,10 +26,16 @@
 
 import sys
 
+import gobject
+gobject.threads_init()
+
 import pygst
 pygst.require("0.10")
+
 import gst
 import gtk
+
+from messagehandler import MessageHandler
 
 class Main:
     def __init__(self, args):
@@ -41,9 +47,10 @@ class Main:
 
         self.pipeline = self.create_pipeline()
 
-        self.configure_message_handling()
+        self.message_handler = MessageHandler(self.pipeline)
 
         # Starting playback
+        print "Starting download..."
         self.pipeline.set_state(gst.STATE_PLAYING)
 
     def create_pipeline(self):
@@ -57,6 +64,7 @@ class Main:
 
         # Configuring elements
         self.src.set_property("torrent", self.args[0])
+        self.decoder.set_property("use-buffering", True)
 
         # Configuring callbacks
         self.decoder.connect("new-decoded-pad", self.handle_decoded_pad)
@@ -68,19 +76,6 @@ class Main:
         gst.element_link_many(self.src, self.decoder)
 
         return pipeline
-
-    def handle_message(self, bus, message):
-        t = message.type
-        if t == gst.MESSAGE_EOS:
-            self.pipeline.set_state(gst.STATE_NULL)
-            gtk.main_quit()
-
-        elif t == gst.MESSAGE_ERROR:
-            self.pipeline.set_state(gst.STATE_NULL)
-            err, debug = message.parse_error()
-            print "Error: %s" % err
-            print debug
-            gtk.main_quit()
 
     def create_audio_sink(self, fake=False):
         if fake:
@@ -136,11 +131,6 @@ class Main:
 
         elif structure_name.startswith("video"):
             new_pad.link(self.video_sink.get_pad("sink"))
-
-    def configure_message_handling(self):
-        bus = self.pipeline.get_bus()
-        bus.add_signal_watch()
-        bus.connect("message", self.handle_message)
 
 
 
