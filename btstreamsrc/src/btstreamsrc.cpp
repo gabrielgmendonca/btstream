@@ -75,7 +75,7 @@ enum {
 };
 
 enum {
-	PROP_0, PROP_TORRENT
+	PROP_0, PROP_TORRENT, PROP_DOWNLOAD_RATE, PROP_UPLOAD_RATE, PROP_PROGRESS
 };
 
 GST_BOILERPLATE(GstBTStreamSrc, gst_btstream_src, GstPushSrc,
@@ -91,107 +91,14 @@ static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
 		GST_STATIC_CAPS ("ANY")
 );
 
-static GstFlowReturn gst_btstream_src_create(GstPushSrc * psrc,
-		GstBuffer ** buffer);
-static gboolean gst_btstream_src_start(GstBaseSrc * basesrc);
-static gboolean gst_btstream_src_stop(GstBaseSrc * basesrc);
+static gboolean gst_btstream_src_start(GstBaseSrc * basesrc) {
+	GstBTStreamSrc *src = GST_BTSTREAM_SRC(basesrc);
 
-static void gst_btstream_src_set_property(GObject * object, guint prop_id,
-		const GValue * value, GParamSpec * pspec);
-static void gst_btstream_src_get_property(GObject * object, guint prop_id,
-		GValue * value, GParamSpec * pspec);
+	std::string path = src->m_torrent;
+	src->m_btstream = new btstream::BTStream(path);
 
-/* GObject vmethod implementations */
-static void gst_btstream_src_base_init(gpointer gclass) {
-	GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
-
-	gst_element_class_set_details_simple(element_class, "BTStreamSrc",
-			"FIXME:Generic", "FIXME:Generic Template Element",
-			"Gabriel Mendonça <<gabrielgmendonca@poli.ufrj.br>>");
-
-	gst_element_class_add_pad_template(element_class,
-			gst_static_pad_template_get(&src_factory));
+	return (src->m_btstream != 0);
 }
-
-/* initialize the btstreamsrc's class */
-static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
-	GObjectClass *gobject_class;
-	GstBaseSrcClass *gstbasesrc_class;
-	GstPushSrcClass *gstpushsrc_class;
-	GParamSpec* pspec;
-	GParamFlags pflags;
-
-	gobject_class = (GObjectClass *) klass;
-	gstbasesrc_class = (GstBaseSrcClass *) klass;
-	gstpushsrc_class = (GstPushSrcClass *) klass;
-
-	// Overrided methods
-	// FIXME: Need to override other methods?
-	gobject_class->set_property = gst_btstream_src_set_property;
-	gobject_class->get_property = gst_btstream_src_get_property;
-
-	gstbasesrc_class->start = gst_btstream_src_start;
-	gstbasesrc_class->stop = gst_btstream_src_stop;
-
-	gstpushsrc_class->create = gst_btstream_src_create;
-
-	// Properties
-	pflags = static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-	pspec = g_param_spec_string("torrent", "Torrent", "Torrent file path", "",
-			pflags);
-
-	g_object_class_install_property(gobject_class, PROP_TORRENT, pspec);
-}
-
-/*
- * initialize the new element
- * instantiate pads and add them to element
- * set pad callback functions
- * initialize instance structure
- */
-static void gst_btstream_src_init(GstBTStreamSrc * src,
-		GstBTStreamSrcClass * gclass) {
-
-	// FIXME: Add Pads?
-//	src->srcpad = gst_pad_new_from_static_template(&src_factory, "src");
-//	gst_pad_set_getcaps_function(src->srcpad,
-//			GST_DEBUG_FUNCPTR(gst_pad_proxy_getcaps));
-//
-//	gst_element_add_pad(GST_ELEMENT (src), src->srcpad);
-}
-
-static void gst_btstream_src_set_property(GObject * object, guint prop_id,
-		const GValue * value, GParamSpec * pspec) {
-	GstBTStreamSrc* src = GST_BTSTREAM_SRC (object);
-
-	switch (prop_id) {
-	case PROP_TORRENT:
-		g_free(src->m_torrent);
-		src->m_torrent = g_value_dup_string(value);
-		break;
-
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-		break;
-	}
-}
-
-static void gst_btstream_src_get_property(GObject * object, guint prop_id,
-		GValue * value, GParamSpec * pspec) {
-	GstBTStreamSrc* src = GST_BTSTREAM_SRC (object);
-
-	switch (prop_id) {
-	case PROP_TORRENT:
-		g_value_set_string(value, src->m_torrent);
-		break;
-
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-		break;
-	}
-}
-
-/* GstElement vmethod implementations */
 
 static GstFlowReturn gst_btstream_src_create(GstPushSrc* psrc,
 		GstBuffer** buffer) {
@@ -226,15 +133,6 @@ static GstFlowReturn gst_btstream_src_create(GstPushSrc* psrc,
 	return res;
 }
 
-static gboolean gst_btstream_src_start(GstBaseSrc * basesrc) {
-	GstBTStreamSrc *src = GST_BTSTREAM_SRC(basesrc);
-
-	std::string path = src->m_torrent;
-	src->m_btstream = new btstream::BTStream(path);
-
-	return (src->m_btstream != 0);
-}
-
 static gboolean gst_btstream_src_stop(GstBaseSrc * basesrc) {
 	GstBTStreamSrc *src = GST_BTSTREAM_SRC(basesrc);
 
@@ -243,6 +141,126 @@ static gboolean gst_btstream_src_stop(GstBaseSrc * basesrc) {
 	}
 
 	return TRUE;
+}
+
+static void install_properties(GObjectClass *gobject_class)
+{
+	GParamSpec* pspec;
+	GParamFlags pflags;
+
+	// Properties
+    pflags = static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+    pspec = g_param_spec_string("torrent", "Torrent", "Torrent file path", "", pflags);
+    g_object_class_install_property(gobject_class, PROP_TORRENT, pspec);
+
+    pflags = static_cast<GParamFlags>(G_PARAM_READABLE);
+    pspec = g_param_spec_int("download_rate", "Download Rate", "Torrent download rate in KiB/s", 0, 999999999, 0, pflags);
+    g_object_class_install_property(gobject_class, PROP_DOWNLOAD_RATE, pspec);
+
+    pflags = static_cast<GParamFlags>(G_PARAM_READABLE);
+    pspec = g_param_spec_int("upload_rate", "Upload Rate", "Torrent upload rate in KiB/s", 0, 999999999, 0, pflags);
+    g_object_class_install_property(gobject_class, PROP_UPLOAD_RATE, pspec);
+
+    pflags = static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+    pspec = g_param_spec_float("progress", "Progress", "Torrent download progress", 0.0f, 1.0f, 0.0f, pflags);
+    g_object_class_install_property(gobject_class, PROP_PROGRESS, pspec);
+}
+
+static void gst_btstream_src_set_property(GObject * object, guint prop_id,
+		const GValue * value, GParamSpec * pspec) {
+	GstBTStreamSrc* src = GST_BTSTREAM_SRC (object);
+
+	switch (prop_id) {
+	case PROP_TORRENT:
+		g_free(src->m_torrent);
+		src->m_torrent = g_value_dup_string(value);
+		break;
+
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+		break;
+	}
+}
+
+static void gst_btstream_src_get_property(GObject * object, guint prop_id,
+		GValue * value, GParamSpec * pspec) {
+	GstBTStreamSrc* src = GST_BTSTREAM_SRC (object);
+
+	switch (prop_id) {
+	case PROP_TORRENT:
+		g_value_set_string(value, src->m_torrent);
+		break;
+
+	case PROP_DOWNLOAD_RATE:
+		g_value_set_int(value, src->m_btstream->get_status().download_rate);
+		break;
+
+	case PROP_UPLOAD_RATE:
+		g_value_set_int(value, src->m_btstream->get_status().upload_rate);
+		break;
+
+	case PROP_PROGRESS:
+		g_value_set_float(value, src->m_btstream->get_status().progress);
+		break;
+
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+		break;
+	}
+}
+
+/* GstElement vmethod implementations */
+
+/* GObject vmethod implementations */
+static void gst_btstream_src_base_init(gpointer gclass) {
+	GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
+
+	gst_element_class_set_details_simple(element_class, "BTStreamSrc",
+			"FIXME:Generic", "FIXME:Generic Template Element",
+			"Gabriel Mendonça <<gabrielgmendonca@poli.ufrj.br>>");
+
+	gst_element_class_add_pad_template(element_class,
+			gst_static_pad_template_get(&src_factory));
+}
+
+/* initialize the btstreamsrc's class */
+static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
+	GObjectClass *gobject_class;
+	GstBaseSrcClass *gstbasesrc_class;
+	GstPushSrcClass *gstpushsrc_class;
+
+	gobject_class = (GObjectClass *)(klass);
+    gstbasesrc_class = (GstBaseSrcClass*)(klass);
+    gstpushsrc_class = (GstPushSrcClass*)(klass);
+
+    // Overrided methods
+    // FIXME: Need to override other methods?
+    gobject_class->set_property = gst_btstream_src_set_property;
+    gobject_class->get_property = gst_btstream_src_get_property;
+
+    gstbasesrc_class->start = gst_btstream_src_start;
+    gstbasesrc_class->stop = gst_btstream_src_stop;
+    gstpushsrc_class->create = gst_btstream_src_create;
+
+    // Properties
+    install_properties(gobject_class);
+}
+
+/*
+ * initialize the new element
+ * instantiate pads and add them to element
+ * set pad callback functions
+ * initialize instance structure
+ */
+static void gst_btstream_src_init(GstBTStreamSrc * src,
+		GstBTStreamSrcClass * gclass) {
+
+	// FIXME: Add Pads?
+//	src->srcpad = gst_pad_new_from_static_template(&src_factory, "src");
+//	gst_pad_set_getcaps_function(src->srcpad,
+//			GST_DEBUG_FUNCPTR(gst_pad_proxy_getcaps));
+//
+//	gst_element_add_pad(GST_ELEMENT (src), src->srcpad);
 }
 
 /*
