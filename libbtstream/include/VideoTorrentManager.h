@@ -38,7 +38,7 @@ namespace btstream {
 struct Status {
 	int download_rate;
 	int upload_rate;
-	float progress;
+	float download_progress;
 };
 
 /**

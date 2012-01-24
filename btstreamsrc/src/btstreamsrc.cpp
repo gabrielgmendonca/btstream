@@ -75,7 +75,7 @@ enum {
 };
 
 enum {
-	PROP_0, PROP_TORRENT, PROP_DOWNLOAD_RATE, PROP_UPLOAD_RATE, PROP_PROGRESS
+	PROP_0, PROP_TORRENT, PROP_DOWNLOAD_RATE, PROP_UPLOAD_RATE, PROP_DOWNLOAD_PROGRESS
 };
 
 GST_BOILERPLATE(GstBTStreamSrc, gst_btstream_src, GstPushSrc,
@@ -154,16 +154,19 @@ static void install_properties(GObjectClass *gobject_class)
     g_object_class_install_property(gobject_class, PROP_TORRENT, pspec);
 
     pflags = static_cast<GParamFlags>(G_PARAM_READABLE);
-    pspec = g_param_spec_int("download_rate", "Download Rate", "Torrent download rate in KiB/s", 0, 999999999, 0, pflags);
+    pspec = g_param_spec_int("download_rate", "Download Rate",
+    		"Torrent download rate in KiB/s", 0, 999999999, 0, pflags);
     g_object_class_install_property(gobject_class, PROP_DOWNLOAD_RATE, pspec);
 
     pflags = static_cast<GParamFlags>(G_PARAM_READABLE);
-    pspec = g_param_spec_int("upload_rate", "Upload Rate", "Torrent upload rate in KiB/s", 0, 999999999, 0, pflags);
+    pspec = g_param_spec_int("upload_rate", "Upload Rate",
+    		"Torrent upload rate in KiB/s", 0, 999999999, 0, pflags);
     g_object_class_install_property(gobject_class, PROP_UPLOAD_RATE, pspec);
 
-    pflags = static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-    pspec = g_param_spec_float("progress", "Progress", "Torrent download progress", 0.0f, 1.0f, 0.0f, pflags);
-    g_object_class_install_property(gobject_class, PROP_PROGRESS, pspec);
+    pflags = static_cast<GParamFlags>(G_PARAM_READABLE);
+    pspec = g_param_spec_float("download_progress", "Download Progress",
+    		"Torrent download progress", 0.0f, 1.0f, 0.0f, pflags);
+    g_object_class_install_property(gobject_class, PROP_DOWNLOAD_PROGRESS, pspec);
 }
 
 static void gst_btstream_src_set_property(GObject * object, guint prop_id,
@@ -199,8 +202,8 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 		g_value_set_int(value, src->m_btstream->get_status().upload_rate);
 		break;
 
-	case PROP_PROGRESS:
-		g_value_set_float(value, src->m_btstream->get_status().progress);
+	case PROP_DOWNLOAD_PROGRESS:
+		g_value_set_float(value, src->m_btstream->get_status().download_progress);
 		break;
 
 	default:

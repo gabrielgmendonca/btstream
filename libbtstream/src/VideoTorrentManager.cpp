@@ -123,7 +123,7 @@ Status VideoTorrentManager::get_status() {
 	Status status;
 	status.download_rate = t_status.download_rate;
 	status.upload_rate = t_status.upload_rate;
-	status.progress = t_status.progress;
+	status.download_progress = t_status.progress;
 
 	return status;
 }
