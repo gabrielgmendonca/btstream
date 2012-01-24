@@ -26,6 +26,7 @@ import gst
 from audiosink import AudioSink
 from videosink import VideoSink
 from fakesink import FakeSink
+from buffermanager import BufferManager
 
 class VideoTorrentPlayer(gst.Pipeline):
     """
@@ -59,6 +60,9 @@ class VideoTorrentPlayer(gst.Pipeline):
         # Linking elements
         gst.element_link_many(self.src, self.decoder)
 
+        # Creating BufferManager
+        self.buffer_manager = BufferManager(self)
+
     def handle_decoded_pad(self, demuxer, new_pad, is_last):
         structure_name = new_pad.get_caps()[0].get_name()
         if structure_name.startswith("audio"):
@@ -75,5 +79,8 @@ class VideoTorrentPlayer(gst.Pipeline):
         else:
             self.audio_sink = FakeSink("audio-sink")
             self.video_sink = FakeSink("video-sink")
+
+    def log(self):
+        self.buffer_manager.log()
 
 

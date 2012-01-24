@@ -24,8 +24,6 @@
 import gst
 import gtk
 
-from buffermanager import BufferManager
-
 import logger
 
 class MessageHandler:
@@ -38,25 +36,23 @@ class MessageHandler:
         self.bus.connect("message::buffering", self.handle_buffering_message)
         self.bus.connect("message::error", self.handle_error_message)
 
-        self.buffer_manager = BufferManager(self.pipeline)
-
     def handle_eos_message(self, bus, message):
         self.exit()
 
     def handle_buffering_message(self, bus, message):
         percent = message.parse_buffering()
-        self.buffer_manager.update(percent)
+        self.pipeline.buffer_manager.update(percent)
 
     def handle_error_message(self, bus, message):
         err, debug = message.parse_error()
         logger.log_error(err, debug)
-#        print "Error: %s" % err
-#        print debug
         self.exit()
 
     def exit(self):
         logger.log("Stopping.")
         self.pipeline.set_state(gst.STATE_NULL)
+        self.pipeline.log()
+
         gtk.main_quit()
 
 

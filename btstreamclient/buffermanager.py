@@ -21,6 +21,8 @@
 #      Author: gabriel
 #
 
+from time import time
+
 import gst
 
 import logger
@@ -28,17 +30,47 @@ import logger
 class BufferManager:
     def __init__(self, pipeline):
         self.pipeline = pipeline
-        self.buffering = False
+        self.buffering_time = []
+
+        self.start_buffering()
 
     def update(self, percent):
-        if percent == 100 and self.buffering:
-            logger.log("Starting playback.")
-            self.pipeline.set_state(gst.STATE_PLAYING)
-            self.buffering = False
+        if percent == 100 and self.is_buffering:
+            self.stop_buffering()
 
-        elif not self.buffering:
-            logger.log("Buffering.")
-            self.pipeline.set_state(gst.STATE_PAUSED)
-            self.buffering = True
+        elif not self.is_buffering:
+            self.start_buffering()
+            
+    def start_buffering(self):
+        self.pipeline.set_state(gst.STATE_PAUSED)
+
+        self.is_buffering = True
+
+        self.buffering_time.append(time())
+
+        logger.log("Buffering.")
+
+    def stop_buffering(self):
+        self.pipeline.set_state(gst.STATE_PLAYING)
+
+        self.is_buffering = False
+
+        # Calculating duration of last playback interruption
+        duration = time() - self.buffering_time[-1]
+        self.buffering_time[-1] = duration
+
+        logger.log("Starting playback.")
+
+    def log(self):
+        interruptions = len(self.buffering_time) - 1
+        mean_time = sum(self.buffering_time[1:]) / interruptions
+        initial_wait = self.buffering_time[0]
+
+        logger.log("--*--Buffer statistics--*--")
+        logger.log("Number of interruptions: %d" % interruptions)
+        logger.log("Mean interruption time: %f" % mean_time)
+        logger.log("Time to start playback: %f" % initial_wait)
+        logger.log("Interruptions: %r" % self.buffering_time)
+        
 
 

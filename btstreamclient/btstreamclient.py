@@ -42,12 +42,10 @@ class Main:
     def __init__(self, args):
         self.parse_args(args)
 
+        logger.log("Starting download.")
+
         self.pipeline = VideoTorrentPlayer(self.torrent_path, self.use_fake_sink)
         self.message_handler = MessageHandler(self.pipeline)
-        
-        # Starting playback
-        logger.log("Starting download.")
-        self.pipeline.set_state(gst.STATE_PAUSED)
 
     def parse_args(self, args):
         if len(args) == 1:
