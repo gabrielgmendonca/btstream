@@ -24,6 +24,8 @@
 import gst
 import gtk
 
+from buffermanager import BufferManager
+
 class MessageHandler:
     def __init__(self, pipeline):
         self.pipeline = pipeline
@@ -34,23 +36,14 @@ class MessageHandler:
         self.bus.connect("message::buffering", self.handle_buffering_message)
         self.bus.connect("message::error", self.handle_error_message)
 
-        self.buffering = True
+        self.buffer_manager = BufferManager(self.pipeline)
 
     def handle_eos_message(self, bus, message):
         self.exit()
 
     def handle_buffering_message(self, bus, message):
         percent = message.parse_buffering()
-        print percent
-
-        if percent == 100 and self.buffering:
-            print "Starting playback..."
-            self.pipeline.set_state(gst.STATE_PLAYING)
-            self.buffering = False
-        elif not self.buffering:
-            print "Buffering..."
-            self.pipeline.set_state(gst.STATE_PAUSED)
-            self.buffering = True
+        self.buffer_manager.update(percent)
 
     def handle_error_message(self, bus, message):
         err, debug = message.parse_error()
