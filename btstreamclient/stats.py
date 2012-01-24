@@ -27,7 +27,7 @@ def avg(samples):
     if len(samples) > 0:
         return sum(samples) / float(len(samples))
 
-    return None
+    return 0.0
 
 def std(samples):
     if len(samples) > 1:
@@ -40,6 +40,6 @@ def std(samples):
         std = sqrt(std / (len(samples) - 1))
         return std
 
-    return None
+    return 0.0
 
 
