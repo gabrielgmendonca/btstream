@@ -6,3 +6,8 @@ DebugBuild
 ReleaseBuild
 TestBuild
 
+# Binary python files
+*.pyc
+
+# Gedit backups
+*~
