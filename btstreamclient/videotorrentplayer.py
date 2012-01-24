@@ -23,13 +23,16 @@
 
 import gst
 
+from audiosink import AudioSink
+from videosink import VideoSink
+
 class VideoTorrentPlayer(gst.Pipeline):
     """
     Provides a GStreamer pipeline for video playing from a torrent
     source.
     """
 
-    def __init__(self, torrent_path):
+    def __init__(self, torrent_path, fake_sink=False):
         super(VideoTorrentPlayer, self).__init__("video-torrent-player")
 
         self.torrent_path = torrent_path
@@ -37,8 +40,10 @@ class VideoTorrentPlayer(gst.Pipeline):
         # Creating elements
         self.src = gst.element_factory_make("btstreamsrc", "src")
         self.decoder = gst.element_factory_make("decodebin2", "decoder")
-        self.audio_sink = self.create_audio_sink()
-        self.video_sink = self.create_video_sink()
+
+        if not fake_sink:
+            self.audio_sink = AudioSink()
+            self.video_sink = VideoSink()
 
         # Configuring elements
         self.src.set_property("torrent", self.torrent_path)
@@ -61,54 +66,6 @@ class VideoTorrentPlayer(gst.Pipeline):
 
         elif structure_name.startswith("video"):
             new_pad.link(self.video_sink.get_pad("sink"))
-
-    def create_audio_sink(self, fake=False):
-        if fake:
-            return gst.element_factory_make("fakesink", "audio-sink")
-        
-        audio_sink_bin = gst.Bin("audio-sink")
-
-        # Creating elements
-        queue = gst.element_factory_make("queue", "audio-queue")
-        converter = gst.element_factory_make("audioconvert", "audio-converter")
-        resampler = gst.element_factory_make("audioresample", "audio-resampler")
-        sink = gst.element_factory_make("autoaudiosink", "audio-sink")
-
-        # Adding elements
-        audio_sink_bin.add(queue, converter, resampler, sink)
-
-        # Linking elements
-        gst.element_link_many(queue, converter, resampler, sink)
-
-        # Adding ghost pad
-        sink_pad = gst.GhostPad("sink", queue.get_pad("sink"))
-        audio_sink_bin.add_pad(sink_pad)
-
-        return audio_sink_bin
-
-    def create_video_sink(self, fake=False):
-        if fake:
-            return gst.element_factory_make("fakesink", "video-sink")
-
-        video_sink_bin = gst.Bin("video-sink")
-
-        # Creating elements
-        queue = gst.element_factory_make("queue", "video-queue")
-        converter = gst.element_factory_make("ffmpegcolorspace", "video-converter")
-        sink = gst.element_factory_make("autovideosink", "video-sink")
-
-        # Adding elements
-        video_sink_bin.add(queue, converter, sink)
-
-        # Linking elements
-        gst.element_link_many(queue, converter, sink)
-
-        # Adding ghost pad
-        sink_pad = gst.GhostPad("sink", queue.get_pad("sink"))
-        video_sink_bin.add_pad(sink_pad)
-
-        return video_sink_bin
-
 
 
 
