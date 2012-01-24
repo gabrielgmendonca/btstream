@@ -26,6 +26,7 @@ from time import time
 import gst
 
 import logger
+import stats
 
 class BufferManager:
     def __init__(self, pipeline):
@@ -62,14 +63,16 @@ class BufferManager:
         logger.log("Starting playback.")
 
     def log(self):
-        interruptions = len(self.buffering_time) - 1
-        mean_time = sum(self.buffering_time[1:]) / interruptions
         initial_wait = self.buffering_time[0]
+        interruptions = len(self.buffering_time) - 1
+        mean_time = stats.avg(self.buffering_time[1:])
+        std_time = stats.std(self.buffering_time[1:])
 
         logger.log("--*--Buffer statistics--*--")
-        logger.log("Number of interruptions: %d" % interruptions)
-        logger.log("Mean interruption time: %f" % mean_time)
         logger.log("Time to start playback: %f" % initial_wait)
+        logger.log("Number of interruptions: %d" % interruptions)
+        logger.log("Interruption time - mean: %f" % mean_time)
+        logger.log("Interruption time - standard deviation: %f" % std_time)
         logger.log("Interruptions: %r" % self.buffering_time)
         
 

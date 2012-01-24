@@ -21,12 +21,17 @@
 #      Author: gabriel
 #
 
+import gobject
+
 import gst
 
 from audiosink import AudioSink
 from videosink import VideoSink
 from fakesink import FakeSink
 from buffermanager import BufferManager
+
+import logger
+import stats
 
 class VideoTorrentPlayer(gst.Pipeline):
     """
@@ -39,7 +44,20 @@ class VideoTorrentPlayer(gst.Pipeline):
 
         self.torrent_path = torrent_path
         self.use_fake_sink = use_fake_sink
+        
+        self.download_rates = []
+        self.upload_rates = []
 
+        # Creating, configuring and linking GStreamer elements
+        self.init_pipeline()
+
+        # Creating BufferManager
+        self.buffer_manager = BufferManager(self)
+
+        # Adding torrent status checking thread
+        gobject.timeout_add(1000, self.check_status)
+
+    def init_pipeline(self):
         # Creating elements
         self.src = gst.element_factory_make("btstreamsrc", "src")
         self.decoder = gst.element_factory_make("decodebin2", "decoder")
@@ -60,9 +78,6 @@ class VideoTorrentPlayer(gst.Pipeline):
         # Linking elements
         gst.element_link_many(self.src, self.decoder)
 
-        # Creating BufferManager
-        self.buffer_manager = BufferManager(self)
-
     def handle_decoded_pad(self, demuxer, new_pad, is_last):
         structure_name = new_pad.get_caps()[0].get_name()
         if structure_name.startswith("audio"):
@@ -80,7 +95,32 @@ class VideoTorrentPlayer(gst.Pipeline):
             self.audio_sink = FakeSink("audio-sink")
             self.video_sink = FakeSink("video-sink")
 
+    def check_status(self):
+        download_rate = self.src.get_property("download_rate") / 1024
+        upload_rate = self.src.get_property("upload_rate") / 1024
+        download_progress = self.src.get_property("download_progress") * 100
+
+        self.download_rates.append(download_rate)
+        self.upload_rates.append(upload_rate)
+
+        logger.log("Download rate: %d KiB/s" % download_rate)
+        logger.log("Upload rate: %d KiB/s" % upload_rate)
+        logger.log("Download Progress: %d%%" % download_progress)
+        return True
+
     def log(self):
+        mean_download_rate = stats.avg(self.download_rates)
+        std_download_rate = stats.std(self.download_rates)
+
+        mean_upload_rate = stats.avg(self.upload_rates)
+        std_upload_rate = stats.std(self.upload_rates)
+
+        logger.log("--*--Torrent statistics--*--")
+        logger.log("Download rate - mean: %f" % mean_download_rate)
+        logger.log("Download rate - standard deviation: %f" % std_download_rate)
+        logger.log("Upload rate - mean: %f" % mean_upload_rate)
+        logger.log("Upload rate - standard deviation: %f" % std_upload_rate)
+
         self.buffer_manager.log()
 
 
