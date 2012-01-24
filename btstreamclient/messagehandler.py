@@ -26,6 +26,8 @@ import gtk
 
 from buffermanager import BufferManager
 
+import logger
+
 class MessageHandler:
     def __init__(self, pipeline):
         self.pipeline = pipeline
@@ -47,12 +49,13 @@ class MessageHandler:
 
     def handle_error_message(self, bus, message):
         err, debug = message.parse_error()
-        print "Error: %s" % err
-        print debug
+        logger.log_error(err, debug)
+#        print "Error: %s" % err
+#        print debug
         self.exit()
 
     def exit(self):
-        print "Stopping..."
+        logger.log("Stopping.")
         self.pipeline.set_state(gst.STATE_NULL)
         gtk.main_quit()
 

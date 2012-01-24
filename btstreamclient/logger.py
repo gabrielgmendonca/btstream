@@ -21,24 +21,14 @@
 #      Author: gabriel
 #
 
-import gst
+from time import time
 
-import logger
+def log(message):
+    print "%d: %s" % (time(), message)
 
-class BufferManager:
-    def __init__(self, pipeline):
-        self.pipeline = pipeline
-        self.buffering = False
+def log_error(error, debug):
+    print "%d: [Error] %s" % (time(), error)
+    print "[Debug] ", debug
 
-    def update(self, percent):
-        if percent == 100 and self.buffering:
-            logger.log("Starting playback.")
-            self.pipeline.set_state(gst.STATE_PLAYING)
-            self.buffering = False
-
-        elif not self.buffering:
-            logger.log("Buffering.")
-            self.pipeline.set_state(gst.STATE_PAUSED)
-            self.buffering = True
 
 

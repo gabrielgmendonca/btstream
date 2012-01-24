@@ -36,16 +36,17 @@ import gtk
 from videotorrentplayer import VideoTorrentPlayer
 from messagehandler import MessageHandler
 
+import logger
+
 class Main:
     def __init__(self, args):
         self.parse_args(args)
 
         self.pipeline = VideoTorrentPlayer(self.torrent_path, self.use_fake_sink)
-
         self.message_handler = MessageHandler(self.pipeline)
-
+        
         # Starting playback
-        print "Starting download..."
+        logger.log("Starting download.")
         self.pipeline.set_state(gst.STATE_PAUSED)
 
     def parse_args(self, args):
