@@ -21,6 +21,8 @@
 #      Author: gabriel
 #
 
+from time import time
+
 import gobject
 
 import gst
@@ -47,6 +49,8 @@ class VideoTorrentPlayer(gst.Pipeline):
         
         self.download_rates = []
         self.upload_rates = []
+        self.download_time = time()
+        self.download_finished = False
 
         # Creating, configuring and linking GStreamer elements
         self.init_pipeline()
@@ -96,16 +100,26 @@ class VideoTorrentPlayer(gst.Pipeline):
             self.video_sink = FakeSink("video-sink")
 
     def check_status(self):
-        download_rate = self.src.get_property("download_rate") / 1024
-        upload_rate = self.src.get_property("upload_rate") / 1024
         download_progress = self.src.get_property("download_progress") * 100
 
-        self.download_rates.append(download_rate)
+        if download_progress < 100:
+            download_rate = self.src.get_property("download_rate") / 1024
+            self.download_rates.append(download_rate)
+
+            logger.log("Download progress: %d%%" % download_progress)
+            logger.log("Download rate: %d KiB/s" % download_rate)
+
+        elif not self.download_finished:
+            self.download_finished = True
+            self.download_time = time() - self.download_time
+
+            logger.log("Download finished.")
+
+        upload_rate = self.src.get_property("upload_rate") / 1024
         self.upload_rates.append(upload_rate)
 
-        logger.log("Download rate: %d KiB/s" % download_rate)
         logger.log("Upload rate: %d KiB/s" % upload_rate)
-        logger.log("Download Progress: %d%%" % download_progress)
+
         return True
 
     def log(self):
@@ -116,10 +130,13 @@ class VideoTorrentPlayer(gst.Pipeline):
         std_upload_rate = stats.std(self.upload_rates)
 
         logger.log("--*--Torrent statistics--*--")
-        logger.log("Download rate - mean: %f" % mean_download_rate)
-        logger.log("Download rate - standard deviation: %f" % std_download_rate)
-        logger.log("Upload rate - mean: %f" % mean_upload_rate)
-        logger.log("Upload rate - standard deviation: %f" % std_upload_rate)
+        logger.log("Download rate (KiB/s) - mean: %f" % mean_download_rate)
+        logger.log("Download rate (KiB/s) - standard deviation: %f" % std_download_rate)
+        logger.log("Upload rate (KiB/s) - mean: %f" % mean_upload_rate)
+        logger.log("Upload rate (KiB/s) - standard deviation: %f" % std_upload_rate)
+
+        if self.download_finished:
+            logger.log("Download time (s): %d" % self.download_time)
 
         self.buffer_manager.log()
 

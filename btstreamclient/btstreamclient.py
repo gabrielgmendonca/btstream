@@ -42,7 +42,7 @@ class Main:
     def __init__(self, args):
         self.parse_args(args)
 
-        logger.log("Starting download.")
+        logger.log("Download started.")
 
         self.pipeline = VideoTorrentPlayer(self.torrent_path, self.use_fake_sink)
         self.message_handler = MessageHandler(self.pipeline)

@@ -49,7 +49,7 @@ class BufferManager:
 
         self.buffering_time.append(time())
 
-        logger.log("Buffering.")
+        logger.log("Buffering started.")
 
     def stop_buffering(self):
         self.pipeline.set_state(gst.STATE_PLAYING)
@@ -60,7 +60,7 @@ class BufferManager:
         duration = time() - self.buffering_time[-1]
         self.buffering_time[-1] = duration
 
-        logger.log("Starting playback.")
+        logger.log("Playback started.")
 
     def log(self):
         initial_wait = self.buffering_time[0]
@@ -69,11 +69,11 @@ class BufferManager:
         std_time = stats.std(self.buffering_time[1:])
 
         logger.log("--*--Buffer statistics--*--")
-        logger.log("Time to start playback: %f" % initial_wait)
+        logger.log("Time to start playback (s): %f" % initial_wait)
         logger.log("Number of interruptions: %d" % interruptions)
-        logger.log("Interruption time - mean: %f" % mean_time)
-        logger.log("Interruption time - standard deviation: %f" % std_time)
-        logger.log("Interruptions: %r" % self.buffering_time)
+        logger.log("Interruption time (s) - mean: %f" % mean_time)
+        logger.log("Interruption time (s) - standard deviation: %f" % std_time)
+        logger.log("Interruptions (s): %r" % self.buffering_time[1:])
         
 
 
