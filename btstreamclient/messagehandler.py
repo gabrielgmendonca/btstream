@@ -17,8 +17,6 @@
 # along with BTStream.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
-# BTStream.h
-#
 #  Created on: 23/01/2012
 #      Author: gabriel
 #

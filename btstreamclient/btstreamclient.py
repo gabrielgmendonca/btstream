@@ -18,8 +18,6 @@
 # along with BTStream.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
-# BTStream.h
-#
 #  Created on: 23/01/2012
 #      Author: gabriel
 #
@@ -35,6 +33,7 @@ pygst.require("0.10")
 import gst
 import gtk
 
+from videotorrentplayer import VideoTorrentPlayer
 from messagehandler import MessageHandler
 
 class Main:
@@ -43,9 +42,8 @@ class Main:
             print "Usage: python btstreamclient.py torrent_path"
             sys.exit()
 
-        self.args = args
-
-        self.pipeline = self.create_pipeline()
+        torrent_path = args[0]
+        self.pipeline = VideoTorrentPlayer(torrent_path)
 
         self.message_handler = MessageHandler(self.pipeline)
 
@@ -54,87 +52,6 @@ class Main:
         self.pipeline.set_state(gst.STATE_PAUSED)
         #self.audio_sink.set_state(gst.STATE_PAUSED)
         #self.video_sink.set_state(gst.STATE_PAUSED)
-
-
-    def create_pipeline(self):
-        pipeline =  gst.Pipeline("video-player-pipeline")
-
-        # Creating elements
-        self.src = gst.element_factory_make("btstreamsrc", "src")
-        self.decoder = gst.element_factory_make("decodebin2", "decoder")
-        self.audio_sink = self.create_audio_sink()
-        self.video_sink = self.create_video_sink()
-
-        # Configuring elements
-        self.src.set_property("torrent", self.args[0])
-        self.decoder.set_property("use-buffering", True)
-        self.decoder.set_property("low-percent", 5)
-
-        # Configuring callbacks
-        self.decoder.connect("new-decoded-pad", self.handle_decoded_pad)
-
-        # Adding elements
-        pipeline.add(self.src, self.decoder, self.audio_sink, self.video_sink)
-
-        # Linking elements
-        gst.element_link_many(self.src, self.decoder)
-
-        return pipeline
-
-    def create_audio_sink(self, fake=False):
-        if fake:
-            return gst.element_factory_make("fakesink", "audio-sink")
-        
-        audio_sink_bin = gst.Bin("audio-sink")
-
-        # Creating elements
-        queue = gst.element_factory_make("queue", "audio-queue")
-        converter = gst.element_factory_make("audioconvert", "audio-converter")
-        resampler = gst.element_factory_make("audioresample", "audio-resampler")
-        sink = gst.element_factory_make("autoaudiosink", "audio-sink")
-
-        # Adding elements
-        audio_sink_bin.add(queue, converter, resampler, sink)
-
-        # Linking elements
-        gst.element_link_many(queue, converter, resampler, sink)
-
-        # Adding ghost pad
-        sink_pad = gst.GhostPad("sink", queue.get_pad("sink"))
-        audio_sink_bin.add_pad(sink_pad)
-
-        return audio_sink_bin
-
-    def create_video_sink(self, fake=False):
-        if fake:
-            return gst.element_factory_make("fakesink", "video-sink")
-
-        video_sink_bin = gst.Bin("video-sink")
-
-        # Creating elements
-        queue = gst.element_factory_make("queue", "video-queue")
-        converter = gst.element_factory_make("ffmpegcolorspace", "video-converter")
-        sink = gst.element_factory_make("autovideosink", "video-sink")
-
-        # Adding elements
-        video_sink_bin.add(queue, converter, sink)
-
-        # Linking elements
-        gst.element_link_many(queue, converter, sink)
-
-        # Adding ghost pad
-        sink_pad = gst.GhostPad("sink", queue.get_pad("sink"))
-        video_sink_bin.add_pad(sink_pad)
-
-        return video_sink_bin
-
-    def handle_decoded_pad(self, demuxer, new_pad, is_last):
-        structure_name = new_pad.get_caps()[0].get_name()
-        if structure_name.startswith("audio"):
-            new_pad.link(self.audio_sink.get_pad("sink"))
-
-        elif structure_name.startswith("video"):
-            new_pad.link(self.video_sink.get_pad("sink"))
 
 
 
