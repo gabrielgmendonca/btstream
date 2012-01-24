@@ -26,6 +26,9 @@ from time import time
 def log(message):
     print "%d: %s" % (time(), message)
 
+def log_event(message):
+    print "%d: [Event] %s" % (time(), message)
+
 def log_error(error, debug):
     print "%d: [Error] %s" % (time(), error)
     print "[Debug] ", debug

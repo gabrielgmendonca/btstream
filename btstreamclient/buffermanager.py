@@ -49,7 +49,7 @@ class BufferManager:
 
         self.buffering_time.append(time())
 
-        logger.log("Buffering started.")
+        logger.log_event("Buffering started.")
 
     def stop_buffering(self):
         self.pipeline.set_state(gst.STATE_PLAYING)
@@ -60,7 +60,7 @@ class BufferManager:
         duration = time() - self.buffering_time[-1]
         self.buffering_time[-1] = duration
 
-        logger.log("Playback started.")
+        logger.log_event("Playback started.")
 
     def log(self):
         initial_wait = self.buffering_time[0]

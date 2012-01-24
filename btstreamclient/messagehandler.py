@@ -37,7 +37,7 @@ class MessageHandler:
         self.bus.connect("message::error", self.handle_error_message)
 
     def handle_eos_message(self, bus, message):
-        logger.log("Playback finished.")
+        logger.log_event("Playback finished.")
         self.exit()
 
     def handle_buffering_message(self, bus, message):
@@ -50,7 +50,7 @@ class MessageHandler:
         self.exit()
 
     def exit(self):
-        logger.log("Stopping...")
+        logger.log_event("Stopping...")
         self.pipeline.set_state(gst.STATE_NULL)
         self.pipeline.log()
 
