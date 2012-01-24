@@ -38,21 +38,28 @@ from messagehandler import MessageHandler
 
 class Main:
     def __init__(self, args):
-        if len(args) != 1:
-            print "Usage: python btstreamclient.py torrent_path"
-            sys.exit()
+        self.parse_args(args)
 
-        torrent_path = args[0]
-        self.pipeline = VideoTorrentPlayer(torrent_path)
+        self.pipeline = VideoTorrentPlayer(self.torrent_path, self.use_fake_sink)
 
         self.message_handler = MessageHandler(self.pipeline)
 
         # Starting playback
         print "Starting download..."
         self.pipeline.set_state(gst.STATE_PAUSED)
-        #self.audio_sink.set_state(gst.STATE_PAUSED)
-        #self.video_sink.set_state(gst.STATE_PAUSED)
 
+    def parse_args(self, args):
+        if len(args) == 1:
+            self.torrent_path = args[0]
+            self.use_fake_sink = False
+
+        elif len(args) == 2 and args[0] == "-f":
+            self.torrent_path = args[1]
+            self.use_fake_sink = True
+            
+        else:
+            print "Usage: python btstreamclient.py [-f] torrent_path"
+            sys.exit()
 
 
 if __name__ == "__main__":

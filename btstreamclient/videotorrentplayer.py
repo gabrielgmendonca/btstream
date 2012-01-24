@@ -25,6 +25,7 @@ import gst
 
 from audiosink import AudioSink
 from videosink import VideoSink
+from fakesink import FakeSink
 
 class VideoTorrentPlayer(gst.Pipeline):
     """
@@ -32,18 +33,17 @@ class VideoTorrentPlayer(gst.Pipeline):
     source.
     """
 
-    def __init__(self, torrent_path, fake_sink=False):
+    def __init__(self, torrent_path, use_fake_sink=False):
         super(VideoTorrentPlayer, self).__init__("video-torrent-player")
 
         self.torrent_path = torrent_path
+        self.use_fake_sink = use_fake_sink
 
         # Creating elements
         self.src = gst.element_factory_make("btstreamsrc", "src")
         self.decoder = gst.element_factory_make("decodebin2", "decoder")
-
-        if not fake_sink:
-            self.audio_sink = AudioSink()
-            self.video_sink = VideoSink()
+        # Creating sink elements (audio, video)
+        self.create_sinks()
 
         # Configuring elements
         self.src.set_property("torrent", self.torrent_path)
@@ -67,5 +67,13 @@ class VideoTorrentPlayer(gst.Pipeline):
         elif structure_name.startswith("video"):
             new_pad.link(self.video_sink.get_pad("sink"))
 
+    def create_sinks(self):
+        if not self.use_fake_sink:
+            self.audio_sink = AudioSink()
+            self.video_sink = VideoSink()
+
+        else:
+            self.audio_sink = FakeSink("audio-sink")
+            self.video_sink = FakeSink("video-sink")
 
 
