@@ -22,12 +22,12 @@
 #
 
 import gst
-import gtk
 
 import logger
 
 class MessageHandler:
-    def __init__(self, pipeline):
+    def __init__(self, main_loop, pipeline):
+        self.main_loop = main_loop
         self.pipeline = pipeline
 
         self.bus = self.pipeline.get_bus()
@@ -53,8 +53,8 @@ class MessageHandler:
         logger.log_event("Stopping...")
         self.pipeline.set_state(gst.STATE_NULL)
         self.pipeline.log()
-
-        gtk.main_quit()
+        
+        self.main_loop.quit()
 
 
 

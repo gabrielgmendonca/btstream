@@ -27,25 +27,21 @@ import sys
 import gobject
 gobject.threads_init()
 
-import pygst
-pygst.require("0.10")
-
-import gst
-import gtk
-
 from videotorrentplayer import VideoTorrentPlayer
 from messagehandler import MessageHandler
 
 import logger
 
-class Main:
+class Main(gobject.MainLoop):
     def __init__(self, args):
+        super(Main, self).__init__()
+
         self.parse_args(args)
 
         logger.log_event("Download started.")
 
         self.pipeline = VideoTorrentPlayer(self.torrent_path, self.use_fake_sink)
-        self.message_handler = MessageHandler(self.pipeline)
+        self.message_handler = MessageHandler(self, self.pipeline)
 
     def parse_args(self, args):
         if len(args) == 1:
@@ -62,6 +58,6 @@ class Main:
 
 
 if __name__ == "__main__":
-    start=Main(sys.argv[1:])
-    gtk.main()
+    main = Main(sys.argv[1:])
+    main.run()
 
