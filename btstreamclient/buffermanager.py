@@ -63,17 +63,30 @@ class BufferManager:
         logger.log_event("Playback started.")
 
     def log(self):
-        initial_wait = self.buffering_time[0]
         interruptions = len(self.buffering_time) - 1
-        mean_time = stats.avg(self.buffering_time[1:])
-        std_time = stats.std(self.buffering_time[1:])
 
+        # Checking if player is on initial buffering state
+        if interruptions > 0 or not self.is_buffering:
+            initial_wait = self.buffering_time[0]
+        else:
+            initial_wait = -1
+
+        # Removing invalid samples
+        buffering_time = self.buffering_time[1:]
+        if self.is_buffering:
+            buffering_time = buffering_time[:-1]
+
+        # Calculating statistics
+        mean_time = stats.avg(buffering_time)
+        std_time = stats.std(buffering_time)
+
+        # Logging
         logger.log("--*--Buffer statistics--*--")
         logger.log("Time to start playback (s): %f" % initial_wait)
         logger.log("Number of interruptions: %d" % interruptions)
         logger.log("Interruption time (s) - mean: %f" % mean_time)
         logger.log("Interruption time (s) - standard deviation: %f" % std_time)
-        logger.log("Interruptions (s): %r" % self.buffering_time[1:])
+        logger.log("Interruptions (s): %r" % buffering_time)
         
 
 
