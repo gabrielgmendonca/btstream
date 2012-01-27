@@ -121,8 +121,8 @@ Status VideoTorrentManager::get_status() {
 	torrent_status t_status = m_torrent_handle.status();
 
 	Status status;
-	status.download_rate = t_status.download_rate;
-	status.upload_rate = t_status.upload_rate;
+	status.download_rate = t_status.download_payload_rate;
+	status.upload_rate = t_status.upload_payload_rate;
 	status.download_progress = t_status.progress;
 
 	return status;
