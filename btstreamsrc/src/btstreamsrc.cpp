@@ -195,15 +195,21 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 		break;
 
 	case PROP_DOWNLOAD_RATE:
-		g_value_set_int(value, src->m_btstream->get_status().download_rate);
+		if (src->m_btstream) {
+			g_value_set_int(value, src->m_btstream->get_status().download_rate);
+		}
 		break;
 
 	case PROP_UPLOAD_RATE:
-		g_value_set_int(value, src->m_btstream->get_status().upload_rate);
+		if (src->m_btstream) {
+			g_value_set_int(value, src->m_btstream->get_status().upload_rate);
+		}
 		break;
 
 	case PROP_DOWNLOAD_PROGRESS:
-		g_value_set_float(value, src->m_btstream->get_status().download_progress);
+		if (src->m_btstream) {
+			g_value_set_float(value, src->m_btstream->get_status().download_progress);
+		}
 		break;
 
 	default:
