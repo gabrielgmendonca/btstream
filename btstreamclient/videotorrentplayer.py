@@ -122,6 +122,10 @@ class VideoTorrentPlayer(gst.Pipeline):
 
         return True
 
+    def close(self):
+        self.set_state(gst.STATE_NULL)
+        self.log()
+
     def log(self):
         mean_download_rate = stats.avg(self.download_rates)
         std_download_rate = stats.std(self.download_rates)

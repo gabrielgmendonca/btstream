@@ -56,8 +56,17 @@ class Main(gobject.MainLoop):
             print "Usage: python btstreamclient.py [-f] torrent_path"
             sys.exit()
 
+    def quit(self):
+        logger.log_event("Stopping...")
+
+        self.pipeline.close()
+        
+        super(Main, self).quit()
 
 if __name__ == "__main__":
-    main = Main(sys.argv[1:])
-    main.run()
+    try:
+        main = Main(sys.argv[1:])
+        main.run()
+    except KeyboardInterrupt:
+        main.quit()
 

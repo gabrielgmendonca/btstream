@@ -38,7 +38,7 @@ class MessageHandler:
 
     def handle_eos_message(self, bus, message):
         logger.log_event("Playback finished.")
-        self.exit()
+        self.main_loop.quit()
 
     def handle_buffering_message(self, bus, message):
         percent = message.parse_buffering()
@@ -47,14 +47,8 @@ class MessageHandler:
     def handle_error_message(self, bus, message):
         err, debug = message.parse_error()
         logger.log_error(err, debug)
-        self.exit()
-
-    def exit(self):
-        logger.log_event("Stopping...")
-        self.pipeline.set_state(gst.STATE_NULL)
-        self.pipeline.log()
-        
         self.main_loop.quit()
+
 
 
 
