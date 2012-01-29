@@ -50,13 +50,17 @@ void fill_buffer(VideoBuffer *video_buffer, int buffer_size) {
  * Reads all pieces on VideoBuffer.
  * Called at a consumer thread for concurrency testing.
  */
-void read_pieces(VideoBuffer *video_buffer, int buffer_size) {
+void read_pieces(VideoBuffer* video_buffer, int buffer_size) {
 	for (int i = 0; i < buffer_size; i++) {
 		boost::shared_ptr<Piece> piece = video_buffer->get_next_piece();
 
 		char expected_data = piece->index;
 		EXPECT_EQ(expected_data, piece->data[0]);
 	}
+}
+
+void read_one_piece(VideoBuffer* video_buffer, boost::shared_ptr<Piece> piece) {
+	piece = video_buffer->get_next_piece();
 }
 
 TEST(VideoBufferTest, CreateWithNegativeSize) {
@@ -208,6 +212,41 @@ TEST(VideoBufferTest, GetNextPieceOverflow) {
 
 	ASSERT_TRUE(valid_piece);
 	ASSERT_FALSE(invalid_piece);
+}
+
+TEST(VideoBufferTest, UnlockBeforeGetNextPiece) {
+	VideoBuffer video_buffer(1);
+
+	ASSERT_FALSE(video_buffer.unlocked());
+
+	video_buffer.unlock();
+
+	ASSERT_TRUE(video_buffer.unlocked());
+
+	boost::shared_ptr<Piece> null_piece = video_buffer.get_next_piece();
+
+	ASSERT_TRUE(video_buffer.unlocked());
+	ASSERT_FALSE(null_piece);
+}
+
+TEST(VideoBufferTest, UnlockRunningGetNextPiece) {
+	VideoBuffer video_buffer(1);
+
+	boost::shared_ptr<Piece> null_piece;
+
+	boost::thread consumer_thread(read_one_piece, &video_buffer, null_piece);
+
+	ASSERT_FALSE(video_buffer.unlocked());
+
+	video_buffer.unlock();
+
+	ASSERT_TRUE(video_buffer.unlocked());
+
+	// Threads shoudn't take to long to stop.
+	boost::posix_time::time_duration td = boost::posix_time::seconds(1);
+	EXPECT_TRUE(consumer_thread.timed_join(td));
+
+	ASSERT_FALSE(null_piece);
 }
 
 } /* namespace btstream */

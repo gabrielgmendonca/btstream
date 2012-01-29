@@ -45,4 +45,12 @@ Status BTStream::get_status() {
 	return m_video_torrent_manager->get_status();
 }
 
+void BTStream::unlock() {
+	m_video_buffer->unlock();
+}
+
+bool BTStream::unlocked() {
+	return m_video_buffer->unlocked();
+}
+
 } /* namespace btstream */

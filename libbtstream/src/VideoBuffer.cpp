@@ -30,7 +30,7 @@
 namespace btstream {
 
 VideoBuffer::VideoBuffer(int num_pieces) throw(Exception) :
-				m_next_piece_index(0) {
+				m_next_piece_index(0), m_unlocked(false) {
 	if (num_pieces > 0) {
 		m_pieces = std::vector<boost::shared_ptr<btstream::Piece> >(num_pieces);
 
@@ -38,6 +38,10 @@ VideoBuffer::VideoBuffer(int num_pieces) throw(Exception) :
 		throw Exception("Invalid buffer size: " +
 				boost::lexical_cast<std::string>(num_pieces));
 	}
+}
+
+VideoBuffer::~VideoBuffer() {
+	unlock();
 }
 
 void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size)
@@ -51,7 +55,7 @@ void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size)
 			m_pieces[index] = piece;
 
 			is_next_piece = (index == m_next_piece_index);
-		}
+		} // Releasing lock.
 
 		if (is_next_piece) {
 			m_condition.notify_all();
@@ -70,15 +74,34 @@ boost::shared_ptr<Piece> VideoBuffer::get_next_piece() {
 	boost::unique_lock<boost::mutex> lock(m_mutex);
 	if (m_next_piece_index < (int) m_pieces.size()) {
 		piece = m_pieces[m_next_piece_index];
-		while (!piece) {
+		while (!piece && !m_unlocked) {
 			m_condition.wait(lock);
 			piece = m_pieces[m_next_piece_index];
+		}
+
+		if (m_unlocked) {
+			boost::shared_ptr<Piece> null_pointer;
+			return null_pointer;
 		}
 
 		m_next_piece_index++;
 	}
 
 	return piece;
+}
+
+void VideoBuffer::unlock() {
+	{
+		boost::lock_guard<boost::mutex> lock(m_mutex);
+		m_unlocked = true;
+	} // Releasing lock.
+
+	m_condition.notify_all();
+}
+
+bool VideoBuffer::unlocked() {
+	boost::lock_guard<boost::mutex> lock(m_mutex);
+	return m_unlocked;
 }
 
 } /* namespace btstream */

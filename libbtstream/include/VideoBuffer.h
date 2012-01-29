@@ -64,6 +64,12 @@ public:
 	VideoBuffer(int num_pieces=1) throw (Exception);
 
 	/**
+	 * Destructor.
+	 * Unlocks any blocked calls to get_next_piece().
+	 */
+	~VideoBuffer();
+
+	/**
 	 * Adds a piece reference to the buffer.
 	 * This method implements mutual exclusion and will block until the
 	 * resources are available.
@@ -76,15 +82,31 @@ public:
 
 	/**
 	 * Returns a pointer to the next piece that should be played.
-	 * If all pieces have already been returned, returns a default
-	 * constructed (NULL) shared_ptr.
-	 * This method will block until the piece is available.
+	 *
+	 * If all pieces have already been returned or the unlock() method
+	 * was called, returns a default constructed (NULL) shared_ptr.
+	 *
+	 * This method will block (sleep) until the piece is available or
+	 * the unlock() method is called.
 	 */
 	boost::shared_ptr<Piece> get_next_piece();
+
+	/**
+	 * Unlocks any blocked calls to get_next_piece().
+	 */
+	void unlock();
+
+	/**
+	 * Returns true if unlock() was called and false otherwise.
+	 * If false, a call to get_next_piece() may be blocked waiting for
+	 * the next piece to be downloaded.
+	 */
+	bool unlocked();
 
 private:
 	std::vector<boost::shared_ptr<Piece> > m_pieces;
 	int m_next_piece_index;
+	bool m_unlocked;
 
 	mutable boost::mutex m_mutex;
 	mutable boost::condition_variable m_condition;
