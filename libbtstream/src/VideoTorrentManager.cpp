@@ -81,8 +81,6 @@ void VideoTorrentManager::start_download(boost::shared_ptr<VideoBuffer> video_bu
 			new boost::thread(&VideoTorrentManager::feed_video_buffer, this));
 }
 
-#include <iostream>
-
 void VideoTorrentManager::feed_video_buffer() {
 	try {
 		while (m_pieces_to_play > 0) {
