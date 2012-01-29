@@ -123,6 +123,13 @@ Status VideoTorrentManager::get_status() {
 	status.upload_rate = t_status.upload_payload_rate;
 	status.download_progress = t_status.progress;
 
+	int num_pieces = t_status.pieces.size();
+	status.pieces = boost::dynamic_bitset<>(num_pieces);
+
+	for (int i = 0; i < num_pieces; i++) {
+		status.pieces[num_pieces - 1 - i] = t_status.pieces[i];
+	}
+
 	return status;
 }
 

@@ -75,7 +75,12 @@ enum {
 };
 
 enum {
-	PROP_0, PROP_TORRENT, PROP_DOWNLOAD_RATE, PROP_UPLOAD_RATE, PROP_DOWNLOAD_PROGRESS
+	PROP_0,
+	PROP_TORRENT,
+	PROP_DOWNLOAD_RATE,
+	PROP_UPLOAD_RATE,
+	PROP_DOWNLOAD_PROGRESS,
+	PROP_PIECES
 };
 
 GST_BOILERPLATE(GstBTStreamSrc, gst_btstream_src, GstPushSrc,
@@ -180,6 +185,11 @@ static void install_properties(GObjectClass *gobject_class)
     pspec = g_param_spec_float("download_progress", "Download Progress",
     		"Torrent download progress", 0.0f, 1.0f, 0.0f, pflags);
     g_object_class_install_property(gobject_class, PROP_DOWNLOAD_PROGRESS, pspec);
+
+    pflags = static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
+    pspec = g_param_spec_string("pieces", "Pieces", "Binary representation of received pieces",
+    		"", pflags);
+    g_object_class_install_property(gobject_class, PROP_PIECES, pspec);
 }
 
 static void gst_btstream_src_set_property(GObject * object, guint prop_id,
@@ -222,6 +232,14 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 	case PROP_DOWNLOAD_PROGRESS:
 		if (src->m_btstream) {
 			g_value_set_float(value, src->m_btstream->get_status().download_progress);
+		}
+		break;
+
+	case PROP_PIECES:
+		if (src->m_btstream) {
+			std::string pieces;
+			boost::to_string(src->m_btstream->get_status().pieces, pieces);
+			g_value_set_string(value, pieces.c_str());
 		}
 		break;
 

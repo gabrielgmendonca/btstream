@@ -27,6 +27,7 @@
 
 #include <libtorrent/session.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/dynamic_bitset.hpp>
 
 #include "VideoBuffer.h"
 #include "Exception.h"
@@ -39,6 +40,7 @@ struct Status {
 	int download_rate;
 	int upload_rate;
 	float download_progress;
+	boost::dynamic_bitset<> pieces;
 };
 
 /**

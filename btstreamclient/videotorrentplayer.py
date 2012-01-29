@@ -106,8 +106,11 @@ class VideoTorrentPlayer(gst.Pipeline):
             download_rate = self.src.get_property("download_rate") / 1024
             self.download_rates.append(download_rate)
 
+            pieces = self.src.get_property("pieces")
+
             logger.log("Download progress: %d%%" % download_progress)
             logger.log("Download rate: %d KiB/s" % download_rate)
+            logger.log("Pieces: %s" % pieces)
 
         elif not self.download_finished:
             self.download_finished = True
