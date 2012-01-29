@@ -125,6 +125,10 @@ static GstFlowReturn gst_btstream_src_create(GstPushSrc* psrc,
 			g_print("Flow Error: %d!\r\n", res);
 		}
 
+	} else if (src->m_btstream->unlocked()) {
+		// Access to resource (torrent pieces) was unlocked.
+		res = GST_FLOW_WRONG_STATE;
+
 	} else {
 		// All pieces have already been returned.
 		res = GST_FLOW_UNEXPECTED;
@@ -139,6 +143,15 @@ static gboolean gst_btstream_src_stop(GstBaseSrc * basesrc) {
 	if (src->m_btstream) {
 		delete src->m_btstream;
 	}
+
+	return TRUE;
+}
+
+static gboolean gst_btstream_src_unlock(GstBaseSrc *bsrc) {
+	GstBTStreamSrc* src;
+
+	src = GST_BTSTREAM_SRC(bsrc);
+	src->m_btstream->unlock();
 
 	return TRUE;
 }
@@ -249,6 +262,7 @@ static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
 
     gstbasesrc_class->start = gst_btstream_src_start;
     gstbasesrc_class->stop = gst_btstream_src_stop;
+    gstbasesrc_class->unlock = gst_btstream_src_unlock;
     gstpushsrc_class->create = gst_btstream_src_create;
 
     // Properties
@@ -299,12 +313,12 @@ static gboolean btstreamsrc_init(GstPlugin * btstreamsrc) {
 #define PACKAGE "btstream"
 #endif
 
-#define VERSION "0.1"
+#define VERSION "0.2"
 
 /* gstreamer looks for this structure to register btstreamsrcs
  *
  * exchange the string 'Template btstreamsrc' with your btstreamsrc description
  */
 GST_PLUGIN_DEFINE( GST_VERSION_MAJOR, GST_VERSION_MINOR, "btstreamsrc",
-		"Template btstreamsrc", btstreamsrc_init, VERSION, "LGPL", "GStreamer",
-		"http://gstreamer.net/");
+		"BitTorrent media source", btstreamsrc_init, VERSION, "LGPL", "GStreamer",
+		"http://code.google.com/p/btstream/");
