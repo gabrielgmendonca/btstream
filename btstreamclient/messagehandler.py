@@ -31,10 +31,19 @@ class MessageHandler:
         self.pipeline = pipeline
 
         self.bus = self.pipeline.get_bus()
-        self.bus.add_signal_watch()
-        self.bus.connect("message::eos", self.handle_eos_message)
-        self.bus.connect("message::buffering", self.handle_buffering_message)
-        self.bus.connect("message::error", self.handle_error_message)
+        self.bus.add_watch(self.handle_message)
+
+    def handle_message(self, bus, message):
+        t = message.type
+
+        if t == gst.MESSAGE_EOS:
+            self.handle_eos_message(bus, message)
+        elif t == gst.MESSAGE_BUFFERING:
+            self.handle_buffering_message(bus, message)
+        elif t == gst.MESSAGE_ERROR:
+            self.handle_error_message(bus, message)
+
+        return True
 
     def handle_eos_message(self, bus, message):
         logger.log_event("Playback finished.")
