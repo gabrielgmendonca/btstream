@@ -105,6 +105,8 @@ static gboolean gst_btstream_src_start(GstBaseSrc * basesrc) {
 	return (src->m_btstream != 0);
 }
 
+int pnum = 0;
+
 static GstFlowReturn gst_btstream_src_create(GstPushSrc* psrc,
 		GstBuffer** buffer) {
 	GstBTStreamSrc* src;
@@ -114,7 +116,9 @@ static GstFlowReturn gst_btstream_src_create(GstPushSrc* psrc,
 
 	boost::shared_ptr < btstream::Piece > piece;
 
+	g_print("[SRC-DEBUG] Asking for piece buffer: %d\r\n", pnum);
 	piece = src->m_btstream->get_next_piece();
+	g_print("[SRC-DEBUG] Piece buffer received: %d\r\n", pnum++);
 
 	if (piece) {
 		res = gst_pad_alloc_buffer(GST_BASE_SRC_PAD(psrc),
@@ -127,7 +131,7 @@ static GstFlowReturn gst_btstream_src_create(GstPushSrc* psrc,
 			mempcpy(data, piece->data.get(), piece->size);
 
 		} else {
-			g_print("Flow Error: %d!\r\n", res);
+			g_print("[SRC-DEBUG] Flow Error: %d!\r\n", res);
 		}
 
 	} else if (src->m_btstream->unlocked()) {
