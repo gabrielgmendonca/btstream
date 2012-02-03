@@ -64,6 +64,7 @@
 
 #include <string.h>
 #include <time.h>
+#include "PropertyInstaller.h"
 
 GST_DEBUG_CATEGORY_STATIC(gst_btstream_src_debug);
 #define GST_CAT_DEFAULT gst_btstream_src_debug
@@ -77,10 +78,19 @@ enum {
 enum {
 	PROP_0,
 	PROP_TORRENT,
+	PROP_SAVE_PATH,
+	PROP_SEQUENTIAL_DOWNLOAD,
+	PROP_SEED_IP,
+	PROP_SEED_PORT,
 	PROP_DOWNLOAD_RATE,
 	PROP_UPLOAD_RATE,
 	PROP_DOWNLOAD_PROGRESS,
-	PROP_PIECES
+	PROP_PIECES,
+	PROP_PEERS,
+	PROP_SEEDS,
+	PROP_CONNECTED_PEERS,
+	PROP_CONNECTED_SEEDS,
+	PROP_NEXT_ANNOUNCE
 };
 
 GST_BOILERPLATE(GstBTStreamSrc, gst_btstream_src, GstPushSrc,
@@ -99,8 +109,21 @@ static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
 static gboolean gst_btstream_src_start(GstBaseSrc * basesrc) {
 	GstBTStreamSrc *src = GST_BTSTREAM_SRC(basesrc);
 
-	std::string path = src->m_torrent;
-	src->m_btstream = new btstream::BTStream(path);
+	std::string torrent_path, save_path, seed_ip;
+	if (src->m_torrent) {
+		torrent_path = src->m_torrent;
+	}
+	if (src->m_save_path) {
+		save_path = src->m_save_path;
+	}
+	if (src->m_seed_ip) {
+		seed_ip = src->m_seed_ip;
+	}
+	bool sequential_download = src->m_sequential_download;
+	unsigned short seed_port = src->m_seed_port;
+
+	src->m_btstream = new btstream::BTStream(torrent_path, save_path,
+			sequential_download, seed_ip, seed_port);
 
 	return (src->m_btstream != 0);
 }
@@ -165,37 +188,6 @@ static gboolean gst_btstream_src_unlock(GstBaseSrc *bsrc) {
 	return TRUE;
 }
 
-static void install_properties(GObjectClass *gobject_class)
-{
-	GParamSpec* pspec;
-	GParamFlags pflags;
-
-	// Properties
-    pflags = static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
-    pspec = g_param_spec_string("torrent", "Torrent", "Torrent file path", "", pflags);
-    g_object_class_install_property(gobject_class, PROP_TORRENT, pspec);
-
-    pflags = static_cast<GParamFlags>(G_PARAM_READABLE);
-    pspec = g_param_spec_int("download_rate", "Download Rate",
-    		"Torrent download rate in KiB/s", 0, 999999999, 0, pflags);
-    g_object_class_install_property(gobject_class, PROP_DOWNLOAD_RATE, pspec);
-
-    pflags = static_cast<GParamFlags>(G_PARAM_READABLE);
-    pspec = g_param_spec_int("upload_rate", "Upload Rate",
-    		"Torrent upload rate in KiB/s", 0, 999999999, 0, pflags);
-    g_object_class_install_property(gobject_class, PROP_UPLOAD_RATE, pspec);
-
-    pflags = static_cast<GParamFlags>(G_PARAM_READABLE);
-    pspec = g_param_spec_float("download_progress", "Download Progress",
-    		"Torrent download progress", 0.0f, 1.0f, 0.0f, pflags);
-    g_object_class_install_property(gobject_class, PROP_DOWNLOAD_PROGRESS, pspec);
-
-    pflags = static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS);
-    pspec = g_param_spec_string("pieces", "Pieces", "Binary representation of received pieces",
-    		"", pflags);
-    g_object_class_install_property(gobject_class, PROP_PIECES, pspec);
-}
-
 static void gst_btstream_src_set_property(GObject * object, guint prop_id,
 		const GValue * value, GParamSpec * pspec) {
 	GstBTStreamSrc* src = GST_BTSTREAM_SRC (object);
@@ -204,6 +196,24 @@ static void gst_btstream_src_set_property(GObject * object, guint prop_id,
 	case PROP_TORRENT:
 		g_free(src->m_torrent);
 		src->m_torrent = g_value_dup_string(value);
+		break;
+
+	case PROP_SAVE_PATH:
+		g_free(src->m_save_path);
+		src->m_save_path = g_value_dup_string(value);
+		break;
+
+	case PROP_SEQUENTIAL_DOWNLOAD:
+		src->m_sequential_download = g_value_get_boolean(value);
+		break;
+
+	case PROP_SEED_IP:
+		g_free(src->m_seed_ip);
+		src->m_seed_ip = g_value_dup_string(value);
+		break;
+
+	case PROP_SEED_PORT:
+		src->m_seed_port = g_value_get_int(value);
 		break;
 
 	default:
@@ -221,6 +231,22 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 		g_value_set_string(value, src->m_torrent);
 		break;
 
+	case PROP_SAVE_PATH:
+		g_value_set_string(value, src->m_save_path);
+		break;
+
+	case PROP_SEQUENTIAL_DOWNLOAD:
+		g_value_set_boolean(value, src->m_sequential_download);
+		break;
+
+	case PROP_SEED_IP:
+		g_value_set_string(value, src->m_seed_ip);
+		break;
+
+	case PROP_SEED_PORT:
+		g_value_set_int(value, src->m_seed_port);
+		break;
+
 	case PROP_DOWNLOAD_RATE:
 		if (src->m_btstream) {
 			g_value_set_int(value, src->m_btstream->get_status().download_rate);
@@ -235,7 +261,8 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 
 	case PROP_DOWNLOAD_PROGRESS:
 		if (src->m_btstream) {
-			g_value_set_float(value, src->m_btstream->get_status().download_progress);
+			g_value_set_float(value,
+					src->m_btstream->get_status().download_progress);
 		}
 		break;
 
@@ -244,6 +271,36 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 			std::string pieces;
 			boost::to_string(src->m_btstream->get_status().pieces, pieces);
 			g_value_set_string(value, pieces.c_str());
+		}
+		break;
+
+	case PROP_PEERS:
+		if (src->m_btstream) {
+			g_value_set_int(value, src->m_btstream->get_status().num_peers);
+		}
+		break;
+
+	case PROP_SEEDS:
+		if (src->m_btstream) {
+			g_value_set_int(value, src->m_btstream->get_status().num_seeds);
+		}
+		break;
+
+	case PROP_CONNECTED_PEERS:
+		if (src->m_btstream) {
+			g_value_set_int(value, src->m_btstream->get_status().num_connected_peers);
+		}
+		break;
+
+	case PROP_CONNECTED_SEEDS:
+		if (src->m_btstream) {
+			g_value_set_int(value, src->m_btstream->get_status().num_connected_seeds);
+		}
+		break;
+
+	case PROP_NEXT_ANNOUNCE:
+		if (src->m_btstream) {
+			g_value_set_int(value, src->m_btstream->get_status().seconds_to_next_announce);
 		}
 		break;
 
@@ -273,22 +330,59 @@ static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
 	GstBaseSrcClass *gstbasesrc_class;
 	GstPushSrcClass *gstpushsrc_class;
 
-	gobject_class = (GObjectClass *)(klass);
-    gstbasesrc_class = (GstBaseSrcClass*)(klass);
-    gstpushsrc_class = (GstPushSrcClass*)(klass);
+	gobject_class = (GObjectClass *) (klass);
+	gstbasesrc_class = (GstBaseSrcClass*) (klass);
+	gstpushsrc_class = (GstPushSrcClass*) (klass);
 
-    // Overrided methods
-    // FIXME: Need to override other methods?
-    gobject_class->set_property = gst_btstream_src_set_property;
-    gobject_class->get_property = gst_btstream_src_get_property;
+	// Overrided methods
+	gobject_class->set_property = gst_btstream_src_set_property;
+	gobject_class->get_property = gst_btstream_src_get_property;
 
-    gstbasesrc_class->start = gst_btstream_src_start;
-    gstbasesrc_class->stop = gst_btstream_src_stop;
-    gstbasesrc_class->unlock = gst_btstream_src_unlock;
-    gstpushsrc_class->create = gst_btstream_src_create;
+	gstbasesrc_class->start = gst_btstream_src_start;
+	gstbasesrc_class->stop = gst_btstream_src_stop;
+	gstbasesrc_class->unlock = gst_btstream_src_unlock;
+	gstpushsrc_class->create = gst_btstream_src_create;
 
-    // Properties
-    install_properties(gobject_class);
+	// Properties
+	PropertyInstaller installer(gobject_class);
+
+	// Read-write properties
+	installer.install_string(PROP_TORRENT, "torrent", "Torrent",
+			"Torrent file path.", "", true);
+	installer.install_string(PROP_SAVE_PATH, "save_path", "Save Path",
+			"Where to save downloaded files.", "./", true);
+	installer.install_bool(
+			PROP_SEQUENTIAL_DOWNLOAD,
+			"sequential_download",
+			"Sequential Download",
+			"Indicates if sequential download will be used for piece selection. Otherwise, uses rarest-first algorithm.",
+			true, true);
+	installer.install_string(PROP_SEED_IP, "seed_ip", "Seed IP",
+			"IP of a known seed.", "", true);
+	installer.install_int(PROP_SEED_PORT, "seed_port", "Seed Port",
+			"Port of a known seed.", 0, 65535, 0, true);
+
+	// Read-only properties
+	installer.install_int(PROP_DOWNLOAD_RATE, "download_rate", "Download Rate",
+			"Torrent download rate in KiB/s.", 0, 999999999, 0);
+	installer.install_int(PROP_UPLOAD_RATE, "upload_rate", "Upload Rate",
+			"Torrent upload rate in KiB/s.", 0, 999999999, 0);
+	installer.install_float(PROP_DOWNLOAD_PROGRESS, "download_progress",
+			"Download Progress", "Torrent download progress.");
+	installer.install_string(PROP_PIECES, "pieces", "Pieces",
+			"Binary representation of received pieces.");
+	installer.install_int(PROP_PEERS, "num_peers", "Number of Peers",
+			"Number of known peers in the swarm.", 0, 999999999, 0);
+	installer.install_int(PROP_SEEDS, "num_seeds", "Number of Seeds",
+			"Number of known seeds in the swarm.", 0, 999999999, 0);
+	installer.install_int(PROP_CONNECTED_PEERS, "num_connected_peers",
+			"Number of Connected Peers", "Number of connected peers.", 0,
+			999999999, 0);
+	installer.install_int(PROP_CONNECTED_SEEDS, "num_connected_seeds",
+			"Number of Connected Seeds", "Number of connected seeds.", 0,
+			999999999, 0);
+	installer.install_int(PROP_NEXT_ANNOUNCE, "next_announce", "Next Announce",
+			"Seconds until next announce to tracker.", 0, 999999999, 0);
 }
 
 /*
@@ -342,5 +436,5 @@ static gboolean btstreamsrc_init(GstPlugin * btstreamsrc) {
  * exchange the string 'Template btstreamsrc' with your btstreamsrc description
  */
 GST_PLUGIN_DEFINE( GST_VERSION_MAJOR, GST_VERSION_MINOR, "btstreamsrc",
-		"BitTorrent media source", btstreamsrc_init, VERSION, "LGPL", "GStreamer",
-		"http://code.google.com/p/btstream/");
+		"BitTorrent media source", btstreamsrc_init, VERSION, "LGPL",
+		"GStreamer", "http://code.google.com/p/btstream/");

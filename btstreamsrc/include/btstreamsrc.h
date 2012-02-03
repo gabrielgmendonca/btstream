@@ -71,8 +71,14 @@ typedef struct _GstBTStreamSrcClass GstBTStreamSrcClass;
 struct _GstBTStreamSrc {
 	GstPushSrc element;
 
-	gchar* m_torrent;
 	btstream::BTStream* m_btstream;
+
+	// Writable properties
+	gchar* m_torrent;
+	gchar* m_save_path;
+	bool m_sequential_download;
+	gchar* m_seed_ip;
+	unsigned short m_seed_port;
 };
 
 struct _GstBTStreamSrcClass {
