@@ -22,7 +22,12 @@
 #      Author: gabriel
 #
 
+# Saving command line arguments so that GStreamer don't steal them.
 import sys
+argv = sys.argv
+sys.argv = []
+
+import argparse
 
 import gobject
 gobject.threads_init()
@@ -33,28 +38,40 @@ from messagehandler import MessageHandler
 import logger
 
 class Main(gobject.MainLoop):
-    def __init__(self, args):
+    def __init__(self):
         super(Main, self).__init__()
 
-        self.parse_args(args)
+        self.parse_args()
 
         logger.log_event("Download started.")
 
-        self.pipeline = VideoTorrentPlayer(self.torrent_path, self.use_fake_sink)
+        self.pipeline = VideoTorrentPlayer(self.torrent_path, self.use_fake_sink,
+            self.sequential_download, self.seed_ip, self.seed_port)
         self.message_handler = MessageHandler(self, self.pipeline)
 
-    def parse_args(self, args):
-        if len(args) == 1:
-            self.torrent_path = args[0]
-            self.use_fake_sink = False
+    def parse_args(self):
+        parser = argparse.ArgumentParser(description="BitTorrent video player.")
 
-        elif len(args) == 2 and args[0] == "-f":
-            self.torrent_path = args[1]
-            self.use_fake_sink = True
-            
+        parser.add_argument("torrent_path", help="torrent file to open")
+        parser.add_argument("-f", dest="fake_sink", action="store_true", 
+            help="produce fake audio/video output")
+        parser.add_argument("--seq", dest="sequential", action="store_true", 
+            help="download pieces sequentially and not in rarest-first order")
+        parser.add_argument("--seed", nargs=2, metavar=("IP", "port"),
+            help="IP address and port of a previously known seed")
+
+        args = parser.parse_args()
+        
+        self.torrent_path = args.torrent_path
+        self.use_fake_sink = args.fake_sink
+        self.sequential_download = args.sequential
+
+        if args.seed is not None:
+            self.seed_ip = args.seed[0]
+            self.seed_port = args.seed[1]
         else:
-            print "Usage: python btstreamclient.py [-f] torrent_path"
-            sys.exit()
+            self.seed_ip = None
+            self.seed_port = None
 
     def quit(self):
         logger.log_event("Stopping...")
@@ -64,8 +81,11 @@ class Main(gobject.MainLoop):
         super(Main, self).quit()
 
 if __name__ == "__main__":
+    # Loading saved command line arguments
+    sys.argv = argv
+
     try:
-        main = Main(sys.argv[1:])
+        main = Main()
         main.run()
     except KeyboardInterrupt:
         main.quit()
