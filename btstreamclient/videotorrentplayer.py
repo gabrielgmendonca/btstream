@@ -134,6 +134,17 @@ class VideoTorrentPlayer(gst.Pipeline):
 
         logger.log("Upload rate: %d KiB/s" % upload_rate)
 
+        peers = self.src.get_property("num_peers")
+        seeds = self.src.get_property("num_seeds")
+        connected_peers = self.src.get_property("num_connected_peers")
+        connected_seeds = self.src.get_property("num_connected_seeds")
+        next_announce = self.src.get_property("next_announce")
+
+        logger.log("Peers (seeds): %d (%d)" % (peers, seeds))
+        logger.log("Connected peers (seeds): %d (%d)" % 
+            (connected_peers, connected_seeds))
+        logger.log("Next annouce to tracker (s): %d" % next_announce)
+
         return True
 
     def close(self):
