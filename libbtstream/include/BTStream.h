@@ -45,9 +45,20 @@ public:
 
 	/**
 	 * Constructor.
-	 * @param torrent_path Path to a valid torrent file.
+	 * @param torrent_path
+	 * 			Path to a valid torrent file.
+	 * @param save_path
+	 * 			Path where the downloaded file will be stored.
+	 * @param sequential_download
+	 * 			Whether to use sequential download or rarest-first algorithm.
+	 * @param seed_ip
+	 * 			IP address of a previously known seed.
+	 * @param seed_port
+	 * 			Port to connect on the previously known seed.
 	 */
-	BTStream(std::string& torrent_path);
+	BTStream(const std::string& torrent_path, const std::string save_path = ".",
+			bool sequential_download = true, const std::string seed_ip = "",
+			unsigned short seed_port = 0);
 
 	/**
 	 * Returns a pointer to the next piece that should be played.

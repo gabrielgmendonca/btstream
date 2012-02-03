@@ -41,6 +41,11 @@ struct Status {
 	int upload_rate;
 	float download_progress;
 	boost::dynamic_bitset<> pieces;
+	int num_peers;
+	int num_seeds;
+	int num_connected_peers;
+	int num_connected_seeds;
+	long seconds_to_next_announce;
 };
 
 /**
@@ -61,18 +66,20 @@ public:
 	~VideoTorrentManager();
 
 	/**
-	 * Initializes session for specified torrent download and returns the
-	 * number of pieces.
+	 * Prepares the download of the torrent given by file_name and returns the
+	 * number of pieces. The address of a previously known seed may be provided.
 	 */
-	int add_torrent(std::string file_name, std::string save_path = ".")
-			throw (Exception);
+	int add_torrent(std::string file_name, std::string save_path,
+			bool sequential_download, std::string seed_ip,
+			unsigned short seed_port) throw (Exception);
 
 	/**
 	 * Starts download of the video file.
 	 * The downloaded pieces will be added to the given VideoBuffer.
 	 * A feeding thread will be started.
 	 */
-	void start_download(boost::shared_ptr<VideoBuffer> video_buffer) throw (Exception);
+	void start_download(boost::shared_ptr<VideoBuffer> video_buffer)
+			throw (Exception);
 
 	/**
 	 * Adds downloaded pieces to VideoBuffer.

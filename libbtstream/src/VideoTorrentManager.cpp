@@ -47,7 +47,8 @@ VideoTorrentManager::~VideoTorrentManager() {
 }
 
 int VideoTorrentManager::add_torrent(std::string file_name,
-		std::string save_path) throw (Exception) {
+		std::string save_path, bool sequential_download, std::string seed_ip,
+		unsigned short seed_port) throw (Exception) {
 
 	try {
 		add_torrent_params params;
@@ -57,7 +58,18 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 		params.auto_managed = false;
 
 		m_torrent_handle = m_session.add_torrent(params);
-		m_torrent_handle.set_sequential_download(true);
+
+		// Sets piece selection policy: sequential download X rarest-first
+		m_torrent_handle.set_sequential_download(sequential_download);
+
+		// Adds seed
+		if (seed_ip != "" && seed_port > 0) {
+			tcp::endpoint seed_endpoint;
+			seed_endpoint.address(address::from_string(seed_ip));
+			seed_endpoint.port(seed_port);
+
+			m_torrent_handle.connect_peer(seed_endpoint, peer_info::seed);
+		}
 
 		// Gets the number of pieces that will be downloaded and played.
 		m_pieces_to_play = params.ti.get()->num_pieces();
@@ -69,8 +81,8 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 	return m_pieces_to_play;
 }
 
-void VideoTorrentManager::start_download(boost::shared_ptr<VideoBuffer> video_buffer)
-		throw (Exception) {
+void VideoTorrentManager::start_download(
+		boost::shared_ptr<VideoBuffer> video_buffer) throw (Exception) {
 	m_video_buffer = video_buffer;
 
 	// Starts torrent download.
@@ -91,8 +103,8 @@ void VideoTorrentManager::feed_video_buffer() {
 
 			if (new_alert) {
 				// Tries to cast alert pointer to read_piece_alert pointer.
-				const read_piece_alert* piece_alert = alert_cast<read_piece_alert>(
-						new_alert);
+				const read_piece_alert* piece_alert = alert_cast<
+						read_piece_alert>(new_alert);
 
 				if (piece_alert) {
 					// Adds piece to VideoBuffer.
@@ -109,8 +121,7 @@ void VideoTorrentManager::feed_video_buffer() {
 				m_session.pop_alert();
 			}
 		}
-	}
-	catch (boost::thread_interrupted& e) {
+	} catch (boost::thread_interrupted& e) {
 		// Thread will stop.
 	}
 }
@@ -122,6 +133,11 @@ Status VideoTorrentManager::get_status() {
 	status.download_rate = t_status.download_payload_rate;
 	status.upload_rate = t_status.upload_payload_rate;
 	status.download_progress = t_status.progress;
+	status.num_peers = t_status.list_peers;
+	status.num_seeds = t_status.list_seeds;
+	status.num_connected_peers = t_status.num_peers;
+	status.num_connected_seeds = t_status.num_seeds;
+	status.seconds_to_next_announce = t_status.next_announce.seconds();
 
 	int num_pieces = t_status.pieces.size();
 	status.pieces = boost::dynamic_bitset<>(num_pieces);

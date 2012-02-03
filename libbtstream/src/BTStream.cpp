@@ -26,13 +26,17 @@
 
 namespace btstream {
 
-BTStream::BTStream(std::string& torrent_path) :
+BTStream::BTStream(const std::string& torrent_path, const std::string save_path,
+		bool sequential_download, const std::string seed_ip,
+		unsigned short seed_port) :
 		m_video_torrent_manager(new VideoTorrentManager) {
 
 	int num_pieces;
-	num_pieces = m_video_torrent_manager->add_torrent(torrent_path);
+	num_pieces = m_video_torrent_manager->add_torrent(torrent_path, save_path,
+			sequential_download, seed_ip, seed_port);
 
-	m_video_buffer = boost::shared_ptr<VideoBuffer>(new VideoBuffer(num_pieces));
+	m_video_buffer = boost::shared_ptr<VideoBuffer>(
+			new VideoBuffer(num_pieces));
 
 	m_video_torrent_manager->start_download(m_video_buffer);
 }
