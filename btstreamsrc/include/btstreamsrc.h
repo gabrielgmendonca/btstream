@@ -72,6 +72,7 @@ struct _GstBTStreamSrc {
 	GstPushSrc element;
 
 	btstream::BTStream* m_btstream;
+	int piece_number;
 
 	// Writable properties
 	gchar* m_torrent;

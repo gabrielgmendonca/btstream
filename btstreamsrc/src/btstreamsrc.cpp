@@ -125,10 +125,10 @@ static gboolean gst_btstream_src_start(GstBaseSrc * basesrc) {
 	src->m_btstream = new btstream::BTStream(torrent_path, save_path,
 			sequential_download, seed_ip, seed_port);
 
+	GST_INFO("Creating BTStreamSrc and starting torrent download.");
+
 	return (src->m_btstream != 0);
 }
-
-int pnum = 0;
 
 static GstFlowReturn gst_btstream_src_create(GstPushSrc* psrc,
 		GstBuffer** buffer) {
@@ -137,11 +137,11 @@ static GstFlowReturn gst_btstream_src_create(GstPushSrc* psrc,
 
 	src = GST_BTSTREAM_SRC(psrc);
 
+	GST_LOG("Requesting buffer from piece %d.", src->piece_number);
+
 	boost::shared_ptr < btstream::Piece > piece;
 
-	g_print("[SRC-DEBUG] Asking for piece buffer: %d\r\n", pnum);
 	piece = src->m_btstream->get_next_piece();
-	g_print("[SRC-DEBUG] Piece buffer received: %d\r\n", pnum++);
 
 	if (piece) {
 		res = gst_pad_alloc_buffer(GST_BASE_SRC_PAD(psrc),
@@ -153,17 +153,23 @@ static GstFlowReturn gst_btstream_src_create(GstPushSrc* psrc,
 
 			mempcpy(data, piece->data.get(), piece->size);
 
+			GST_LOG("Buffer from piece %d created.", src->piece_number++);
+
 		} else {
-			g_print("[SRC-DEBUG] Flow Error: %d!\r\n", res);
+			GST_WARNING("Flow error when creating buffer: %d.", res);
 		}
 
 	} else if (src->m_btstream->unlocked()) {
 		// Access to resource (torrent pieces) was unlocked.
 		res = GST_FLOW_WRONG_STATE;
 
+		GST_INFO("Resources unlocked.");
+
 	} else {
 		// All pieces have already been returned.
 		res = GST_FLOW_UNEXPECTED;
+
+		GST_INFO("End of stream. All pieces returned.");
 	}
 
 	return res;
@@ -176,6 +182,8 @@ static gboolean gst_btstream_src_stop(GstBaseSrc * basesrc) {
 		delete src->m_btstream;
 	}
 
+	GST_INFO("Stopping download.");
+
 	return TRUE;
 }
 
@@ -184,6 +192,8 @@ static gboolean gst_btstream_src_unlock(GstBaseSrc *bsrc) {
 
 	src = GST_BTSTREAM_SRC(bsrc);
 	src->m_btstream->unlock();
+
+	GST_INFO("Unlock requested.");
 
 	return TRUE;
 }
@@ -317,7 +327,7 @@ static void gst_btstream_src_base_init(gpointer gclass) {
 	GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
 
 	gst_element_class_set_details_simple(element_class, "BTStreamSrc",
-			"FIXME:Generic", "FIXME:Generic Template Element",
+			"source", "BitTorrent media source.",
 			"Gabriel Mendonça <<gabrielgmendonca@poli.ufrj.br>>");
 
 	gst_element_class_add_pad_template(element_class,
@@ -393,13 +403,6 @@ static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
  */
 static void gst_btstream_src_init(GstBTStreamSrc * src,
 		GstBTStreamSrcClass * gclass) {
-
-	// FIXME: Add Pads?
-//	src->srcpad = gst_pad_new_from_static_template(&src_factory, "src");
-//	gst_pad_set_getcaps_function(src->srcpad,
-//			GST_DEBUG_FUNCPTR(gst_pad_proxy_getcaps));
-//
-//	gst_element_add_pad(GST_ELEMENT (src), src->srcpad);
 }
 
 /*
@@ -408,12 +411,10 @@ static void gst_btstream_src_init(GstBTStreamSrc * src,
  * register the element factories and other features
  */
 static gboolean btstreamsrc_init(GstPlugin * btstreamsrc) {
-	/* debug category for fltering log messages
-	 *
-	 * exchange the string 'Template btstreamsrc' with your description
+	/* debug category for filtering log messages
 	 */
 	GST_DEBUG_CATEGORY_INIT(gst_btstream_src_debug, "btstreamsrc", 0,
-			"Template btstreamsrc");
+			"BitTorrent media source");
 
 	return gst_element_register(btstreamsrc, "btstreamsrc", GST_RANK_NONE,
 			GST_TYPE_BTSTREAM_SRC);
@@ -429,11 +430,10 @@ static gboolean btstreamsrc_init(GstPlugin * btstreamsrc) {
 #define PACKAGE "btstream"
 #endif
 
-#define VERSION "0.2"
+#define VERSION "0.3"
 
-/* gstreamer looks for this structure to register btstreamsrcs
- *
- * exchange the string 'Template btstreamsrc' with your btstreamsrc description
+/*
+ * gstreamer looks for this structure to register btstreamsrcs
  */
 GST_PLUGIN_DEFINE( GST_VERSION_MAJOR, GST_VERSION_MINOR, "btstreamsrc",
 		"BitTorrent media source", btstreamsrc_init, VERSION, "LGPL",
