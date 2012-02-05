@@ -36,12 +36,15 @@ class BufferManager:
         self.start_buffering()
 
     def update(self, percent):
-        if percent == 100 and self.is_buffering:
-            self.stop_buffering()
+        logger.log("Buffer status: %d" % percent)
+            
+        if percent >= 95:
+            if self.is_buffering:
+                self.stop_buffering()
 
         elif not self.is_buffering:
             self.start_buffering()
-            
+
     def start_buffering(self):
         self.pipeline.set_state(gst.STATE_PAUSED)
 
