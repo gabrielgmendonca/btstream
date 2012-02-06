@@ -36,6 +36,8 @@ VideoTorrentManager::VideoTorrentManager() {
 
 	// Sets alert mask in order to receive downloaded pieces as alerts.
 	m_session.set_alert_mask(alert::storage_notification);
+
+	m_session.start_dht();
 }
 
 VideoTorrentManager::~VideoTorrentManager() {
@@ -68,7 +70,12 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 			seed_endpoint.address(address::from_string(seed_ip));
 			seed_endpoint.port(seed_port);
 
+			// Adds as peer
 			m_torrent_handle.connect_peer(seed_endpoint, peer_info::seed);
+
+			// Adds as DHT node
+			std::pair<std::string, int> node(seed_ip, seed_port);
+			m_session.add_dht_node(node);
 		}
 
 		// Gets the number of pieces that will be downloaded and played.

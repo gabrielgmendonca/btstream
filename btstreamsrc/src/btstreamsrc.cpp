@@ -182,7 +182,7 @@ static gboolean gst_btstream_src_stop(GstBaseSrc * basesrc) {
 		delete src->m_btstream;
 	}
 
-	GST_INFO("Stopping download.");
+	GST_INFO("Closing source.");
 
 	return TRUE;
 }
