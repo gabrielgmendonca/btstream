@@ -34,9 +34,13 @@ VideoTorrentManager::VideoTorrentManager() {
 	TorrentPluginFactory f(&create_video_plugin);
 	m_session.add_extension(f);
 
+	// Defines port range to listen.
+	m_session.listen_on(std::make_pair(6881, 6889));
+
 	// Sets alert mask in order to receive downloaded pieces as alerts.
 	m_session.set_alert_mask(alert::storage_notification);
 
+	// Starts extensions.
 	m_session.start_dht();
 }
 
@@ -93,7 +97,7 @@ void VideoTorrentManager::start_download(
 	m_video_buffer = video_buffer;
 
 	// Starts torrent download.
-	m_torrent_handle.auto_managed(true);
+	m_torrent_handle.resume();
 
 	// Starts VideoBuffer feeding thread that calls the feed_video_buffer method.
 	m_feeding_thread = boost::shared_ptr<boost::thread>(
