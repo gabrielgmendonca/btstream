@@ -22,8 +22,6 @@
  *      Author: gabriel
  */
 
-#include <iostream>
-
 #include "VideoTorrentPlugin.h"
 #include "VideoPeerPlugin.h"
 

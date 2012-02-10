@@ -124,9 +124,9 @@ void VideoTorrentManager::feed_video_buffer() {
 					int size = piece_alert->size;
 
 					m_video_buffer->add_piece(index, data, size);
-				}
 
-				m_pieces_to_play--;
+					m_pieces_to_play--;
+				}
 
 				// Removes alert from queue.
 				m_session.pop_alert();
