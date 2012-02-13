@@ -41,14 +41,15 @@ class VideoTorrentPlayer(gst.Pipeline):
     source.
     """
 
-    def __init__(self, torrent_path, use_fake_sink=False, 
-        sequential_download=False, seed_ip=None, seed_port=None):
+    def __init__(self, torrent_path, use_fake_sink, algorithm, stream_length,
+            seed_ip, seed_port):
 
         super(VideoTorrentPlayer, self).__init__("video-torrent-player")
 
         self.torrent_path = torrent_path
         self.use_fake_sink = use_fake_sink
-        self.sequential_download = sequential_download
+        self.algorithm = algorithm
+        self.stream_length = stream_length
         self.seed_ip = seed_ip
         self.seed_port = seed_port
         
@@ -75,7 +76,8 @@ class VideoTorrentPlayer(gst.Pipeline):
 
         # Configuring elements
         self.src.set_property("torrent", self.torrent_path)
-        self.src.set_property("sequential_download", self.sequential_download)
+        self.src.set_property("algorithm", self.algorithm)
+        self.src.set_property("stream_length", self.stream_length)
 
         if self.seed_ip is not None and self.seed_port is not None:
             self.src.set_property("seed_ip", self.seed_ip)

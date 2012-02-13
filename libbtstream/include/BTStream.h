@@ -47,17 +47,21 @@ public:
 	 * Constructor.
 	 * @param torrent_path
 	 * 			Path to a valid torrent file.
+	 * @param algorithm
+	 * 			Piece picking algorithm that will be used.
+	 * @param stream_length
+	 * 			Length of the decoded stream in milliseconds.
+	 * 			It must be provided when using the DEADLINE algorithm.
 	 * @param save_path
 	 * 			Path where the downloaded file will be stored.
-	 * @param sequential_download
-	 * 			Whether to use sequential download or rarest-first algorithm.
 	 * @param seed_ip
 	 * 			IP address of a previously known seed.
 	 * @param seed_port
 	 * 			Port to connect on the previously known seed.
 	 */
-	BTStream(const std::string& torrent_path, const std::string save_path = ".",
-			bool sequential_download = true, const std::string seed_ip = "",
+	BTStream(const std::string& torrent_path,
+			Algorithm algorithm = RAREST_FIRST, int stream_length = 0,
+			const std::string save_path = ".", const std::string seed_ip = "",
 			unsigned short seed_port = 0);
 
 	/**

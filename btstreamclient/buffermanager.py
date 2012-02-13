@@ -38,7 +38,7 @@ class BufferManager:
     def update(self, percent):
         logger.log("Buffer status: %d" % percent)
             
-        if percent >= 95:
+        if percent == 100:
             if self.is_buffering:
                 self.stop_buffering()
 

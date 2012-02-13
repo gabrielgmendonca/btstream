@@ -52,10 +52,11 @@ VideoTorrentManager::~VideoTorrentManager() {
 	}
 }
 
-int VideoTorrentManager::add_torrent(std::string file_name,
-		std::string save_path, bool sequential_download, std::string seed_ip,
+int VideoTorrentManager::add_torrent(std::string file_name, Algorithm algorithm,
+		int stream_length, std::string save_path, std::string seed_ip,
 		unsigned short seed_port) throw (Exception) {
 
+	int num_pieces = 0;
 	try {
 		add_torrent_params params;
 		params.ti = new torrent_info((const boost::filesystem::path) file_name);
@@ -65,8 +66,33 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 
 		m_torrent_handle = m_session.add_torrent(params);
 
-		// Sets piece selection policy: sequential download X rarest-first
-		m_torrent_handle.set_sequential_download(sequential_download);
+		num_pieces = params.ti.get()->num_pieces();
+
+		// Sets piece picking algorithm
+		switch (algorithm) {
+		case RAREST_FIRST:
+			m_torrent_handle.set_sequential_download(false);
+			break;
+
+		case SEQUENTIAL:
+			m_torrent_handle.set_sequential_download(true);
+			break;
+
+		case DEADLINE:
+			if (stream_length == 0) {
+				throw Exception("The decoded stream length must be provided.");
+			}
+
+			// Estimates decoded piece (audio/video) length.
+			float decoded_piece_length = (float) stream_length / num_pieces;
+			int buffering_time = 10000;
+
+			for (int i = 0; i < num_pieces; i++) {
+				int deadline = i * decoded_piece_length + buffering_time;
+				m_torrent_handle.set_piece_deadline(i, deadline);
+			}
+			break;
+		}
 
 		// Adds seed
 		if (seed_ip != "" && seed_port > 0) {
@@ -83,13 +109,13 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 		}
 
 		// Gets the number of pieces that will be downloaded and played.
-		m_pieces_to_play = params.ti.get()->num_pieces();
+		m_pieces_to_play = num_pieces;
 
 	} catch (std::exception& e) {
 		throw Exception(e.what());
 	}
 
-	return m_pieces_to_play;
+	return num_pieces;
 }
 
 void VideoTorrentManager::start_download(

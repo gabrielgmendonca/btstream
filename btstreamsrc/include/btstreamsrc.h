@@ -76,8 +76,9 @@ struct _GstBTStreamSrc {
 
 	// Writable properties
 	gchar* m_torrent;
+	gchar* m_algorithm;
+	int m_stream_length;
 	gchar* m_save_path;
-	bool m_sequential_download;
 	gchar* m_seed_ip;
 	unsigned short m_seed_port;
 };

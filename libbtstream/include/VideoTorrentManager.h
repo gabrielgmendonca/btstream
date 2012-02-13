@@ -48,6 +48,10 @@ struct Status {
 	long seconds_to_next_announce;
 };
 
+enum Algorithm {
+	RAREST_FIRST, SEQUENTIAL, DEADLINE
+};
+
 /**
  * Manages video torrents through libtorrent.
  * Sends downloaded pieces to a VideoBuffer in order to be played.
@@ -69,8 +73,8 @@ public:
 	 * Prepares the download of the torrent given by file_name and returns the
 	 * number of pieces. The address of a previously known seed may be provided.
 	 */
-	int add_torrent(std::string file_name, std::string save_path,
-			bool sequential_download, std::string seed_ip,
+	int add_torrent(std::string file_name, Algorithm algorithm,
+			int stream_length, std::string save_path, std::string seed_ip,
 			unsigned short seed_port) throw (Exception);
 
 	/**

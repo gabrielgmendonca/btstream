@@ -78,8 +78,9 @@ enum {
 enum {
 	PROP_0,
 	PROP_TORRENT,
+	PROP_ALGORITHM,
+	PROP_STREAM_LENGTH,
 	PROP_SAVE_PATH,
-	PROP_SEQUENTIAL_DOWNLOAD,
 	PROP_SEED_IP,
 	PROP_SEED_PORT,
 	PROP_DOWNLOAD_RATE,
@@ -110,20 +111,34 @@ static gboolean gst_btstream_src_start(GstBaseSrc * basesrc) {
 	GstBTStreamSrc *src = GST_BTSTREAM_SRC(basesrc);
 
 	std::string torrent_path, save_path, seed_ip;
+	btstream::Algorithm algorithm = btstream::RAREST_FIRST;
+
 	if (src->m_torrent) {
 		torrent_path = src->m_torrent;
 	}
+
+	if (src->m_algorithm) {
+		if (g_strcmp0(src->m_algorithm, "sequential") == 0) {
+			algorithm = btstream::SEQUENTIAL;
+		} else if (g_strcmp0(src->m_algorithm, "deadline") == 0) {
+			algorithm = btstream::DEADLINE;
+		}
+	}
+
+	int stream_length = src->m_stream_length;
+
 	if (src->m_save_path) {
 		save_path = src->m_save_path;
 	}
+
 	if (src->m_seed_ip) {
 		seed_ip = src->m_seed_ip;
 	}
-	bool sequential_download = src->m_sequential_download;
+
 	unsigned short seed_port = src->m_seed_port;
 
-	src->m_btstream = new btstream::BTStream(torrent_path, save_path,
-			sequential_download, seed_ip, seed_port);
+	src->m_btstream = new btstream::BTStream(torrent_path, algorithm,
+			stream_length, save_path, seed_ip, seed_port);
 
 	GST_INFO("Creating BTStreamSrc and starting torrent download.");
 
@@ -208,13 +223,18 @@ static void gst_btstream_src_set_property(GObject * object, guint prop_id,
 		src->m_torrent = g_value_dup_string(value);
 		break;
 
+	case PROP_ALGORITHM:
+		g_free(src->m_algorithm);
+		src->m_algorithm = g_value_dup_string(value);
+		break;
+
+	case PROP_STREAM_LENGTH:
+		src->m_stream_length = g_value_get_int(value);
+		break;
+
 	case PROP_SAVE_PATH:
 		g_free(src->m_save_path);
 		src->m_save_path = g_value_dup_string(value);
-		break;
-
-	case PROP_SEQUENTIAL_DOWNLOAD:
-		src->m_sequential_download = g_value_get_boolean(value);
 		break;
 
 	case PROP_SEED_IP:
@@ -241,12 +261,16 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 		g_value_set_string(value, src->m_torrent);
 		break;
 
-	case PROP_SAVE_PATH:
-		g_value_set_string(value, src->m_save_path);
+	case PROP_ALGORITHM:
+		g_value_set_string(value, src->m_algorithm);
 		break;
 
-	case PROP_SEQUENTIAL_DOWNLOAD:
-		g_value_set_boolean(value, src->m_sequential_download);
+	case PROP_STREAM_LENGTH:
+		g_value_set_int(value, src->m_stream_length);
+		break;
+
+	case PROP_SAVE_PATH:
+		g_value_set_string(value, src->m_save_path);
 		break;
 
 	case PROP_SEED_IP:
@@ -298,19 +322,22 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 
 	case PROP_CONNECTED_PEERS:
 		if (src->m_btstream) {
-			g_value_set_int(value, src->m_btstream->get_status().num_connected_peers);
+			g_value_set_int(value,
+					src->m_btstream->get_status().num_connected_peers);
 		}
 		break;
 
 	case PROP_CONNECTED_SEEDS:
 		if (src->m_btstream) {
-			g_value_set_int(value, src->m_btstream->get_status().num_connected_seeds);
+			g_value_set_int(value,
+					src->m_btstream->get_status().num_connected_seeds);
 		}
 		break;
 
 	case PROP_NEXT_ANNOUNCE:
 		if (src->m_btstream) {
-			g_value_set_int(value, src->m_btstream->get_status().seconds_to_next_announce);
+			g_value_set_int(value,
+					src->m_btstream->get_status().seconds_to_next_announce);
 		}
 		break;
 
@@ -326,8 +353,8 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 static void gst_btstream_src_base_init(gpointer gclass) {
 	GstElementClass *element_class = GST_ELEMENT_CLASS (gclass);
 
-	gst_element_class_set_details_simple(element_class, "BTStreamSrc",
-			"source", "BitTorrent media source.",
+	gst_element_class_set_details_simple(element_class, "BTStreamSrc", "source",
+			"BitTorrent media source.",
 			"Gabriel Mendonça <<gabrielgmendonca@poli.ufrj.br>>");
 
 	gst_element_class_add_pad_template(element_class,
@@ -359,14 +386,14 @@ static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
 	// Read-write properties
 	installer.install_string(PROP_TORRENT, "torrent", "Torrent",
 			"Torrent file path.", "", true);
+	installer.install_string(PROP_ALGORITHM, "algorithm", "Algorithm",
+			"Piece picking algorithm: rarest-first, sequential or deadline.",
+			"rarest-first", true);
+	installer.install_int(PROP_STREAM_LENGTH,"stream_length","Stream Length",
+			"Estimation of decoded stream's length in milliseconds. Used by deadline algorithm.",
+			0, 999999999, 0, true);
 	installer.install_string(PROP_SAVE_PATH, "save_path", "Save Path",
 			"Where to save downloaded files.", "./", true);
-	installer.install_bool(
-			PROP_SEQUENTIAL_DOWNLOAD,
-			"sequential_download",
-			"Sequential Download",
-			"Indicates if sequential download will be used for piece selection. Otherwise, uses rarest-first algorithm.",
-			true, true);
 	installer.install_string(PROP_SEED_IP, "seed_ip", "Seed IP",
 			"IP of a known seed.", "", true);
 	installer.install_int(PROP_SEED_PORT, "seed_port", "Seed Port",

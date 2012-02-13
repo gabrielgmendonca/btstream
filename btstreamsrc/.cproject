@@ -37,10 +37,10 @@
 									<listOptionValue builtIn="false" value="/usr/include/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include-fixed"/>
 									<listOptionValue builtIn="false" value="/usr/local/include"/>
-									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
 									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/backward"/>
 									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/include/c++/4.6"/>
+									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
 									<listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
 									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu/glib-2.0/include"/>
 									<listOptionValue builtIn="false" value="/usr/include/gstreamer-0.10"/>
@@ -57,10 +57,10 @@
 									<listOptionValue builtIn="false" value="/usr/include/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include-fixed"/>
 									<listOptionValue builtIn="false" value="/usr/local/include"/>
-									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
 									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/backward"/>
 									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/include/c++/4.6"/>
+									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
 									<listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
 									<listOptionValue builtIn="false" value="/usr/lib/x86_64-linux-gnu/glib-2.0/include"/>
 									<listOptionValue builtIn="false" value="/usr/include/gstreamer-0.10"/>
@@ -104,10 +104,10 @@
 									<listOptionValue builtIn="false" value="/usr/include/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include-fixed"/>
 									<listOptionValue builtIn="false" value="/usr/local/include"/>
-									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
 									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/backward"/>
 									<listOptionValue builtIn="false" value="/usr/include/c++/4.6/x86_64-linux-gnu"/>
 									<listOptionValue builtIn="false" value="/usr/include/c++/4.6"/>
+									<listOptionValue builtIn="false" value="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1268669900" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -151,10 +151,10 @@
 						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/x86_64-linux-gnu"/>
 						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include-fixed"/>
 						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/local/include"/>
-						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
 						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/c++/4.6/backward"/>
 						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/c++/4.6/x86_64-linux-gnu"/>
 						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/include/c++/4.6"/>
+						<entry flags="BUILTIN|READONLY|RESOLVED" kind="includePath" name="/usr/lib/gcc/x86_64-linux-gnu/4.6.1/include"/>
 					</externalSetting>
 				</externalSettings>
 			</storageModule>

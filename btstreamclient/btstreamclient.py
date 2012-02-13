@@ -46,7 +46,7 @@ class Main(gobject.MainLoop):
         logger.log_event("Download started.")
 
         self.pipeline = VideoTorrentPlayer(self.torrent_path, self.use_fake_sink,
-            self.sequential_download, self.seed_ip, self.seed_port)
+            self.algorithm, self.stream_length, self.seed_ip, self.seed_port)
         self.message_handler = MessageHandler(self, self.pipeline)
 
     def parse_args(self):
@@ -55,8 +55,11 @@ class Main(gobject.MainLoop):
         parser.add_argument("torrent_path", help="torrent file to open")
         parser.add_argument("-f", dest="fake_sink", action="store_true", 
             help="produce fake audio/video output")
-        parser.add_argument("--seq", dest="sequential", action="store_true", 
-            help="download pieces sequentially and not in rarest-first order")
+        parser.add_argument("--algorithm",
+            choices=["rarest-first", "sequential", "deadline"],
+            default="rarest-first", help="piece picking algorithm")
+        parser.add_argument("--stream_length", type=int, default=0,
+            help="Length of the video in milliseconds")
         parser.add_argument("--seed", nargs=2, metavar=("IP", "port"),
             help="IP address and port of a previously known seed")
 
@@ -64,7 +67,8 @@ class Main(gobject.MainLoop):
         
         self.torrent_path = args.torrent_path
         self.use_fake_sink = args.fake_sink
-        self.sequential_download = args.sequential
+        self.algorithm = args.algorithm
+        self.stream_length = args.stream_length
 
         if args.seed is not None:
             self.seed_ip = args.seed[0]
