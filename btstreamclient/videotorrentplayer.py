@@ -85,6 +85,7 @@ class VideoTorrentPlayer(gst.Pipeline):
         
         self.decoder.set_property("use-buffering", True)
         self.decoder.set_property("low-percent", 5)
+        self.decoder.set_property("max-size-bytes", 4 * 1024 * 1024)
 
         # Configuring callbacks
         self.decoder.connect("new-decoded-pad", self.handle_decoded_pad)
