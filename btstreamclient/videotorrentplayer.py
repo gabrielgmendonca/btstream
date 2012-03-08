@@ -42,7 +42,7 @@ class VideoTorrentPlayer(gst.Pipeline):
     """
 
     def __init__(self, torrent_path, use_fake_sink, algorithm, stream_length,
-            seed_ip, seed_port):
+            buffer_size, seed_ip, seed_port):
 
         super(VideoTorrentPlayer, self).__init__("video-torrent-player")
 
@@ -50,6 +50,7 @@ class VideoTorrentPlayer(gst.Pipeline):
         self.use_fake_sink = use_fake_sink
         self.algorithm = algorithm
         self.stream_length = stream_length
+        self.buffer_size = buffer_size
         self.seed_ip = seed_ip
         self.seed_port = seed_port
         
@@ -82,10 +83,12 @@ class VideoTorrentPlayer(gst.Pipeline):
         if self.seed_ip is not None and self.seed_port is not None:
             self.src.set_property("seed_ip", self.seed_ip)
             self.src.set_property("seed_port", int(self.seed_port))
-        
+
+        # Configuring playback buffer        
         self.decoder.set_property("use-buffering", True)
         self.decoder.set_property("low-percent", 5)
-        self.decoder.set_property("max-size-bytes", 4 * 1024 * 1024)
+        self.decoder.set_property("max-size-bytes", 
+            int(self.buffer_size * 1024 * 1024))
 
         # Configuring callbacks
         self.decoder.connect("new-decoded-pad", self.handle_decoded_pad)
