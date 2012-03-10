@@ -124,10 +124,12 @@ class VideoTorrentPlayer(gst.Pipeline):
             self.download_rates.append(download_rate)
 
             pieces = self.src.get_property("pieces")
+            num_pieces = self.src.get_property("num_pieces")
 
             logger.log("Download progress: %d%%" % download_progress)
             logger.log("Download rate: %d KiB/s" % download_rate)
             logger.log("Pieces: %s" % pieces)
+            logger.log("Number of pieces: %s" % num_pieces)
 
         elif not self.download_finished:
             self.download_finished = True
@@ -144,10 +146,14 @@ class VideoTorrentPlayer(gst.Pipeline):
         seeds = self.src.get_property("num_seeds")
         connected_peers = self.src.get_property("num_connected_peers")
         connected_seeds = self.src.get_property("num_connected_seeds")
+        num_uploads = self.src.get_property("num_uploads")
+        distributed_copies = self.src.get_property("distributed_copies")
         next_announce = self.src.get_property("next_announce")
 
         logger.log("Connected peers (total): %d (%d)" % (connected_peers, peers))
         logger.log("Connected seeds (total): %d (%d)" % (connected_seeds, seeds))
+        logger.log("Number of unchocked peers: %d" % num_uploads)
+        logger.log("Distributed copies: %d" % distributed_copies)
         logger.log("Next annouce to tracker (s): %d" % next_announce)
 
         return True
