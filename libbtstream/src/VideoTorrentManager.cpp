@@ -170,10 +170,13 @@ Status VideoTorrentManager::get_status() {
 	status.download_rate = t_status.download_payload_rate;
 	status.upload_rate = t_status.upload_payload_rate;
 	status.download_progress = t_status.progress;
+	status.num_pieces = t_status.num_pieces;
 	status.num_peers = t_status.list_peers;
 	status.num_seeds = t_status.list_seeds;
 	status.num_connected_peers = t_status.num_peers;
 	status.num_connected_seeds = t_status.num_seeds;
+	status.num_uploads = t_status.num_uploads;
+	status.distributed_copies = t_status.distributed_full_copies;
 	status.seconds_to_next_announce = t_status.next_announce.seconds();
 
 	int num_pieces = t_status.pieces.size();

@@ -41,10 +41,13 @@ struct Status {
 	int upload_rate;
 	float download_progress;
 	boost::dynamic_bitset<> pieces;
+	int num_pieces;
 	int num_peers;
 	int num_seeds;
 	int num_connected_peers;
 	int num_connected_seeds;
+	int num_uploads;
+	int distributed_copies;
 	long seconds_to_next_announce;
 };
 

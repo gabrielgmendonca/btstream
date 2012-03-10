@@ -87,10 +87,13 @@ enum {
 	PROP_UPLOAD_RATE,
 	PROP_DOWNLOAD_PROGRESS,
 	PROP_PIECES,
+	PROP_NUM_PIECES,
 	PROP_PEERS,
 	PROP_SEEDS,
 	PROP_CONNECTED_PEERS,
 	PROP_CONNECTED_SEEDS,
+	PROP_UPLOADS,
+	PROP_DISTRIBUTED_COPIES,
 	PROP_NEXT_ANNOUNCE
 };
 
@@ -308,6 +311,12 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 		}
 		break;
 
+	case PROP_NUM_PIECES:
+		if (src->m_btstream) {
+			g_value_set_int(value, src->m_btstream->get_status().num_pieces);
+		}
+		break;
+
 	case PROP_PEERS:
 		if (src->m_btstream) {
 			g_value_set_int(value, src->m_btstream->get_status().num_peers);
@@ -331,6 +340,18 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 		if (src->m_btstream) {
 			g_value_set_int(value,
 					src->m_btstream->get_status().num_connected_seeds);
+		}
+		break;
+
+	case PROP_UPLOADS:
+		if (src->m_btstream) {
+			g_value_set_int(value, src->m_btstream->get_status().num_uploads);
+		}
+		break;
+
+	case PROP_DISTRIBUTED_COPIES:
+		if (src->m_btstream) {
+			g_value_set_int(value, src->m_btstream->get_status().distributed_copies);
 		}
 		break;
 
@@ -408,6 +429,8 @@ static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
 			"Download Progress", "Torrent download progress.");
 	installer.install_string(PROP_PIECES, "pieces", "Pieces",
 			"Binary representation of received pieces.");
+	installer.install_int(PROP_NUM_PIECES, "num_pieces", "Number of Pieces",
+			"Number of downloaded pieces.", 0, 999999999, 0);
 	installer.install_int(PROP_PEERS, "num_peers", "Number of Peers",
 			"Number of known peers in the swarm.", 0, 999999999, 0);
 	installer.install_int(PROP_SEEDS, "num_seeds", "Number of Seeds",
@@ -418,6 +441,13 @@ static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
 	installer.install_int(PROP_CONNECTED_SEEDS, "num_connected_seeds",
 			"Number of Connected Seeds", "Number of connected seeds.", 0,
 			999999999, 0);
+	installer.install_int(PROP_UPLOADS, "num_uploads",
+			"Number of Uploads", "Number of unchocked peers.", 0,
+			999999999, 0);
+	installer.install_int(PROP_DISTRIBUTED_COPIES, "distributed_copies",
+			"Number of Distributed Copies",
+			"Number of copies of the rarest piece(s) among connected peers.",
+			0, 999999999, 0);
 	installer.install_int(PROP_NEXT_ANNOUNCE, "next_announce", "Next Announce",
 			"Seconds until next announce to tracker.", 0, 999999999, 0);
 }
