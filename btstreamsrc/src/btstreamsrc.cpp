@@ -422,9 +422,9 @@ static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
 
 	// Read-only properties
 	installer.install_int(PROP_DOWNLOAD_RATE, "download_rate", "Download Rate",
-			"Torrent download rate in KiB/s.", 0, 999999999, 0);
+			"Torrent download rate in B/s.", 0, 999999999, 0);
 	installer.install_int(PROP_UPLOAD_RATE, "upload_rate", "Upload Rate",
-			"Torrent upload rate in KiB/s.", 0, 999999999, 0);
+			"Torrent upload rate in B/s.", 0, 999999999, 0);
 	installer.install_float(PROP_DOWNLOAD_PROGRESS, "download_progress",
 			"Download Progress", "Torrent download progress.");
 	installer.install_string(PROP_PIECES, "pieces", "Pieces",
