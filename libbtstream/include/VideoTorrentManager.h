@@ -31,6 +31,7 @@
 
 #include "VideoBuffer.h"
 #include "Exception.h"
+#include "PiecePicker.h"
 
 using namespace libtorrent;
 
@@ -75,9 +76,21 @@ public:
 	/**
 	 * Prepares the download of the torrent given by file_name and returns the
 	 * number of pieces. The address of a previously known seed may be provided.
+	 *
+	 * With this method, a built-in piece selection algorithm can be chosen.
 	 */
 	int add_torrent(std::string file_name, Algorithm algorithm,
 			int stream_length, std::string save_path, std::string seed_ip,
+			unsigned short seed_port) throw (Exception);
+
+	/**
+	 * Prepares the download of the torrent given by file_name and returns the
+	 * number of pieces. The address of a previously known seed may be provided.
+	 *
+	 * With this method, a custom piece selection algorithm can be provided.
+	 */
+	int add_torrent(std::string file_name, PiecePicker* piece_picker,
+			std::string save_path, std::string seed_ip,
 			unsigned short seed_port) throw (Exception);
 
 	/**
@@ -101,6 +114,7 @@ public:
 	Status get_status();
 
 private:
+
 	session m_session;
 	torrent_handle m_torrent_handle;
 	boost::shared_ptr<VideoBuffer> m_video_buffer;
