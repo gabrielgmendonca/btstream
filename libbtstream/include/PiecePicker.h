@@ -16,17 +16,50 @@
  * along with BTStream.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * VideoPeerPlugin.cpp
+ * PiecePicker.h
  *
- *  Created on: 06/09/2011
+ *  Created on: 11/03/2012
  *      Author: gabriel
  */
 
-#include "VideoPeerPlugin.h"
+#ifndef PIECEPICKER_H_
+#define PIECEPICKER_H_
+
+#include <libtorrent/torrent.hpp>
+
+using namespace libtorrent;
 
 namespace btstream {
 
-VideoPeerPlugin::VideoPeerPlugin(peer_connection* pc) :
-		m_peer_connection(pc) {}
+class PiecePicker {
+public:
+
+	PiecePicker();
+
+	/**
+	 * Adds a new piece request to the download queue.
+	 * The piece selection is done by the pick_piece method.
+	 */
+	virtual void add_piece_request(torrent* t);
+
+	/**
+	 * Adds first requests to download queue.
+	 * The piece selection is done by the pick_piece method.
+	 */
+	virtual void init(torrent* t);
+
+	virtual ~PiecePicker() {};
+
+protected:
+
+	/**
+	 * Returns the index of the next piece that should be requested.
+	 */
+	virtual int pick_piece(torrent* t) = 0;
+
+private:
+	int m_deadline;
+};
 
 } /* namespace btstream */
+#endif /* PIECEPICKER_H_ */

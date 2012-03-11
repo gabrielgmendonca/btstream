@@ -30,28 +30,26 @@
 #include <libtorrent/extensions.hpp>
 #include <libtorrent/torrent.hpp>
 
+#include "PiecePicker.h"
+
 using namespace libtorrent;
 
 namespace btstream {
 
 class VideoTorrentPlugin: public torrent_plugin {
 public:
-	VideoTorrentPlugin(torrent* t);
+	VideoTorrentPlugin(torrent* t, PiecePicker* pp = 0);
 
 	/**
-	 * Returns a VideoPeerPlugin.
-	 * Called when a new peer is connected to the torrent.
-	 */
-	virtual boost::shared_ptr<peer_plugin> new_connection(peer_connection* pc);
-
-	/**
-	 * Informs torrent that the received piece will be read.
+	 * Informs torrent that the received piece will be read. If a custom
+	 * PiecePicker was provided, requests the next piece.
 	 * Called when a piece is received and pass the hash check.
 	 */
 	virtual void on_piece_pass(int index);
 
 private:
 	torrent* m_torrent;
+	boost::shared_ptr<PiecePicker> m_piece_picker;
 };
 
 /**

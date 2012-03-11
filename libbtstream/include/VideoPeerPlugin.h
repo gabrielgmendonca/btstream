@@ -35,12 +35,6 @@ class VideoPeerPlugin: public peer_plugin {
 public:
 	VideoPeerPlugin(peer_connection* pc);
 
-	/**
-	 * Requests a new piece from peer.
-	 * Called when peer sends an unchoke message.
-	 */
-	virtual bool on_unchoke();
-
 private:
 	peer_connection* m_peer_connection;
 };
