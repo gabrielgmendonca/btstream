@@ -85,11 +85,16 @@ class BufferManager:
 
         # Logging
         logger.log("--*--Buffer statistics--*--")
-        logger.log("Time to start playback (s): %f" % initial_wait)
+        logger.log("Time to start playback (s): %d" % initial_wait)
         logger.log("Number of interruptions: %d" % interruptions)
         logger.log("Interruption time (s) - mean: %f" % mean_time)
         logger.log("Interruption time (s) - standard deviation: %f" % std_time)
         logger.log("Interruptions (s): %r" % buffering_time)
-        
+
+        logger.log_to_file("playback_start_time, %d\r\n" % initial_wait)
+        logger.log_to_file("interruptions, %d\r\n" % interruptions)
+        logger.log_to_file("interruption_time_mean, %f\r\n" % mean_time)
+        logger.log_to_file("interruption_time_stdev, %f\r\n" % std_time)
+
 
 

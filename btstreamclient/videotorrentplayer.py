@@ -161,6 +161,7 @@ class VideoTorrentPlayer(gst.Pipeline):
     def close(self):
         self.set_state(gst.STATE_NULL)
         self.log()
+        logger.close()
 
     def log(self):
         mean_download_rate = stats.avg(self.download_rates)
@@ -175,8 +176,16 @@ class VideoTorrentPlayer(gst.Pipeline):
         logger.log("Upload rate (KiB/s) - mean: %f" % mean_upload_rate)
         logger.log("Upload rate (KiB/s) - standard deviation: %f" % std_upload_rate)
 
+        logger.log_to_file("download_rate_mean, %f\r\n" % mean_download_rate)
+        logger.log_to_file("download_rate_stdev, %f\r\n" % std_download_rate)
+        logger.log_to_file("upload_rate_mean, %f\r\n" % mean_upload_rate)
+        logger.log_to_file("upload_rate_stdev, %f\r\n" % std_upload_rate)
+
         if self.download_finished:
             logger.log("Download time (s): %d" % self.download_time)
+            logger.log_to_file("download_time, %d\r\n" % self.download_time)
+        else:
+            logger.log_to_file("download_time, %d\r\n" % -1)
 
         self.buffer_manager.log()
 

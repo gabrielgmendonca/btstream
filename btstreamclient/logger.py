@@ -23,6 +23,10 @@
 
 from time import time
 
+log_file = None
+
+LOG_FILE_NAME = "%d.log" % time()
+
 def log(message):
     print "%d: %s" % (time(), message)
 
@@ -32,6 +36,21 @@ def log_event(message):
 def log_error(error, debug):
     print "%d: [Error] %s" % (time(), error)
     print "[Debug] ", debug
+
+
+def log_to_file(message):
+    global log_file, LOG_FILE_NAME
+
+    if log_file is None:
+        log_file = open(LOG_FILE_NAME, "w")
+
+    log_file.write(message)
+
+def close():
+    global log_file
+
+    if log_file is not None:
+        log_file.close()
 
 
 
