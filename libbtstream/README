@@ -1,0 +1,16 @@
+libbtstream is a C++ library that implements a BitTorrent client and provides
+a simple API to read downloaded pieces sequentially, allowing the development 
+of P2P multimedia streaming software. It implements different piece selection
+algorithms and allows the implementation of new BitTorrent extensions.
+
+For more information, see the project's page:
+
+    http://code.google.com/p/btstream
+
+To build with GNU Autotools, just follow the standard steps:
+
+    ./configure
+    make
+    make install
+
+You may need to run the last step as a super user (sudo). 

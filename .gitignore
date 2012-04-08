@@ -6,8 +6,46 @@ DebugBuild
 ReleaseBuild
 TestBuild
 
+# Object files
+*.o
+*.lo
+
 # Binary python files
 *.pyc
 
 # Gedit backups
 *~
+
+# Autotools generated files
+Makefile
+Makefile.in
+
+configure
+config.guess
+config.log
+config.status
+config.sub
+
+*.pc
+*.la
+
+aclocal.m4
+autom4te.cache
+libtool.m4
+ltoptions.m4
+ltsugar.m4
+ltversion.m4
+lt~obsolete.m4
+
+depcomp
+install-sh
+libtool
+ltmain.sh
+missing
+
+.deps
+.libs
+
+# Package
+*.tar.gz
+

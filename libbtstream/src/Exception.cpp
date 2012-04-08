@@ -22,7 +22,7 @@
  *      Author: gabriel
  */
 
-#include "../include/Exception.h"
+#include "Exception.h"
 
 namespace btstream {
 
