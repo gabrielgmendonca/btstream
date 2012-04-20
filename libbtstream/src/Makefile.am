@@ -1,24 +1,24 @@
 lib_LTLIBRARIES = libbtstream.la
 
 libbtstream_la_SOURCES = \
-  BTStream.cpp \
-  Exception.cpp \
-  PiecePicker.cpp \
-  SequentialPiecePicker.cpp \
-  VideoBuffer.cpp \
-  VideoPeerPlugin.cpp \
-  VideoTorrentManager.cpp \
-  VideoTorrentPlugin.cpp
+  btstream.cpp \
+  exception.cpp \
+  piecepicker.cpp \
+  sequentialpiecepicker.cpp \
+  videobuffer.cpp \
+  videopeerplugin.cpp \
+  videotorrentmanager.cpp \
+  videotorrentplugin.cpp
    
 pkginclude_HEADERS = \
-  BTStream.h \
-  Exception.h \
-  PiecePicker.h \
-  SequentialPiecePicker.h \
-  VideoBuffer.h \
-  VideoPeerPlugin.h \
-  VideoTorrentManager.h \
-  VideoTorrentPlugin.h
+  btstream.h \
+  exception.h \
+  piecepicker.h \
+  sequentialpiecepicker.h \
+  videobuffer.h \
+  videopeerplugin.h \
+  videotorrentmanager.h \
+  videotorrentplugin.h
 
 libbtstream_la_LDFLAGS = -version-info @INTERFACE_VERSION_INFO@ -no-undefined
 

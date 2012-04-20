@@ -16,17 +16,35 @@
  * along with BTStream.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * VideoPeerPlugin.cpp
+ * VideoTorrentPlugin.cpp
  *
- *  Created on: 06/09/2011
+ *  Created on: 24/08/2011
  *      Author: gabriel
  */
 
-#include "VideoPeerPlugin.h"
+#include "videotorrentplugin.h"
+#include "videopeerplugin.h"
 
 namespace btstream {
 
-VideoPeerPlugin::VideoPeerPlugin(peer_connection* pc) :
-		m_peer_connection(pc) {}
+VideoTorrentPlugin::VideoTorrentPlugin(torrent* t, PiecePicker* pp) :
+		m_torrent(t), m_piece_picker(pp) {
+
+	if (m_piece_picker) {
+		m_piece_picker->init(m_torrent);
+	}
+}
+
+void VideoTorrentPlugin::on_piece_pass(int index) {
+	m_torrent->read_piece(index);
+
+	if (m_piece_picker) {
+		m_piece_picker->add_piece_request(m_torrent);
+	}
+}
+
+boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void* params) {
+	return boost::shared_ptr<torrent_plugin>(new VideoTorrentPlugin(t, (PiecePicker*) params));
+}
 
 } /* namespace btstream */

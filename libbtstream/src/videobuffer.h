@@ -31,7 +31,7 @@
 #include <boost/shared_array.hpp>
 #include <boost/thread.hpp>
 
-#include "Exception.h"
+#include "exception.h"
 
 namespace btstream {
 

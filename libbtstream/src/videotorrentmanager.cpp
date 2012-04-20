@@ -22,11 +22,11 @@
  *      Author: gabriel
  */
 
-#include "VideoTorrentManager.h"
+#include "videotorrentmanager.h"
 
 #include <libtorrent/alert_types.hpp>
 
-#include "VideoTorrentPlugin.h"
+#include "videotorrentplugin.h"
 
 namespace btstream {
 

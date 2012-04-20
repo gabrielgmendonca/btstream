@@ -16,23 +16,26 @@
  * along with BTStream.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * Exception.cpp
+ * SequentialPiecePicker.cpp
  *
- *  Created on: 16/10/2011
+ *  Created on: 11/03/2012
  *      Author: gabriel
  */
 
-#include "Exception.h"
+#include "sequentialpiecepicker.h"
 
 namespace btstream {
 
-Exception::Exception(std::string message) throw():
-		m_message(message) {}
+SequentialPiecePicker::SequentialPiecePicker() :
+		m_counter(0) {
+}
 
-Exception::~Exception() throw() {}
-
-const char* Exception::what() const throw() {
-	return m_message.c_str();
+int SequentialPiecePicker::pick_piece(torrent* t) {
+	if (m_counter < t->torrent_file().num_pieces()) {
+		return m_counter++;
+	} else {
+		return m_counter - 1;
+	}
 }
 
 } /* namespace btstream */

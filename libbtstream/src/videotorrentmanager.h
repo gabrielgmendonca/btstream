@@ -29,9 +29,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/dynamic_bitset.hpp>
 
-#include "VideoBuffer.h"
-#include "Exception.h"
-#include "PiecePicker.h"
+#include "videobuffer.h"
+#include "exception.h"
+#include "piecepicker.h"
 
 using namespace libtorrent;
 

@@ -22,7 +22,7 @@
  *      Author: gabriel
  */
 
-#include "BTStream.h"
+#include "btstream.h"
 
 namespace btstream {
 

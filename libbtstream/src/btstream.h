@@ -28,8 +28,8 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
-#include "VideoTorrentManager.h"
-#include "VideoBuffer.h"
+#include "videotorrentmanager.h"
+#include "videobuffer.h"
 
 namespace btstream {
 

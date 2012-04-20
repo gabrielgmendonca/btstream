@@ -30,7 +30,7 @@
 #include <libtorrent/extensions.hpp>
 #include <libtorrent/torrent.hpp>
 
-#include "PiecePicker.h"
+#include "piecepicker.h"
 
 using namespace libtorrent;
 

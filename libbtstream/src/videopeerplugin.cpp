@@ -16,26 +16,17 @@
  * along with BTStream.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * SequentialPiecePicker.cpp
+ * VideoPeerPlugin.cpp
  *
- *  Created on: 11/03/2012
+ *  Created on: 06/09/2011
  *      Author: gabriel
  */
 
-#include "SequentialPiecePicker.h"
+#include "videopeerplugin.h"
 
 namespace btstream {
 
-SequentialPiecePicker::SequentialPiecePicker() :
-		m_counter(0) {
-}
-
-int SequentialPiecePicker::pick_piece(torrent* t) {
-	if (m_counter < t->torrent_file().num_pieces()) {
-		return m_counter++;
-	} else {
-		return m_counter - 1;
-	}
-}
+VideoPeerPlugin::VideoPeerPlugin(peer_connection* pc) :
+		m_peer_connection(pc) {}
 
 } /* namespace btstream */

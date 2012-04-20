@@ -25,7 +25,7 @@
 #ifndef SEQUENTIALPIECEPICKER_H_
 #define SEQUENTIALPIECEPICKER_H_
 
-#include "PiecePicker.h"
+#include "piecepicker.h"
 
 namespace btstream {
 

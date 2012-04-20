@@ -16,35 +16,23 @@
  * along with BTStream.  If not, see <http://www.gnu.org/licenses/>.
  *
  *
- * VideoTorrentPlugin.cpp
+ * Exception.cpp
  *
- *  Created on: 24/08/2011
+ *  Created on: 16/10/2011
  *      Author: gabriel
  */
 
-#include "VideoTorrentPlugin.h"
-#include "VideoPeerPlugin.h"
+#include "exception.h"
 
 namespace btstream {
 
-VideoTorrentPlugin::VideoTorrentPlugin(torrent* t, PiecePicker* pp) :
-		m_torrent(t), m_piece_picker(pp) {
+Exception::Exception(std::string message) throw():
+		m_message(message) {}
 
-	if (m_piece_picker) {
-		m_piece_picker->init(m_torrent);
-	}
-}
+Exception::~Exception() throw() {}
 
-void VideoTorrentPlugin::on_piece_pass(int index) {
-	m_torrent->read_piece(index);
-
-	if (m_piece_picker) {
-		m_piece_picker->add_piece_request(m_torrent);
-	}
-}
-
-boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void* params) {
-	return boost::shared_ptr<torrent_plugin>(new VideoTorrentPlugin(t, (PiecePicker*) params));
+const char* Exception::what() const throw() {
+	return m_message.c_str();
 }
 
 } /* namespace btstream */

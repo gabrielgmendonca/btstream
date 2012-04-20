@@ -5,7 +5,7 @@
  *      Author: gabriel
  */
 
-#include "PiecePicker.h"
+#include "piecepicker.h"
 
 namespace btstream {
 

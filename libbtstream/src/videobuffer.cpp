@@ -22,7 +22,7 @@
  *      Author: gabriel
  */
 
-#include "VideoBuffer.h"
+#include "videobuffer.h"
 
 #include <boost/lexical_cast.hpp>
 
