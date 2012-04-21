@@ -21,7 +21,7 @@
  *      Author: gabriel
  */
 
-#include "PropertyInstaller.h"
+#include "propertyinstaller.h"
 
 PropertyInstaller::PropertyInstaller(GObjectClass* gobject_class) :
 		m_gobject_class(gobject_class) {

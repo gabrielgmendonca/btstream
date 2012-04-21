@@ -1,8 +1,11 @@
 # Prelude
 AC_PREREQ([2.59])
 
-AC_INIT([libbtstream], [0.1], [gabrielgmendonca@poli.ufrj.br])
+AC_INIT([btstreamsrc], [0.1], [gabrielgmendonca@poli.ufrj.br])
 AC_CONFIG_MACRO_DIR([m4])
+
+dnl Get prefix from GStreamer 
+AC_PREFIX_PROGRAM(gst-launch-0.10)
 
 AC_LANG_CPLUSPLUS
 
@@ -47,12 +50,13 @@ AC_PROG_CXX
 PKG_PROG_PKG_CONFIG([0.20])
 
 # Check for libraries
-PKG_CHECK_MODULES([LIBTORRENT], [libtorrent-rasterbar >= 0.15])
-AC_SUBST([LIBTORRENT_LIBS])
-AC_SUBST([LIBTORRENT_CFLAGS])
+PKG_CHECK_MODULES([LIBBTSTREAM], [libbtstream])
+AC_SUBST([LIBBTSTREAM_LIBS])
+AC_SUBST([LIBBTSTREAM_CFLAGS])
 
-AX_BOOST_BASE([1.36])
-AX_BOOST_THREAD()
+PKG_CHECK_MODULES([GSTREAMER], [gstreamer-0.10 >= 0.10.35 gstreamer-base-0.10 >= 0.10.35])
+AC_SUBST([GSTREAMER_LIBS])
+AC_SUBST([GSTREAMER_CFLAGS])
 
 # Initialize Automake
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
@@ -61,7 +65,13 @@ AM_INIT_AUTOMAKE([foreign -Wall -Werror])
 LT_PREREQ([2.2.6])
 LT_INIT
 
+# Set plugin install path
+GST_MAJORMINOR=0.10
+AC_SUBST(GST_MAJORMINOR)
+
+AG_GST_SET_PLUGINDIR
+
 # Output files
-AC_CONFIG_FILES([Makefile src/Makefile libbtstream.pc])
+AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT
 

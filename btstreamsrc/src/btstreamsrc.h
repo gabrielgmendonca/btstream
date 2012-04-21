@@ -26,7 +26,7 @@
 #include <gst/gst.h>
 #include <gst/base/gstpushsrc.h>
 
-#include "BTStream.h"
+#include "libbtstream/btstream.h"
 
 G_BEGIN_DECLS
 

@@ -41,7 +41,8 @@
 
 #include <string.h>
 #include <time.h>
-#include "PropertyInstaller.h"
+
+#include "propertyinstaller.h"
 
 GST_DEBUG_CATEGORY_STATIC(gst_btstream_src_debug);
 #define GST_CAT_DEFAULT gst_btstream_src_debug
@@ -464,7 +465,7 @@ static gboolean btstreamsrc_init(GstPlugin * btstreamsrc) {
 #define PACKAGE "btstream"
 #endif
 
-#define VERSION "0.3"
+#define VERSION "0.1"
 
 /*
  * gstreamer looks for this structure to register btstreamsrcs

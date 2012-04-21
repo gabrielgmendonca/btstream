@@ -1,0 +1,16 @@
+BTStreamSrc is a GStreamer plugin that uses libbtstream to define a source 
+element that can be used to build multimedia streaming applications with the
+GStreamer framework.
+
+For more information, see the project's page:
+
+    http://code.google.com/p/btstream
+
+To build with GNU Automake, just follow the standard steps (more details on
+the `INSTALL` file):
+
+    ./configure
+    make
+    make install
+
+You may need to run the last step as a super user (sudo). 
