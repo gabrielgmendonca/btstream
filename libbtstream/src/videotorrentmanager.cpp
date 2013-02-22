@@ -30,7 +30,9 @@
 
 namespace btstream {
 
-VideoTorrentManager::VideoTorrentManager() {
+VideoTorrentManager::VideoTorrentManager() :
+		m_last_played_piece(0), m_deadlines_mode(false) {
+
 	TorrentPluginFactory f(&create_video_plugin);
 	m_session.add_extension(f);
 
@@ -56,7 +58,7 @@ int VideoTorrentManager::add_torrent(std::string file_name, Algorithm algorithm,
 		int stream_length, std::string save_path, std::string seed_ip,
 		unsigned short seed_port) throw (Exception) {
 
-	int num_pieces = add_torrent(file_name, 0, save_path, seed_ip, seed_port);
+	add_torrent(file_name, 0, save_path, seed_ip, seed_port);
 
 	// Sets piece picking algorithm
 	switch (algorithm) {
@@ -73,18 +75,21 @@ int VideoTorrentManager::add_torrent(std::string file_name, Algorithm algorithm,
 			throw Exception("The decoded stream length must be provided.");
 		}
 
-		// Estimates decoded piece (audio/video) length.
-		float decoded_piece_length = (float) stream_length / num_pieces;
-		int buffering_time = 10000;
+		m_deadlines_mode = true;
 
-		for (int i = 0; i < num_pieces; i++) {
-			int deadline = i * decoded_piece_length + buffering_time;
+		// Estimates decoded piece (audio/video) length.
+		m_decoded_piece_length = (float) stream_length / m_num_pieces;
+		int initial_buffering_time = 10000;
+
+		for (int i = 0; i < m_num_pieces; i++) {
+			int deadline = i * m_decoded_piece_length + initial_buffering_time;
 			m_torrent_handle.set_piece_deadline(i, deadline);
 		}
+
 		break;
 	}
 
-	return num_pieces;
+	return m_num_pieces;
 }
 
 int VideoTorrentManager::add_torrent(std::string file_name,
@@ -118,8 +123,10 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 			m_session.add_dht_node(node);
 		}
 
+		m_num_pieces = num_pieces;
+
 		// Gets the number of pieces that will be downloaded and played.
-		m_pieces_to_play = num_pieces;
+		m_pieces_to_play = m_num_pieces;
 
 	} catch (std::exception& e) {
 		throw Exception(e.what());
@@ -171,6 +178,26 @@ void VideoTorrentManager::feed_video_buffer() {
 	} catch (boost::thread_interrupted& e) {
 		// Thread will stop.
 	}
+}
+
+void VideoTorrentManager::notify_playback() {
+	// If deadlines algorithm is being used, updates piece deadline.
+	if (m_deadlines_mode) {
+		int last_requested_piece = m_video_buffer->get_next_piece_index();
+		int pieces_on_buffer = last_requested_piece - m_last_played_piece;
+
+		int buffer_time = m_decoded_piece_length * pieces_on_buffer;
+
+		for (int i = last_requested_piece; i < m_num_pieces; i++) {
+			int deadline = (i - last_requested_piece) * m_decoded_piece_length
+					+ buffer_time;
+			m_torrent_handle.set_piece_deadline(i, deadline);
+		}
+	}
+}
+
+void VideoTorrentManager::notify_stall() {
+	m_last_played_piece = m_video_buffer->get_next_piece_index();
 }
 
 Status VideoTorrentManager::get_status() {

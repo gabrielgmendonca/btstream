@@ -108,6 +108,20 @@ public:
 	void feed_video_buffer();
 
 	/**
+	 * Knowing that video player's playback buffer is full and
+	 * playback will start/resume, optimizes piece selection to avoid
+	 * stalls during playback.
+	 */
+	void notify_playback();
+
+	/**
+	 * Knowing that video player's playback buffer is empty and
+	 * playback will stall, optimizes piece selection to avoid other
+	 * stalls during playback.
+	 */
+	void notify_stall();
+
+	/**
 	 * Returns a Status object with statistics like download rate,
 	 * upload rate, progress and current class.
 	 */
@@ -118,7 +132,11 @@ private:
 	session m_session;
 	torrent_handle m_torrent_handle;
 	boost::shared_ptr<VideoBuffer> m_video_buffer;
+	int m_num_pieces;
 	int m_pieces_to_play;
+	int m_last_played_piece;
+	bool m_deadlines_mode;
+	float m_decoded_piece_length;
 
 	boost::shared_ptr<boost::thread> m_feeding_thread;
 };

@@ -92,6 +92,11 @@ public:
 	boost::shared_ptr<Piece> get_next_piece();
 
 	/**
+	 * Returns the index of the next piece that should be played.
+	 */
+	int get_next_piece_index();
+
+	/**
 	 * Unlocks any blocked calls to get_next_piece().
 	 */
 	void unlock();

@@ -58,6 +58,14 @@ Status BTStream::get_status() {
 	return m_video_torrent_manager->get_status();
 }
 
+void BTStream::notify_playback() {
+	m_video_torrent_manager->notify_playback();
+}
+
+void BTStream::notify_stall() {
+	m_video_torrent_manager->notify_stall();
+}
+
 void BTStream::unlock() {
 	m_video_buffer->unlock();
 }

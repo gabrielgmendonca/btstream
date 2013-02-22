@@ -90,6 +90,11 @@ boost::shared_ptr<Piece> VideoBuffer::get_next_piece() {
 	return piece;
 }
 
+int VideoBuffer::get_next_piece_index() {
+	boost::lock_guard<boost::mutex> lock(m_mutex);
+	return m_next_piece_index;
+}
+
 void VideoBuffer::unlock() {
 	{
 		boost::lock_guard<boost::mutex> lock(m_mutex);

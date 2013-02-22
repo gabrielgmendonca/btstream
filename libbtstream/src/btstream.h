@@ -98,6 +98,20 @@ public:
 	 */
 	Status get_status();
 
+    /**
+     * Notifies BTStream that video player's playback buffer is full
+     * and playback will start/resume. This way piece selection can be
+     * optimized in order to avoid stalls.
+     */
+    void notify_playback();
+
+    /**
+     * Notifies BTStream that video player's playback buffer is empty
+     * and playback will stall. This way piece selection can be 
+     * optimized in order to avoid other stalls during playback.
+     */
+    void notify_stall();
+
 	/**
 	 * Unlocks any blocked calls to get_next_piece().
 	 */
