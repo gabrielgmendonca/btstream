@@ -45,9 +45,10 @@ class Main(gobject.MainLoop):
 
         logger.log_event("Download started.")
 
-        self.pipeline = VideoTorrentPlayer(self.torrent_path, self.use_fake_sink,
-            self.algorithm, self.stream_length, self.buffer_size, self.seed_ip,
-            self.seed_port)
+        self.pipeline = VideoTorrentPlayer(self.torrent_path,
+            self.use_fake_sink, self.algorithm, self.stream_length,
+            self.buffer_size, self.seed_ip, self.seed_port)
+
         self.message_handler = MessageHandler(self, self.pipeline)
 
     def parse_args(self):
