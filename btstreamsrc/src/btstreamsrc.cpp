@@ -135,7 +135,7 @@ static GstFlowReturn gst_btstream_src_create(GstPushSrc* psrc,
 
 	GST_LOG("Requesting buffer from piece %d.", src->piece_number);
 
-	boost::shared_ptr < btstream::Piece > piece;
+	boost::shared_ptr<btstream::Piece> piece;
 
 	piece = src->m_btstream->get_next_piece();
 
@@ -181,6 +181,38 @@ static gboolean gst_btstream_src_stop(GstBaseSrc * basesrc) {
 	GST_INFO("Closing source.");
 
 	return TRUE;
+}
+
+static GstStateChangeReturn gst_btstream_src_change_state(GstElement *element,
+		GstStateChange transition) {
+
+	GstStateChangeReturn ret = GST_STATE_CHANGE_SUCCESS;
+	GstBTStreamSrc* src = GST_BTSTREAM_SRC(element);
+
+	switch (transition) {
+	case GST_STATE_CHANGE_PAUSED_TO_PLAYING:
+		src->m_btstream->notify_playback();
+		GST_LOG("Starting playback. Updating deadlines.");
+		break;
+	default:
+		break;
+	}
+
+	ret = GST_ELEMENT_CLASS(parent_class)->change_state(element, transition);
+	if (ret == GST_STATE_CHANGE_FAILURE) {
+		return ret;
+	}
+
+	switch (transition) {
+	case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
+		src->m_btstream->notify_stall();
+		GST_LOG("An interruption occurred.");
+		break;
+	default:
+		break;
+	}
+
+	return ret;
 }
 
 static gboolean gst_btstream_src_unlock(GstBaseSrc *bsrc) {
@@ -329,7 +361,8 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 
 	case PROP_DISTRIBUTED_COPIES:
 		if (src->m_btstream) {
-			g_value_set_int(value, src->m_btstream->get_status().distributed_copies);
+			g_value_set_int(value,
+					src->m_btstream->get_status().distributed_copies);
 		}
 		break;
 
@@ -363,16 +396,20 @@ static void gst_btstream_src_base_init(gpointer gclass) {
 /* initialize the btstreamsrc's class */
 static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
 	GObjectClass *gobject_class;
+	GstElementClass *gstelement_class;
 	GstBaseSrcClass *gstbasesrc_class;
 	GstPushSrcClass *gstpushsrc_class;
 
-	gobject_class = (GObjectClass *) (klass);
+	gobject_class = (GObjectClass*) (klass);
+	gstelement_class = (GstElementClass*) (klass);
 	gstbasesrc_class = (GstBaseSrcClass*) (klass);
 	gstpushsrc_class = (GstPushSrcClass*) (klass);
 
 	// Overrided methods
 	gobject_class->set_property = gst_btstream_src_set_property;
 	gobject_class->get_property = gst_btstream_src_get_property;
+
+	gstelement_class->change_state = gst_btstream_src_change_state;
 
 	gstbasesrc_class->start = gst_btstream_src_start;
 	gstbasesrc_class->stop = gst_btstream_src_stop;
@@ -388,7 +425,7 @@ static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
 	installer.install_string(PROP_ALGORITHM, "algorithm", "Algorithm",
 			"Piece picking algorithm: rarest-first, sequential or deadline.",
 			"rarest-first", true);
-	installer.install_int(PROP_STREAM_LENGTH,"stream_length","Stream Length",
+	installer.install_int(PROP_STREAM_LENGTH, "stream_length", "Stream Length",
 			"Estimation of decoded stream's length in milliseconds. Used by deadline algorithm.",
 			0, 999999999, 0, true);
 	installer.install_string(PROP_SAVE_PATH, "save_path", "Save Path",
@@ -419,13 +456,12 @@ static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
 	installer.install_int(PROP_CONNECTED_SEEDS, "num_connected_seeds",
 			"Number of Connected Seeds", "Number of connected seeds.", 0,
 			999999999, 0);
-	installer.install_int(PROP_UPLOADS, "num_uploads",
-			"Number of Uploads", "Number of unchocked peers.", 0,
-			999999999, 0);
+	installer.install_int(PROP_UPLOADS, "num_uploads", "Number of Uploads",
+			"Number of unchocked peers.", 0, 999999999, 0);
 	installer.install_int(PROP_DISTRIBUTED_COPIES, "distributed_copies",
 			"Number of Distributed Copies",
-			"Number of copies of the rarest piece(s) among connected peers.",
-			0, 999999999, 0);
+			"Number of copies of the rarest piece(s) among connected peers.", 0,
+			999999999, 0);
 	installer.install_int(PROP_NEXT_ANNOUNCE, "next_announce", "Next Announce",
 			"Seconds until next announce to tracker.", 0, 999999999, 0);
 }
@@ -465,7 +501,7 @@ static gboolean btstreamsrc_init(GstPlugin * btstreamsrc) {
 #define PACKAGE "btstream"
 #endif
 
-#define VERSION "0.1"
+#define VERSION "0.2"
 
 /*
  * gstreamer looks for this structure to register btstreamsrcs
