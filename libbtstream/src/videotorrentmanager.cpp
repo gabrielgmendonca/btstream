@@ -79,12 +79,9 @@ int VideoTorrentManager::add_torrent(std::string file_name, Algorithm algorithm,
 
 		// Estimates decoded piece (audio/video) length.
 		m_decoded_piece_length = (float) stream_length / m_num_pieces;
-		int initial_buffering_time = 10000;
 
-		for (int i = 0; i < m_num_pieces; i++) {
-			int deadline = i * m_decoded_piece_length + initial_buffering_time;
-			m_torrent_handle.set_piece_deadline(i, deadline);
-		}
+		// Starts on sequential mode.
+		m_torrent_handle.set_sequential_download(true);
 
 		break;
 	}
@@ -193,11 +190,19 @@ void VideoTorrentManager::notify_playback() {
 					+ buffer_time;
 			m_torrent_handle.set_piece_deadline(i, deadline);
 		}
+
+		// Disables strict sequential mode.
+		m_torrent_handle.set_sequential_download(false);
 	}
 }
 
 void VideoTorrentManager::notify_stall() {
-	m_last_played_piece = m_video_buffer->get_next_piece_index();
+	if (m_deadlines_mode) {
+		m_last_played_piece = m_video_buffer->get_next_piece_index();
+
+		// Returns to sequential mode until buffer is full.
+		m_torrent_handle.set_sequential_download(true);
+	}
 }
 
 Status VideoTorrentManager::get_status() {
