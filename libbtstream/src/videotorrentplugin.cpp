@@ -43,8 +43,20 @@ void VideoTorrentPlugin::on_piece_pass(int index) {
 	}
 }
 
-boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void* params) {
-	return boost::shared_ptr<torrent_plugin>(new VideoTorrentPlugin(t, (PiecePicker*) params));
+void VideoTorrentPlugin::on_files_checked() {
+	torrent_status t_status = m_torrent->status();
+
+	for (int i = 0; i < t_status.pieces.size(); i++) {
+		if (t_status.pieces[i]) {
+			m_torrent->read_piece(i);
+		}
+	}
+}
+
+boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t,
+		void* params) {
+	return boost::shared_ptr<torrent_plugin>(
+			new VideoTorrentPlugin(t, (PiecePicker*) params));
 }
 
 } /* namespace btstream */

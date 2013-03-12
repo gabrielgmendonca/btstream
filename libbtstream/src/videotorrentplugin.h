@@ -47,6 +47,8 @@ public:
 	 */
 	virtual void on_piece_pass(int index);
 
+	virtual void on_files_checked();
+
 private:
 	torrent* m_torrent;
 	boost::shared_ptr<PiecePicker> m_piece_picker;
