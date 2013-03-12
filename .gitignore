@@ -1,6 +1,10 @@
 # Eclipse settings files
 .settings
 
+# Eclipse project files
+.cproject
+.project
+
 # Build directories
 DebugBuild
 ReleaseBuild
@@ -49,3 +53,5 @@ missing
 # Package
 *.tar.gz
 
+# BTStreamClient logs
+*.log
