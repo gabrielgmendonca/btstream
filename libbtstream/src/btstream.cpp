@@ -27,8 +27,8 @@
 namespace btstream {
 
 BTStream::BTStream(const std::string& torrent_path, Algorithm algorithm,
-		int stream_length, const std::string seed_ip,
-		const std::string save_path, unsigned short seed_port) :
+		int stream_length, const std::string& save_path,
+		const std::string& seed_ip, unsigned short seed_port) :
 		m_video_torrent_manager(new VideoTorrentManager) {
 
 	int num_pieces;
@@ -39,7 +39,7 @@ BTStream::BTStream(const std::string& torrent_path, Algorithm algorithm,
 }
 
 BTStream::BTStream(const std::string& torrent_path, PiecePicker* piece_picker,
-		const std::string save_path, const std::string seed_ip,
+		const std::string& save_path, const std::string& seed_ip,
 		unsigned short seed_port) :
 		m_video_torrent_manager(new VideoTorrentManager) {
 

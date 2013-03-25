@@ -45,21 +45,24 @@ class Main(gobject.MainLoop):
 
         logger.log_event("Download started.")
 
-        self.pipeline = VideoTorrentPlayer(self.torrent_path,
-            self.use_fake_sink, self.algorithm, self.stream_length,
-            self.buffer_size, self.seed_ip, self.seed_port)
+        self.pipeline = VideoTorrentPlayer(self.torrent_path, 
+            self.use_fake_sink, self.save_path, self.algorithm,
+            self.stream_length, self.buffer_size, self.seed_ip, 
+            self.seed_port)
 
         self.message_handler = MessageHandler(self, self.pipeline)
 
     def parse_args(self):
         parser = argparse.ArgumentParser(description="BitTorrent video player.")
 
-        parser.add_argument("torrent_path", help="torrent file to open")
+        parser.add_argument("torrent_path", help="Torrent file to open")
         parser.add_argument("-f", dest="fake_sink", action="store_true", 
-            help="produce fake audio/video output")
+            help="Produce fake audio/video output")
+        parser.add_argument("--save_path", help="Where to save files", 
+            default=".")
         parser.add_argument("--algorithm",
             choices=["rarest-first", "sequential", "deadline"],
-            default="rarest-first", help="piece picking algorithm")
+            default="rarest-first", help="Piece picking algorithm")
         parser.add_argument("--stream_length", type=int, default=0,
             help="Length of the video in milliseconds")
         parser.add_argument("--buffer_size", type=float, default=4.0,
@@ -71,6 +74,7 @@ class Main(gobject.MainLoop):
         
         self.torrent_path = args.torrent_path
         self.use_fake_sink = args.fake_sink
+        self.save_path = args.save_path
         self.algorithm = args.algorithm
         self.stream_length = args.stream_length
         self.buffer_size = args.buffer_size

@@ -61,7 +61,7 @@ public:
 	 */
 	BTStream(const std::string& torrent_path,
 			Algorithm algorithm = RAREST_FIRST, int stream_length = 0,
-			const std::string save_path = ".", const std::string seed_ip = "",
+			const std::string& save_path = ".", const std::string& seed_ip = "",
 			unsigned short seed_port = 0);
 
 	/**
@@ -78,7 +78,7 @@ public:
 	 * 			Port to connect on the previously known seed.
 	 */
 	BTStream(const std::string& torrent_path, PiecePicker* piece_picker,
-			const std::string save_path = ".", const std::string seed_ip = "",
+			const std::string& save_path = ".", const std::string& seed_ip = "",
 			unsigned short seed_port = 0);
 
 	/**
