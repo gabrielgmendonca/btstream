@@ -44,10 +44,8 @@ void VideoTorrentPlugin::on_piece_pass(int index) {
 }
 
 void VideoTorrentPlugin::on_files_checked() {
-	torrent_status t_status = m_torrent->status();
-
-	for (int i = 0; i < t_status.pieces.size(); i++) {
-		if (t_status.pieces[i]) {
+	for (int i = 0; i < m_torrent->torrent_file().num_pieces(); i++) {
+		if (m_torrent->have_piece(i)) {
 			m_torrent->read_piece(i);
 		}
 	}

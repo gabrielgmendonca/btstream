@@ -129,6 +129,8 @@ public:
 
 private:
 
+	torrent_info* read_torrent_file(const std::string& file_name);
+
 	session m_session;
 	torrent_handle m_torrent_handle;
 	boost::shared_ptr<VideoBuffer> m_video_buffer;

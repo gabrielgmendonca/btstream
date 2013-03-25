@@ -24,7 +24,9 @@
 
 #include "videotorrentmanager.h"
 
+#include <fstream>
 #include <libtorrent/alert_types.hpp>
+#include <libtorrent/peer_info.hpp>
 
 #include "videotorrentplugin.h"
 
@@ -96,7 +98,7 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 	int num_pieces = 0;
 	try {
 		add_torrent_params params;
-		params.ti = new torrent_info((const boost::filesystem::path) file_name);
+		params.ti = read_torrent_file(file_name);
 		params.save_path = save_path;
 		params.paused = true;
 		params.auto_managed = false;
@@ -229,6 +231,35 @@ Status VideoTorrentManager::get_status() {
 	}
 
 	return status;
+}
+
+torrent_info* VideoTorrentManager::read_torrent_file(
+		const std::string& file_name) {
+
+	int size;
+	char* memory_block;
+	torrent_info* ti;
+
+	std::ifstream torrent_file(file_name.c_str(),
+			std::ios::in | std::ios::binary | std::ios::ate);
+
+	if (torrent_file.is_open()) {
+		size = torrent_file.tellg();
+		memory_block = new char[size];
+
+		torrent_file.seekg(0, std::ios::beg);
+		torrent_file.read(memory_block, size);
+		torrent_file.close();
+
+		ti = new torrent_info(memory_block, size);
+
+		delete[] memory_block;
+
+	} else {
+		throw Exception("Could not open torrent file.");
+	}
+
+	return ti;
 }
 
 } /* namespace btstream */
