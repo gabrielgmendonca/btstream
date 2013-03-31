@@ -36,18 +36,14 @@ VideoTorrentPlugin::VideoTorrentPlugin(torrent* t, PiecePicker* pp) :
 }
 
 void VideoTorrentPlugin::on_piece_pass(int index) {
-	m_torrent->read_piece(index);
-
 	if (m_piece_picker) {
 		m_piece_picker->add_piece_request(m_torrent);
 	}
 }
 
 void VideoTorrentPlugin::on_files_checked() {
-	for (int i = 0; i < m_torrent->torrent_file().num_pieces(); i++) {
-		if (m_torrent->have_piece(i)) {
-			m_torrent->read_piece(i);
-		}
+	if (m_torrent->have_piece(0)) {
+		m_torrent->read_piece(0);
 	}
 }
 

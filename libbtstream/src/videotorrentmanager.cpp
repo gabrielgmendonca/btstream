@@ -42,7 +42,8 @@ VideoTorrentManager::VideoTorrentManager() :
 	m_session.listen_on(std::make_pair(6881, 6889));
 
 	// Sets alert mask in order to receive downloaded pieces as alerts.
-	m_session.set_alert_mask(alert::storage_notification);
+	m_session.set_alert_mask(
+			alert::storage_notification | alert::progress_notification);
 
 	// Starts extensions.
 	m_session.start_dht();
@@ -122,10 +123,8 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 			m_session.add_dht_node(node);
 		}
 
+		m_next_piece = 0;
 		m_num_pieces = num_pieces;
-
-		// Gets the number of pieces that will be downloaded and played.
-		m_pieces_to_play = m_num_pieces;
 
 	} catch (std::exception& e) {
 		throw Exception(e.what());
@@ -148,26 +147,40 @@ void VideoTorrentManager::start_download(
 
 void VideoTorrentManager::feed_video_buffer() {
 	try {
-		while (m_pieces_to_play > 0) {
+		while (m_next_piece < m_num_pieces) {
 
 			// Tries to get an alert from alert queue.
 			time_duration max_wait_time(boost::posix_time::seconds(30).ticks());
 			const alert* new_alert = m_session.wait_for_alert(max_wait_time);
 
 			if (new_alert) {
-				// Tries to cast alert pointer to read_piece_alert pointer.
-				const read_piece_alert* piece_alert = alert_cast<
-						read_piece_alert>(new_alert);
+				// Tries to cast alert pointer to different alert types.
+				const piece_finished_alert* finished_alert = alert_cast<
+						piece_finished_alert>(new_alert);
+				const read_piece_alert* read_alert =
+						alert_cast<read_piece_alert>(new_alert);
 
-				if (piece_alert) {
-					// Adds piece to VideoBuffer.
-					int index = piece_alert->piece;
-					boost::shared_array<char> data = piece_alert->buffer;
-					int size = piece_alert->size;
+				if (finished_alert) {
+					if (finished_alert->piece_index == m_next_piece) {
+						m_torrent_handle.read_piece(m_next_piece);
+					}
 
-					m_video_buffer->add_piece(index, data, size);
+				} else if (read_alert) {
+					if (read_alert->piece == m_next_piece) {
+						// Adds piece to VideoBuffer.
+						int index = read_alert->piece;
+						boost::shared_array<char> data = read_alert->buffer;
+						int size = read_alert->size;
 
-					m_pieces_to_play--;
+						m_video_buffer->add_piece(index, data, size);
+						m_next_piece++;
+
+						bool have_next =
+								m_torrent_handle.status().pieces[m_next_piece];
+						if (have_next) {
+							m_torrent_handle.read_piece(m_next_piece);
+						}
+					}
 				}
 
 				// Removes alert from queue.

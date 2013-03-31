@@ -135,7 +135,7 @@ private:
 	torrent_handle m_torrent_handle;
 	boost::shared_ptr<VideoBuffer> m_video_buffer;
 	int m_num_pieces;
-	int m_pieces_to_play;
+	int m_next_piece;
 	int m_last_played_piece;
 	bool m_deadlines_mode;
 	float m_decoded_piece_length;

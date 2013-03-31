@@ -41,8 +41,7 @@ public:
 	VideoTorrentPlugin(torrent* t, PiecePicker* pp = 0);
 
 	/**
-	 * Informs torrent that the received piece will be read. If a custom
-	 * PiecePicker was provided, requests the next piece.
+	 * If a custom PiecePicker was provided, requests the next piece.
 	 * Called when a piece is received and pass the hash check.
 	 */
 	virtual void on_piece_pass(int index);
@@ -57,7 +56,9 @@ private:
 /**
  * Function template for a torrent_plugin factory function.
  */
-typedef boost::function<boost::shared_ptr<libtorrent::torrent_plugin> (libtorrent::torrent *, void *)> TorrentPluginFactory;
+typedef boost::function<
+		boost::shared_ptr<libtorrent::torrent_plugin>(libtorrent::torrent *,
+				void *)> TorrentPluginFactory;
 
 /**
  * Returns a new VideoTorrentPlugin.

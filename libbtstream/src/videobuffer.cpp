@@ -26,18 +26,11 @@
 
 #include <boost/lexical_cast.hpp>
 
-
 namespace btstream {
 
-VideoBuffer::VideoBuffer(int num_pieces) throw(Exception) :
-				m_next_piece_index(0), m_unlocked(false) {
-	if (num_pieces > 0) {
-		m_pieces = std::vector<boost::shared_ptr<btstream::Piece> >(num_pieces);
-
-	} else {
-		throw Exception("Invalid buffer size: " +
-				boost::lexical_cast<std::string>(num_pieces));
-	}
+VideoBuffer::VideoBuffer(int num_pieces) throw (Exception) :
+		m_max_buffer_size(10), m_num_pieces(num_pieces), m_next_piece_index(0),
+		m_unlocked(false) {
 }
 
 VideoBuffer::~VideoBuffer() {
@@ -45,26 +38,27 @@ VideoBuffer::~VideoBuffer() {
 }
 
 void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size)
-				throw(Exception) {
-	if (index >= 0 && index < ((int) m_pieces.size()) && data && size > 0) {
-		boost::shared_ptr<Piece> piece(new Piece(index, data, size));
-		bool is_next_piece;
+		throw (Exception) {
 
-		{
-			boost::lock_guard<boost::mutex> lock(m_mutex);
-			m_pieces[index] = piece;
+	if (index >= 0 && index < m_num_pieces && data && size > 0) {
+		boost::unique_lock<boost::mutex> lock(m_mutex);
 
-			is_next_piece = (index == m_next_piece_index);
-		} // Releasing lock.
-
-		if (is_next_piece) {
-			m_condition.notify_all();
+		// Waits while buffer is full.
+		while (m_pieces.size() == m_max_buffer_size) {
+			m_buffer_not_full.wait(lock);
 		}
 
+		// Adds piece to buffer.
+		boost::shared_ptr<Piece> piece(new Piece(index, data, size));
+		m_pieces.push(piece);
+
+		// Notifies that next piece is available.
+		m_next_piece_available.notify_all();
+
 	} else {
-		throw Exception("Invalid piece: " +
-				boost::lexical_cast<std::string>(index) + ", " +
-				boost::lexical_cast<std::string>(size));
+		throw Exception(
+				"Invalid piece: " + boost::lexical_cast<std::string>(index)
+						+ ", " + boost::lexical_cast<std::string>(size));
 	}
 }
 
@@ -72,11 +66,9 @@ boost::shared_ptr<Piece> VideoBuffer::get_next_piece() {
 	boost::shared_ptr<Piece> piece;
 
 	boost::unique_lock<boost::mutex> lock(m_mutex);
-	if (m_next_piece_index < (int) m_pieces.size()) {
-		piece = m_pieces[m_next_piece_index];
-		while (!piece && !m_unlocked) {
-			m_condition.wait(lock);
-			piece = m_pieces[m_next_piece_index];
+	if (m_next_piece_index < m_num_pieces) {
+		while (m_pieces.empty() && !m_unlocked) {
+			m_next_piece_available.wait(lock);
 		}
 
 		if (m_unlocked) {
@@ -84,7 +76,13 @@ boost::shared_ptr<Piece> VideoBuffer::get_next_piece() {
 			return null_pointer;
 		}
 
+		piece = m_pieces.front();
+		m_pieces.pop();
+
 		m_next_piece_index++;
+
+		// Notifies that there is free space on buffer.
+		m_buffer_not_full.notify_all();
 	}
 
 	return piece;
@@ -101,7 +99,7 @@ void VideoBuffer::unlock() {
 		m_unlocked = true;
 	} // Releasing lock.
 
-	m_condition.notify_all();
+	m_next_piece_available.notify_all();
 }
 
 bool VideoBuffer::unlocked() {

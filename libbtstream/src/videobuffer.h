@@ -25,7 +25,7 @@
 #ifndef VIDEOBUFFER_H_
 #define VIDEOBUFFER_H_
 
-#include <vector>
+#include <queue>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/shared_array.hpp>
@@ -109,12 +109,16 @@ public:
 	bool unlocked();
 
 private:
-	std::vector<boost::shared_ptr<Piece> > m_pieces;
+	const int m_max_buffer_size;
+
+	std::queue<boost::shared_ptr<Piece> > m_pieces;
+	int m_num_pieces;
 	int m_next_piece_index;
 	bool m_unlocked;
 
 	mutable boost::mutex m_mutex;
-	mutable boost::condition_variable m_condition;
+	mutable boost::condition_variable m_next_piece_available;
+	mutable boost::condition_variable m_buffer_not_full;
 };
 
 } /* namespace btstream */
