@@ -59,8 +59,6 @@ enum {
 	PROP_ALGORITHM,
 	PROP_STREAM_LENGTH,
 	PROP_SAVE_PATH,
-	PROP_SEED_IP,
-	PROP_SEED_PORT,
 	PROP_DOWNLOAD_RATE,
 	PROP_UPLOAD_RATE,
 	PROP_DOWNLOAD_PROGRESS,
@@ -91,7 +89,7 @@ static GstStaticPadTemplate src_factory = GST_STATIC_PAD_TEMPLATE ("src",
 static gboolean gst_btstream_src_start(GstBaseSrc * basesrc) {
 	GstBTStreamSrc *src = GST_BTSTREAM_SRC(basesrc);
 
-	std::string torrent_path, save_path, seed_ip;
+	std::string torrent_path, save_path;
 	btstream::Algorithm algorithm = btstream::RAREST_FIRST;
 
 	if (src->m_torrent) {
@@ -112,14 +110,8 @@ static gboolean gst_btstream_src_start(GstBaseSrc * basesrc) {
 		save_path = src->m_save_path;
 	}
 
-	if (src->m_seed_ip) {
-		seed_ip = src->m_seed_ip;
-	}
-
-	unsigned short seed_port = src->m_seed_port;
-
-	src->m_btstream = new btstream::BTStream(torrent_path, algorithm,
-			stream_length, save_path, seed_ip, seed_port);
+	src->m_btstream = new btstream::BTStream(torrent_path, save_path,
+			algorithm, stream_length);
 
 	GST_INFO("Creating BTStreamSrc and starting torrent download.");
 
@@ -250,15 +242,6 @@ static void gst_btstream_src_set_property(GObject * object, guint prop_id,
 		src->m_save_path = g_value_dup_string(value);
 		break;
 
-	case PROP_SEED_IP:
-		g_free(src->m_seed_ip);
-		src->m_seed_ip = g_value_dup_string(value);
-		break;
-
-	case PROP_SEED_PORT:
-		src->m_seed_port = g_value_get_int(value);
-		break;
-
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
 		break;
@@ -284,14 +267,6 @@ static void gst_btstream_src_get_property(GObject * object, guint prop_id,
 
 	case PROP_SAVE_PATH:
 		g_value_set_string(value, src->m_save_path);
-		break;
-
-	case PROP_SEED_IP:
-		g_value_set_string(value, src->m_seed_ip);
-		break;
-
-	case PROP_SEED_PORT:
-		g_value_set_int(value, src->m_seed_port);
 		break;
 
 	case PROP_DOWNLOAD_RATE:
@@ -430,10 +405,6 @@ static void gst_btstream_src_class_init(GstBTStreamSrcClass * klass) {
 			0, 999999999, 0, true);
 	installer.install_string(PROP_SAVE_PATH, "save_path", "Save Path",
 			"Where to save downloaded files.", "./", true);
-	installer.install_string(PROP_SEED_IP, "seed_ip", "Seed IP",
-			"IP of a known seed.", "", true);
-	installer.install_int(PROP_SEED_PORT, "seed_port", "Seed Port",
-			"Port of a known seed.", 0, 65535, 0, true);
 
 	// Read-only properties
 	installer.install_int(PROP_DOWNLOAD_RATE, "download_rate", "Download Rate",

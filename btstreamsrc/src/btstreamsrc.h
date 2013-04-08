@@ -56,8 +56,6 @@ struct _GstBTStreamSrc {
 	gchar* m_algorithm;
 	int m_stream_length;
 	gchar* m_save_path;
-	gchar* m_seed_ip;
-	unsigned short m_seed_port;
 };
 
 struct _GstBTStreamSrcClass {

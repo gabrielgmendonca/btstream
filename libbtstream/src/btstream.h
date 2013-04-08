@@ -47,22 +47,18 @@ public:
 	 * Constructor.
 	 * @param torrent_path
 	 * 			Path to a valid torrent file.
+	 * @param save_path
+	 * 			Path where the downloaded file will be stored.
 	 * @param algorithm
 	 * 			Built-in piece picking algorithm that will be used.
 	 * @param stream_length
 	 * 			Length of the decoded stream in milliseconds.
 	 * 			It must be provided when using the DEADLINE algorithm.
-	 * @param save_path
-	 * 			Path where the downloaded file will be stored.
-	 * @param seed_ip
-	 * 			IP address of a previously known seed.
-	 * @param seed_port
-	 * 			Port to connect on the previously known seed.
 	 */
 	BTStream(const std::string& torrent_path,
-			Algorithm algorithm = RAREST_FIRST, int stream_length = 0,
-			const std::string& save_path = ".", const std::string& seed_ip = "",
-			unsigned short seed_port = 0);
+			const std::string& save_path = ".",
+			Algorithm algorithm = RAREST_FIRST,
+			int stream_length = 0);
 
 	/**
 	 * Constructor.
@@ -72,14 +68,9 @@ public:
 	 * 			Pointer to a custom PiecePicker.
 	 * @param save_path
 	 * 			Path where the downloaded file will be stored.
-	 * @param seed_ip
-	 * 			IP address of a previously known seed.
-	 * @param seed_port
-	 * 			Port to connect on the previously known seed.
 	 */
 	BTStream(const std::string& torrent_path, PiecePicker* piece_picker,
-			const std::string& save_path = ".", const std::string& seed_ip = "",
-			unsigned short seed_port = 0);
+			const std::string& save_path = ".");
 
 	/**
 	 * Returns a pointer to the next piece that should be played.
@@ -98,19 +89,19 @@ public:
 	 */
 	Status get_status();
 
-    /**
-     * Notifies BTStream that video player's playback buffer is full
-     * and playback will start/resume. This way piece selection can be
-     * optimized in order to avoid stalls.
-     */
-    void notify_playback();
+	/**
+	 * Notifies BTStream that video player's playback buffer is full
+	 * and playback will start/resume. This way piece selection can be
+	 * optimized in order to avoid stalls.
+	 */
+	void notify_playback();
 
-    /**
-     * Notifies BTStream that video player's playback buffer is empty
-     * and playback will stall. This way piece selection can be 
-     * optimized in order to avoid other stalls during playback.
-     */
-    void notify_stall();
+	/**
+	 * Notifies BTStream that video player's playback buffer is empty
+	 * and playback will stall. This way piece selection can be 
+	 * optimized in order to avoid other stalls during playback.
+	 */
+	void notify_stall();
 
 	/**
 	 * Unlocks any blocked calls to get_next_piece().

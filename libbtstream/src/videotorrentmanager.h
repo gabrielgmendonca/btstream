@@ -79,9 +79,8 @@ public:
 	 *
 	 * With this method, a built-in piece selection algorithm can be chosen.
 	 */
-	int add_torrent(std::string file_name, Algorithm algorithm,
-			int stream_length, std::string save_path, std::string seed_ip,
-			unsigned short seed_port) throw (Exception);
+	int add_torrent(const std::string& file_name, const std::string& save_path,
+			Algorithm algorithm, int stream_length) throw (Exception);
 
 	/**
 	 * Prepares the download of the torrent given by file_name and returns the
@@ -89,9 +88,8 @@ public:
 	 *
 	 * With this method, a custom piece selection algorithm can be provided.
 	 */
-	int add_torrent(std::string file_name, PiecePicker* piece_picker,
-			std::string save_path, std::string seed_ip,
-			unsigned short seed_port) throw (Exception);
+	int add_torrent(const std::string& file_name, PiecePicker* piece_picker,
+			const std::string& save_path) throw (Exception);
 
 	/**
 	 * Starts download of the video file.

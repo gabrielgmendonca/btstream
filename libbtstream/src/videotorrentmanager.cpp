@@ -57,11 +57,11 @@ VideoTorrentManager::~VideoTorrentManager() {
 	}
 }
 
-int VideoTorrentManager::add_torrent(std::string file_name, Algorithm algorithm,
-		int stream_length, std::string save_path, std::string seed_ip,
-		unsigned short seed_port) throw (Exception) {
+int VideoTorrentManager::add_torrent(const std::string& file_name,
+		const std::string& save_path, Algorithm algorithm, int stream_length)
+				throw (Exception) {
 
-	add_torrent(file_name, 0, save_path, seed_ip, seed_port);
+	add_torrent(file_name, 0, save_path);
 
 	// Sets piece picking algorithm
 	switch (algorithm) {
@@ -92,9 +92,9 @@ int VideoTorrentManager::add_torrent(std::string file_name, Algorithm algorithm,
 	return m_num_pieces;
 }
 
-int VideoTorrentManager::add_torrent(std::string file_name,
-		PiecePicker* piece_picker, std::string save_path, std::string seed_ip,
-		unsigned short seed_port) throw (Exception) {
+int VideoTorrentManager::add_torrent(const std::string& file_name,
+		PiecePicker* piece_picker, const std::string& save_path)
+		throw (Exception) {
 
 	int num_pieces = 0;
 	try {
@@ -108,20 +108,6 @@ int VideoTorrentManager::add_torrent(std::string file_name,
 		m_torrent_handle = m_session.add_torrent(params);
 
 		num_pieces = params.ti.get()->num_pieces();
-
-		// Adds seed
-		if (seed_ip != "" && seed_port > 0) {
-			tcp::endpoint seed_endpoint;
-			seed_endpoint.address(address::from_string(seed_ip));
-			seed_endpoint.port(seed_port);
-
-			// Adds as peer
-			m_torrent_handle.connect_peer(seed_endpoint, peer_info::seed);
-
-			// Adds as DHT node
-			std::pair<std::string, int> node(seed_ip, seed_port);
-			m_session.add_dht_node(node);
-		}
 
 		m_next_piece = 0;
 		m_num_pieces = num_pieces;

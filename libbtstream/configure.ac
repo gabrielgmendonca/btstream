@@ -32,9 +32,9 @@ dnl  increment AGE, Otherwise AGE is reset to 0. If CURRENT has changed,
 dnl  REVISION is set to 0, otherwise REVISION is incremented.
 dnl ---------------------------------------------------------------------------
 
-m4_define([VERSION_INFO_CURRENT],[1])
+m4_define([VERSION_INFO_CURRENT],[2])
 m4_define([VERSION_INFO_REVISION],[0])
-m4_define([VERSION_INFO_AGE],[1])
+m4_define([VERSION_INFO_AGE],[0])
 INTERFACE_VERSION_INFO=VERSION_INFO_CURRENT:VERSION_INFO_REVISION:VERSION_INFO_AGE
 AC_SUBST(INTERFACE_VERSION_INFO)
 ###############################################################################
