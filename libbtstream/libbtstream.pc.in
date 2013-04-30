@@ -8,4 +8,4 @@ Description: BitTorrent video streaming library.
 Requires: libtorrent-rasterbar >= 0.15
 Version: @PACKAGE_VERSION@
 Libs: -L${libdir} -lbtstream -lboost_system -lpthread
-Cflags: -I${includedir} -I${includedir}/btstream
+Cflags: -I${includedir} -I${includedir}/libbtstream
