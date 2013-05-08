@@ -44,9 +44,6 @@ VideoTorrentManager::VideoTorrentManager() :
 	// Sets alert mask in order to receive downloaded pieces as alerts.
 	m_session.set_alert_mask(
 			alert::storage_notification | alert::progress_notification);
-
-	// Starts extensions.
-	m_session.start_dht();
 }
 
 VideoTorrentManager::~VideoTorrentManager() {
