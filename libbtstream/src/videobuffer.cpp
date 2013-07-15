@@ -37,8 +37,7 @@ VideoBuffer::~VideoBuffer() {
 	unlock();
 }
 
-void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size)
-		throw (Exception) {
+void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size) {
 
 	if (index >= 0 && index < m_num_pieces && data && size > 0) {
 		boost::unique_lock<boost::mutex> lock(m_mutex);

@@ -77,8 +77,7 @@ public:
 	 * @param data a char array with piece data.
 	 * @param size the size of the data array.
 	 */
-	void add_piece(int index, boost::shared_array<char> data, int size)
-			throw (Exception);
+	void add_piece(int index, boost::shared_array<char> data, int size);
 
 	/**
 	 * Returns a pointer to the next piece that should be played.
