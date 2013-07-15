@@ -27,6 +27,7 @@
 #include <fstream>
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/peer_info.hpp>
+#include <libtorrent/bencode.hpp>
 
 #include "videotorrentplugin.h"
 
@@ -52,6 +53,11 @@ VideoTorrentManager::~VideoTorrentManager() {
 		m_feeding_thread->interrupt();
 		m_feeding_thread->join();
 	}
+
+	// Stops session.
+	m_session.pause();
+
+	save_resume_data();
 }
 
 int VideoTorrentManager::add_torrent(const std::string& file_name,
@@ -102,12 +108,23 @@ int VideoTorrentManager::add_torrent(const std::string& file_name,
 		params.auto_managed = false;
 		params.userdata = dynamic_cast<void*>(piece_picker);
 
+		std::string file_name = params.ti->name() + ".resume";
+		std::string resume_data_file = save_path + "/" + file_name;
+
+		std::vector<char> buffer;
+		error_code ec;
+
+		if (load_file(resume_data_file.c_str(), buffer, ec) == 0) {
+			params.resume_data = &buffer;
+		}
+
 		m_torrent_handle = m_session.add_torrent(params);
 
 		num_pieces = params.ti.get()->num_pieces();
 
 		m_next_piece = 0;
 		m_num_pieces = num_pieces;
+		m_save_path = save_path;
 
 	} catch (std::exception& e) {
 		throw Exception(e.what());
@@ -133,8 +150,7 @@ void VideoTorrentManager::feed_video_buffer() {
 		while (m_next_piece < m_num_pieces) {
 
 			// Tries to get an alert from alert queue.
-			time_duration max_wait_time(boost::posix_time::seconds(30).ticks());
-			const alert* new_alert = m_session.wait_for_alert(max_wait_time);
+			const alert* new_alert = m_session.wait_for_alert(seconds(30));
 
 			if (new_alert) {
 				// Tries to cast alert pointer to different alert types.
@@ -256,6 +272,43 @@ torrent_info* VideoTorrentManager::read_torrent_file(
 	}
 
 	return ti;
+}
+
+void VideoTorrentManager::save_resume_data() {
+	m_torrent_handle.pause();
+	m_torrent_handle.save_resume_data();
+
+	// Waits for alerts.
+	int outstanding_resume_data = 1;
+
+	while (outstanding_resume_data > 0) {
+		alert const* new_alert = m_session.wait_for_alert(seconds(20));
+
+		if (new_alert) {
+			save_resume_data_alert const* resume_alert =
+					alert_cast<save_resume_data_alert>(new_alert);
+
+			// Saves resume data file.
+			if (resume_alert) {
+				std::string save_path = m_save_path;
+				std::string torrent_name = m_torrent_handle.get_torrent_info().name();
+				std::string resume_path = save_path + "/" + torrent_name +
+						".resume";
+
+				std::ofstream out(resume_path.c_str(), std::ios_base::binary);
+				out.unsetf(std::ios_base::skipws);
+				bencode(std::ostream_iterator<char>(out), *resume_alert->resume_data);
+				outstanding_resume_data--;
+			}
+
+			// Resume data failed.
+			if (alert_cast<save_resume_data_failed_alert>(new_alert)) {
+				outstanding_resume_data--;
+			}
+
+			m_session.pop_alert();
+		}
+	}
 }
 
 } /* namespace btstream */
