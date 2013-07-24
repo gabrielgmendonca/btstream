@@ -33,8 +33,6 @@
 #include "exception.h"
 #include "piecepicker.h"
 
-using namespace libtorrent;
-
 namespace btstream {
 
 struct Status {
@@ -127,11 +125,11 @@ public:
 
 private:
 
-	torrent_info* read_torrent_file(const std::string& file_name);
+	libtorrent::torrent_info* read_torrent_file(const std::string& file_name);
 	void save_resume_data();
 
-	session m_session;
-	torrent_handle m_torrent_handle;
+	libtorrent::session m_session;
+	libtorrent::torrent_handle m_torrent_handle;
 	boost::shared_ptr<VideoBuffer> m_video_buffer;
 	std::string m_save_path;
 	int m_num_pieces;

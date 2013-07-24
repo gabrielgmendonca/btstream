@@ -32,13 +32,11 @@
 
 #include "piecepicker.h"
 
-using namespace libtorrent;
-
 namespace btstream {
 
-class VideoTorrentPlugin: public torrent_plugin {
+class VideoTorrentPlugin: public libtorrent::torrent_plugin {
 public:
-	VideoTorrentPlugin(torrent* t, PiecePicker* pp = 0);
+	VideoTorrentPlugin(libtorrent::torrent* t, PiecePicker* pp = 0);
 
 	/**
 	 * If a custom PiecePicker was provided, requests the next piece.
@@ -49,7 +47,7 @@ public:
 	virtual void on_files_checked();
 
 private:
-	torrent* m_torrent;
+	libtorrent::torrent* m_torrent;
 	boost::shared_ptr<PiecePicker> m_piece_picker;
 };
 
@@ -67,7 +65,8 @@ typedef boost::function<
  * as a parameter. The TorrentPluginFactory object should then be
  * passed at add_extension method call.
  */
-boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t, void* params);
+boost::shared_ptr<libtorrent::torrent_plugin> create_video_plugin(
+		libtorrent::torrent* t, void* params);
 
 } /* namespace btstream */
 

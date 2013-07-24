@@ -26,7 +26,7 @@
 
 namespace btstream {
 
-VideoPeerPlugin::VideoPeerPlugin(peer_connection* pc) :
+VideoPeerPlugin::VideoPeerPlugin(libtorrent::peer_connection* pc) :
 		m_peer_connection(pc) {}
 
 } /* namespace btstream */

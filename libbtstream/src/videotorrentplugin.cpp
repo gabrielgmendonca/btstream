@@ -27,7 +27,7 @@
 
 namespace btstream {
 
-VideoTorrentPlugin::VideoTorrentPlugin(torrent* t, PiecePicker* pp) :
+VideoTorrentPlugin::VideoTorrentPlugin(libtorrent::torrent* t, PiecePicker* pp) :
 		m_torrent(t), m_piece_picker(pp) {
 
 	if (m_piece_picker) {
@@ -47,9 +47,9 @@ void VideoTorrentPlugin::on_files_checked() {
 	}
 }
 
-boost::shared_ptr<torrent_plugin> create_video_plugin(torrent* t,
-		void* params) {
-	return boost::shared_ptr<torrent_plugin>(
+boost::shared_ptr<libtorrent::torrent_plugin> create_video_plugin(
+		libtorrent::torrent* t, void* params) {
+	return boost::shared_ptr<libtorrent::torrent_plugin>(
 			new VideoTorrentPlugin(t, (PiecePicker*) params));
 }
 

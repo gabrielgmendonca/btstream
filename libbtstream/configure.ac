@@ -54,14 +54,29 @@ AC_SUBST([LIBTORRENT_CFLAGS])
 AX_BOOST_BASE([1.36])
 AX_BOOST_THREAD()
 
+#AC_ARG_ENABLE(
+#  [tests],
+#  [AS_HELP_STRING(
+#    [--enable-tests],
+#    [build test files [default=no]])],
+#  [[ARG_ENABLE_TESTS=$enableval]],
+#  [[ARG_ENABLE_TESTS=no]]
+#)
+
+# Only for unit tests
+AX_BOOST_SYSTEM()
+
 # Initialize Automake
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
+
+# Set conditional variables for Automake
+#AM_CONDITIONAL([ENABLE_TESTS], [test "x$ARG_ENABLE_TESTS" = "xyes"])
 
 # Initialize Libtool
 LT_PREREQ([2.2.6])
 LT_INIT
 
 # Output files
-AC_CONFIG_FILES([Makefile src/Makefile libbtstream.pc])
+AC_CONFIG_FILES([Makefile src/Makefile test/Makefile libbtstream.pc])
 AC_OUTPUT
 

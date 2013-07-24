@@ -30,7 +30,7 @@ SequentialPiecePicker::SequentialPiecePicker() :
 		m_counter(0) {
 }
 
-int SequentialPiecePicker::pick_piece(torrent* t) {
+int SequentialPiecePicker::pick_piece(libtorrent::torrent* t) {
 	if (m_counter < t->torrent_file().num_pieces()) {
 		return m_counter++;
 	} else {

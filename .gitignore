@@ -17,6 +17,9 @@ TestBuild
 # Binary python files
 *.pyc
 
+# Binary test files
+unittest
+
 # Gedit backups
 *~
 
@@ -32,6 +35,7 @@ config.sub
 
 *.pc
 *.la
+*.a
 
 aclocal.m4
 autom4te.cache

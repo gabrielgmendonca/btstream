@@ -11,7 +11,7 @@ namespace btstream {
 
 PiecePicker::PiecePicker(): m_deadline(0) {}
 
-void PiecePicker::add_piece_request(torrent* t) {
+void PiecePicker::add_piece_request(libtorrent::torrent* t) {
 	if (t) {
 		int piece_index = pick_piece(t);
 
@@ -19,7 +19,7 @@ void PiecePicker::add_piece_request(torrent* t) {
 	}
 }
 
-void PiecePicker::init(torrent* t) {
+void PiecePicker::init(libtorrent::torrent* t) {
 	if (t) {
 		// TODO: Change to the max number of parallel requests.
 		int n = 10;

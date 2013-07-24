@@ -27,16 +27,14 @@
 
 #include <libtorrent/extensions.hpp>
 
-using namespace libtorrent;
-
 namespace btstream {
 
-class VideoPeerPlugin: public peer_plugin {
+class VideoPeerPlugin: public libtorrent::peer_plugin {
 public:
-	VideoPeerPlugin(peer_connection* pc);
+	VideoPeerPlugin(libtorrent::peer_connection* pc);
 
 private:
-	peer_connection* m_peer_connection;
+	libtorrent::peer_connection* m_peer_connection;
 };
 
 } /* namespace btstream */

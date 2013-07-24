@@ -36,7 +36,7 @@ public:
 	/**
 	 * Returns each piece index sequentially.
 	 */
-	virtual int pick_piece(torrent* t);
+	virtual int pick_piece(libtorrent::torrent* t);
 
 private:
 	int m_counter;
