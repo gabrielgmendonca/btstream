@@ -77,6 +77,6 @@ LT_PREREQ([2.2.6])
 LT_INIT
 
 # Output files
-AC_CONFIG_FILES([Makefile src/Makefile test/Makefile libbtstream.pc])
+AC_CONFIG_FILES([Makefile src/Makefile test/Makefile test/gtest/Makefile libbtstream.pc])
 AC_OUTPUT
 
