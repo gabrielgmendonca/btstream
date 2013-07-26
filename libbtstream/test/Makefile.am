@@ -1,4 +1,7 @@
+if ENABLE_TESTS
 check_PROGRAMS = unittest
+endif
+
 unittest_SOURCES = \
 	main.cpp \
 	btstreamtest.cpp \

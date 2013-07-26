@@ -46,7 +46,7 @@ AC_CANONICAL_SYSTEM
 AC_PROG_CXX
 PKG_PROG_PKG_CONFIG([0.20])
 
-# Check for libraries
+# Check libraries
 PKG_CHECK_MODULES([LIBTORRENT], [libtorrent-rasterbar >= 0.15])
 AC_SUBST([LIBTORRENT_LIBS])
 AC_SUBST([LIBTORRENT_CFLAGS])
@@ -54,23 +54,22 @@ AC_SUBST([LIBTORRENT_CFLAGS])
 AX_BOOST_BASE([1.36])
 AX_BOOST_THREAD()
 
-#AC_ARG_ENABLE(
-#  [tests],
-#  [AS_HELP_STRING(
-#    [--enable-tests],
-#    [build test files [default=no]])],
-#  [[ARG_ENABLE_TESTS=$enableval]],
-#  [[ARG_ENABLE_TESTS=no]]
-#)
+# Prepare optional unit test compilation
+AC_ARG_ENABLE(
+    [tests],
+    [AS_HELP_STRING(
+        [--enable-tests],
+        [build unit test files [default=no]])],
+    [[ARG_ENABLE_TESTS=$enableval]],
+    [[ARG_ENABLE_TESTS=no]]
+)
 
-# Only for unit tests
-AX_BOOST_SYSTEM()
+AS_IF([test "x$ARG_ENABLE_TESTS" = "xyes"], [AX_BOOST_SYSTEM()])
+
+AM_CONDITIONAL([ENABLE_TESTS], [test "x$ARG_ENABLE_TESTS" = "xyes"])
 
 # Initialize Automake
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
-
-# Set conditional variables for Automake
-#AM_CONDITIONAL([ENABLE_TESTS], [test "x$ARG_ENABLE_TESTS" = "xyes"])
 
 # Initialize Libtool
 LT_PREREQ([2.2.6])

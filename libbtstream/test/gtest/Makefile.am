@@ -1,4 +1,6 @@
+if ENABLE_TESTS
 noinst_LIBRARIES = libgtest.a
+endif
 
 GTEST_SRC = \
   src/gtest-death-test.cc \
