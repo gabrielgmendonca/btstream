@@ -14,7 +14,6 @@ unittest_LDADD = \
 	@BOOST_THREAD_LIB@ \
 	@BOOST_SYSTEM_LIB@
 
-#unittest_LDFLAGS = -no-undefined @BOOST_LDFLAGS@
 unittest_CXXFLAGS = \
 	-Igtest/include \
 	-I$(top_builddir)/src \
@@ -24,5 +23,7 @@ unittest_CXXFLAGS = \
 
 # Programs run with "make check" 
 TESTS = $(check_PROGRAMS)
+
+EXTRA_DIST = testfile testfile.torrent
 
 SUBDIRS=gtest
