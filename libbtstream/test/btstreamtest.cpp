@@ -30,28 +30,32 @@
 
 namespace btstream {
 
-TEST(DISABLED_BTStreamTest, CreateWithInvalidTorrent) {
+TEST(BTStreamTest, CreateWithInvalidTorrent) {
 	std::string path = "";
 	ASSERT_THROW(BTStream btstream(path), Exception);
 }
 
-TEST(DISABLED_BTStreamTest, CreateWithValidTorrent) {
-	std::string TEST_TORRENT = "test/big_buck_bunny.torrent";
+TEST(BTStreamTest, CreateWithValidTorrent) {
+	std::string TEST_TORRENT = "testfile.torrent";
 	ASSERT_NO_THROW(BTStream btstream(TEST_TORRENT));
 }
 
-TEST(DISABLED_BTStreamTest, GetPiece) {
-	std::string TEST_TORRENT = "test/big_buck_bunny.torrent";
+TEST(BTStreamTest, GetPiece) {
+	std::string TEST_TORRENT = "testfile.torrent";
 	BTStream btstream(TEST_TORRENT);
 
 	boost::shared_ptr<Piece> piece;
-	piece = btstream.get_next_piece();
-	ASSERT_TRUE(piece);
-	EXPECT_EQ(0, piece->index);
 
+	for (int i = 0; i < 256; i++) {
+		piece = btstream.get_next_piece();
+		ASSERT_TRUE(piece);
+		EXPECT_EQ(i, piece->index);
+		EXPECT_EQ(1024, piece->size);
+	}
+
+	// After last piece returned, expect NULL
 	piece = btstream.get_next_piece();
-	ASSERT_TRUE(piece);
-	EXPECT_EQ(1, piece->index);
+	ASSERT_FALSE(piece);
 }
 
 } /* namespace btstream */
