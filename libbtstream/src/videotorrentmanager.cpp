@@ -109,8 +109,8 @@ int VideoTorrentManager::add_torrent(const std::string& file_name,
 		params.auto_managed = false;
 		params.userdata = dynamic_cast<void*>(piece_picker);
 
-		std::string file_name = params.ti->name() + ".resume";
-		std::string resume_data_file = save_path + "/" + file_name;
+		std::string video_file_name = params.ti->name() + ".resume";
+		std::string resume_data_file = save_path + "/" + video_file_name;
 
 		std::vector<char> buffer;
 		libtorrent::error_code ec;
@@ -254,7 +254,7 @@ libtorrent::torrent_info* VideoTorrentManager::read_torrent_file(
 
 	int size;
 	char* memory_block;
-	libtorrent::torrent_info* ti;
+	libtorrent::torrent_info* ti = 0;
 
 	std::ifstream torrent_file(file_name.c_str(),
 			std::ios::in | std::ios::binary | std::ios::ate);
@@ -279,43 +279,45 @@ libtorrent::torrent_info* VideoTorrentManager::read_torrent_file(
 }
 
 void VideoTorrentManager::save_resume_data() {
-	m_torrent_handle.pause();
-	m_torrent_handle.save_resume_data();
+	if (m_torrent_handle.is_valid()) {
+		m_torrent_handle.pause();
+		m_torrent_handle.save_resume_data();
 
-	// Waits for alerts.
-	int outstanding_resume_data = 1;
+		// Waits for alerts.
+		int outstanding_resume_data = 1;
 
-	while (outstanding_resume_data > 0) {
-		libtorrent::alert const* new_alert = m_session.wait_for_alert(
-				libtorrent::seconds(20));
+		while (outstanding_resume_data > 0) {
+			libtorrent::alert const* new_alert = m_session.wait_for_alert(
+					libtorrent::seconds(20));
 
-		if (new_alert) {
-			libtorrent::save_resume_data_alert const* resume_alert =
-					libtorrent::alert_cast<libtorrent::save_resume_data_alert>(
-							new_alert);
+			if (new_alert) {
+				libtorrent::save_resume_data_alert const* resume_alert =
+						libtorrent::alert_cast<libtorrent::save_resume_data_alert>(
+								new_alert);
 
-			// Saves resume data file.
-			if (resume_alert) {
-				std::string save_path = m_save_path;
-				std::string torrent_name =
-						m_torrent_handle.get_torrent_info().name();
-				std::string resume_path = save_path + "/" + torrent_name
-						+ ".resume";
+				// Saves resume data file.
+				if (resume_alert) {
+					std::string save_path = m_save_path;
+					std::string torrent_name =
+							m_torrent_handle.get_torrent_info().name();
+					std::string resume_path = save_path + "/" + torrent_name
+							+ ".resume";
 
-				std::ofstream out(resume_path.c_str(), std::ios_base::binary);
-				out.unsetf(std::ios_base::skipws);
-				bencode(std::ostream_iterator<char>(out),
-						*resume_alert->resume_data);
-				outstanding_resume_data--;
+					std::ofstream out(resume_path.c_str(), std::ios_base::binary);
+					out.unsetf(std::ios_base::skipws);
+					bencode(std::ostream_iterator<char>(out),
+							*resume_alert->resume_data);
+					outstanding_resume_data--;
+				}
+
+				// Resume data failed.
+				if (libtorrent::alert_cast<libtorrent::save_resume_data_failed_alert>(
+						new_alert)) {
+					outstanding_resume_data--;
+				}
+
+				m_session.pop_alert();
 			}
-
-			// Resume data failed.
-			if (libtorrent::alert_cast<libtorrent::save_resume_data_failed_alert>(
-					new_alert)) {
-				outstanding_resume_data--;
-			}
-
-			m_session.pop_alert();
 		}
 	}
 }
