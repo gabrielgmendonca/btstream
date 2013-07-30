@@ -63,11 +63,11 @@ void read_one_piece(VideoBuffer* video_buffer, boost::shared_ptr<Piece> piece) {
 	piece = video_buffer->get_next_piece();
 }
 
-TEST(VideoBufferTest, CreateWithNegativeSize) {
+TEST(DISABLED_VideoBufferTest, CreateWithNegativeSize) {
 	ASSERT_THROW(VideoBuffer video_buffer(-1), Exception);
 }
 
-TEST(VideoBufferTest, AddPieceInvalidIndex) {
+TEST(DISABLED_VideoBufferTest, AddPieceInvalidIndex) {
 	int buffer_length = 1;
 	VideoBuffer video_buffer(buffer_length);
 
@@ -79,7 +79,7 @@ TEST(VideoBufferTest, AddPieceInvalidIndex) {
 	EXPECT_THROW(video_buffer.add_piece(buffer_length, data, size), Exception);
 }
 
-TEST(VideoBufferTest, AddPieceNoData) {
+TEST(DISABLED_VideoBufferTest, AddPieceNoData) {
 	VideoBuffer video_buffer(1);
 
 	int index = 0;
@@ -89,7 +89,7 @@ TEST(VideoBufferTest, AddPieceNoData) {
 	EXPECT_THROW(video_buffer.add_piece(index, data, size), Exception);
 }
 
-TEST(VideoBufferTest, AddPieceInvalidSize) {
+TEST(DISABLED_VideoBufferTest, AddPieceInvalidSize) {
 	VideoBuffer video_buffer(1);
 
 	int index = 0;
@@ -99,7 +99,7 @@ TEST(VideoBufferTest, AddPieceInvalidSize) {
 	EXPECT_THROW(video_buffer.add_piece(index, data, -1), Exception);
 }
 
-TEST(VideoBufferTest, AddPieceOne) {
+TEST(DISABLED_VideoBufferTest, AddPieceOne) {
 	VideoBuffer video_buffer(1);
 
 	int index = 0;
@@ -118,7 +118,7 @@ TEST(VideoBufferTest, AddPieceOne) {
 	EXPECT_EQ(size, piece->size);
 }
 
-TEST(VideoBufferTest, AddPieceTwo) {
+TEST(DISABLED_VideoBufferTest, AddPieceTwo) {
 	VideoBuffer video_buffer(2);
 
 	int index2 = 1;
@@ -153,38 +153,38 @@ TEST(VideoBufferTest, AddPieceTwo) {
 	EXPECT_EQ(size2, piece2->size);
 }
 
-TEST(VideoBufferTest, AddPieceConcurrent) {
-//	int buffer_size = 50000;
-//	VideoBuffer video_buffer(buffer_size + 1);
-//
-//	fill_buffer(&video_buffer, buffer_size);
-//
-//	// Consumer thread. Will read all pieces and check their values.
-//	boost::thread consumer_thread(read_pieces, &video_buffer, buffer_size);
-//
-//	// Adding last piece in parallel.
-//	int index = buffer_size;
-//	int size = 1;
-//	boost::shared_array<char> data(new char[size]);
-//	data[0] = 127;
-//
-//	video_buffer.add_piece(index, data, size);
-//
-//	// Waiting for consumer to finish reading.
-//	consumer_thread.join();
-//
-//
-//	// Reading last piece.
-//	boost::shared_ptr<Piece> last_piece = video_buffer.get_next_piece();
-//
-//	ASSERT_TRUE(last_piece);
-//	EXPECT_EQ(index, last_piece->index);
-//	ASSERT_TRUE((bool) last_piece->data);
-//	EXPECT_EQ(data[0], last_piece->data[0]);
-//	EXPECT_EQ(size, last_piece->size);
+TEST(DISABLED_VideoBufferTest, AddPieceConcurrent) {
+	int buffer_size = 50000;
+	VideoBuffer video_buffer(buffer_size + 1);
+
+	fill_buffer(&video_buffer, buffer_size);
+
+	// Consumer thread. Will read all pieces and check their values.
+	boost::thread consumer_thread(read_pieces, &video_buffer, buffer_size);
+
+	// Adding last piece in parallel.
+	int index = buffer_size;
+	int size = 1;
+	boost::shared_array<char> data(new char[size]);
+	data[0] = 127;
+
+	video_buffer.add_piece(index, data, size);
+
+	// Waiting for consumer to finish reading.
+	consumer_thread.join();
+
+
+	// Reading last piece.
+	boost::shared_ptr<Piece> last_piece = video_buffer.get_next_piece();
+
+	ASSERT_TRUE(last_piece);
+	EXPECT_EQ(index, last_piece->index);
+	ASSERT_TRUE((bool) last_piece->data);
+	EXPECT_EQ(data[0], last_piece->data[0]);
+	EXPECT_EQ(size, last_piece->size);
 }
 
-TEST(VideoBufferTest, AddPieceDeadlock) {
+TEST(DISABLED_VideoBufferTest, AddPieceDeadlock) {
 	int buffer_size = 50000;
 	VideoBuffer video_buffer(buffer_size);
 
@@ -201,7 +201,7 @@ TEST(VideoBufferTest, AddPieceDeadlock) {
 }
 
 
-TEST(VideoBufferTest, GetNextPieceOverflow) {
+TEST(DISABLED_VideoBufferTest, GetNextPieceOverflow) {
 	VideoBuffer video_buffer(1);
 
 	boost::shared_array<char> data(new char[1]);
@@ -214,7 +214,7 @@ TEST(VideoBufferTest, GetNextPieceOverflow) {
 	ASSERT_FALSE(invalid_piece);
 }
 
-TEST(VideoBufferTest, UnlockBeforeGetNextPiece) {
+TEST(DISABLED_VideoBufferTest, UnlockBeforeGetNextPiece) {
 	VideoBuffer video_buffer(1);
 
 	ASSERT_FALSE(video_buffer.unlocked());
@@ -229,7 +229,7 @@ TEST(VideoBufferTest, UnlockBeforeGetNextPiece) {
 	ASSERT_FALSE(null_piece);
 }
 
-TEST(VideoBufferTest, UnlockRunningGetNextPiece) {
+TEST(DISABLED_VideoBufferTest, UnlockRunningGetNextPiece) {
 	VideoBuffer video_buffer(1);
 
 	boost::shared_ptr<Piece> null_piece;
