@@ -31,6 +31,10 @@ namespace btstream {
 VideoBuffer::VideoBuffer(int num_pieces) throw (Exception) :
 		m_max_buffer_size(10), m_num_pieces(num_pieces), m_next_piece_index(0),
 		m_unlocked(false) {
+
+	if (num_pieces <= 0) {
+		throw Exception("Invalid number of pieces.");
+	}
 }
 
 VideoBuffer::~VideoBuffer() {

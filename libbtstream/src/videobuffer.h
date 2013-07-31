@@ -61,7 +61,7 @@ public:
 	 * Constructor.
 	 * @param num_pieces Number of pieces in the video file.
 	 */
-	VideoBuffer(int num_pieces=1) throw (Exception);
+	VideoBuffer(int num_pieces = 1) throw (Exception);
 
 	/**
 	 * Destructor.
@@ -70,8 +70,11 @@ public:
 	~VideoBuffer();
 
 	/**
-	 * Adds a piece reference to the buffer.
-	 * This method implements mutual exclusion and will block until the
+	 * Adds a piece reference to the buffer. If there is no space left
+	 * on the buffer then the method will block until the method
+	 * get_next_piece is called.
+	 *
+	 * This method implements mutual exclusion and will block until
 	 * resources are available.
 	 * @param index the piece index.
 	 * @param data a char array with piece data.
