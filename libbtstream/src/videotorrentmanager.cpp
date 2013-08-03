@@ -272,7 +272,7 @@ libtorrent::torrent_info* VideoTorrentManager::read_torrent_file(
 		delete[] memory_block;
 
 	} else {
-		throw Exception("Could not open torrent file.");
+		throw Exception("Could not open torrent file " + file_name);
 	}
 
 	return ti;

@@ -30,7 +30,7 @@
 
 namespace btstream {
 
-std::string TEST_TORRENT = "testfile.torrent";
+std::string TEST_TORRENT = "testfile1.torrent";
 int TEST_TORRENT_PIECES = 256;
 int TEST_TORRENT_PIECE_SIZE = 1024;
 

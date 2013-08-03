@@ -40,7 +40,7 @@ TEST(VideoTorrentManagerTest, AddTorrentValid) {
 	VideoTorrentManager video_torrent_manager;
 
 	int piece_number = 256;
-	std::string TEST_TORRENT = "testfile.torrent";
+	std::string TEST_TORRENT = "testfile1.torrent";
 	ASSERT_EQ(piece_number, video_torrent_manager.add_torrent(TEST_TORRENT, 0, "."));
 }
 
