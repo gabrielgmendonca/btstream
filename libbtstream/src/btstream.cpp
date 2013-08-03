@@ -26,9 +26,27 @@
 
 namespace btstream {
 
+BTStream::BTStream() :
+		m_video_torrent_manager(new VideoTorrentManager) {
+
+}
+
 BTStream::BTStream(const std::string& torrent_path,
 		const std::string& save_path, Algorithm algorithm, int stream_length) :
 		m_video_torrent_manager(new VideoTorrentManager) {
+
+	add_torrent(torrent_path, save_path, algorithm, stream_length);
+}
+
+BTStream::BTStream(const std::string& torrent_path, PiecePicker* piece_picker,
+		const std::string& save_path) :
+		m_video_torrent_manager(new VideoTorrentManager) {
+
+	add_torrent(torrent_path, piece_picker, save_path);
+}
+
+void BTStream::add_torrent(const std::string& torrent_path,
+		const std::string& save_path, Algorithm algorithm, int stream_length) {
 
 	int num_pieces;
 	num_pieces = m_video_torrent_manager->add_torrent(torrent_path, save_path,
@@ -37,13 +55,12 @@ BTStream::BTStream(const std::string& torrent_path,
 	init(num_pieces);
 }
 
-BTStream::BTStream(const std::string& torrent_path, PiecePicker* piece_picker,
-		const std::string& save_path) :
-		m_video_torrent_manager(new VideoTorrentManager) {
+void BTStream::add_torrent(const std::string& torrent_path,
+		PiecePicker* piece_picker, const std::string& save_path) {
 
 	int num_pieces;
-	num_pieces = m_video_torrent_manager->add_torrent(torrent_path, piece_picker,
-			save_path);
+	num_pieces = m_video_torrent_manager->add_torrent(torrent_path,
+			piece_picker, save_path);
 
 	init(num_pieces);
 }

@@ -40,7 +40,21 @@ TEST(BTStreamTest, CreateWithValidTorrent) {
 	ASSERT_NO_THROW(BTStream btstream(TEST_TORRENT));
 }
 
-TEST(BTStreamTest, GetPiece) {
+TEST(BTStreamTest, AddInvalidTorrent) {
+	BTStream btstream;
+	std::string path = "";
+
+	ASSERT_THROW(btstream.add_torrent(path), Exception);
+}
+
+TEST(BTStreamTest, AddValidTorrent) {
+	BTStream btstream;
+	std::string TEST_TORRENT = "testfile.torrent";
+
+	ASSERT_NO_THROW(btstream.add_torrent(TEST_TORRENT));
+}
+
+TEST(BTStreamTest, GetPieceWithTorrent) {
 	std::string TEST_TORRENT = "testfile.torrent";
 	BTStream btstream(TEST_TORRENT);
 

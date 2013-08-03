@@ -39,9 +39,19 @@ namespace btstream {
  * to provide a path to a valid torrent file at the constructor and,
  * after that, call the get_next_piece method regularly to read
  * downloaded pieces.
+ *
+ * One can also create an empty BTStream object and add a torrent later
+ * with the add_torrent method.
  */
 class BTStream {
 public:
+
+	/**
+	 * Default constructor.
+	 * Creates a BTStream object without any torrents. In order to
+	 * start a video download one have to call the add_torrent method.
+	 */
+	BTStream();
 
 	/**
 	 * Constructor.
@@ -56,9 +66,8 @@ public:
 	 * 			It must be provided when using the DEADLINE algorithm.
 	 */
 	BTStream(const std::string& torrent_path,
-			const std::string& save_path = ".",
-			Algorithm algorithm = RAREST_FIRST,
-			int stream_length = 0);
+			const std::string& save_path = ".", Algorithm algorithm =
+					RAREST_FIRST, int stream_length = 0);
 
 	/**
 	 * Constructor.
@@ -70,6 +79,34 @@ public:
 	 * 			Path where the downloaded file will be stored.
 	 */
 	BTStream(const std::string& torrent_path, PiecePicker* piece_picker,
+			const std::string& save_path = ".");
+
+	/**
+	 * Adds a torrent and starts its download.
+	 * @param torrent_path
+	 * 			Path to a valid torrent file.
+	 * @param save_path
+	 * 			Path where the downloaded file will be stored.
+	 * @param algorithm
+	 * 			Built-in piece picking algorithm that will be used.
+	 * @param stream_length
+	 * 			Length of the decoded stream in milliseconds.
+	 * 			It must be provided when using the DEADLINE algorithm.
+	 */
+	void add_torrent(const std::string& torrent_path,
+			const std::string& save_path = ".", Algorithm algorithm =
+					RAREST_FIRST, int stream_length = 0);
+
+	/**
+	 * Adds a torrent and starts its download.
+	 * @param torrent_path
+	 * 			Path to a valid torrent file.
+	 * @param piece picker
+	 * 			Pointer to a custom PiecePicker.
+	 * @param save_path
+	 * 			Path where the downloaded file will be stored.
+	 */
+	void add_torrent(const std::string& torrent_path, PiecePicker* piece_picker,
 			const std::string& save_path = ".");
 
 	/**
