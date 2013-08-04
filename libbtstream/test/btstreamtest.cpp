@@ -22,24 +22,21 @@
  *      Author: gabriel
  */
 
-#include "btstream.h"
-
 #include <gtest/gtest.h>
 
+#include "btstream.h"
 #include "exception.h"
 
-namespace btstream {
+#include "constants.h"
 
-std::string TEST_TORRENT = "testfile1.torrent";
-int TEST_TORRENT_PIECES = 256;
-int TEST_TORRENT_PIECE_SIZE = 1024;
+namespace btstream {
 
 TEST(BTStreamTest, CreateWithInvalidTorrent) {
 	ASSERT_THROW(BTStream btstream(""), Exception);
 }
 
 TEST(BTStreamTest, CreateWithValidTorrent) {
-	ASSERT_NO_THROW(BTStream btstream(TEST_TORRENT));
+	ASSERT_NO_THROW(BTStream btstream(TEST_TORRENT1));
 }
 
 TEST(BTStreamTest, AddInvalidTorrent) {
@@ -49,19 +46,25 @@ TEST(BTStreamTest, AddInvalidTorrent) {
 
 TEST(BTStreamTest, AddValidTorrent) {
 	BTStream btstream;
-	ASSERT_NO_THROW(btstream.add_torrent(TEST_TORRENT));
+	ASSERT_NO_THROW(btstream.add_torrent(TEST_TORRENT1));
+}
+
+TEST(DISABLED_BTStreamTest, AddTwoTorrents) {
+	BTStream btstream;
+	ASSERT_NO_THROW(btstream.add_torrent(TEST_TORRENT1));
+	ASSERT_NO_THROW(btstream.add_torrent(TEST_TORRENT2));
 }
 
 TEST(BTStreamTest, GetPieceWithTorrent) {
-	BTStream btstream(TEST_TORRENT);
+	BTStream btstream(TEST_TORRENT1);
 
 	boost::shared_ptr<Piece> piece;
 
-	for (int i = 0; i < TEST_TORRENT_PIECES; i++) {
+	for (int i = 0; i < TEST_TORRENT1_PIECES; i++) {
 		piece = btstream.get_next_piece();
 		ASSERT_TRUE(piece);
 		EXPECT_EQ(i, piece->index);
-		EXPECT_EQ(TEST_TORRENT_PIECE_SIZE, piece->size);
+		EXPECT_EQ(TEST_TORRENT1_PIECE_LENGTH, piece->size);
 	}
 
 	// After last piece returned, expect NULL
@@ -70,7 +73,7 @@ TEST(BTStreamTest, GetPieceWithTorrent) {
 }
 
 TEST(BTStreamTest, GetStatus) {
-	BTStream btstream(TEST_TORRENT);
+	BTStream btstream(TEST_TORRENT1);
 
 	// Wait until pieces have been read.
 	btstream.get_next_piece();
@@ -79,7 +82,7 @@ TEST(BTStreamTest, GetStatus) {
 
 	EXPECT_EQ(0, status.download_rate);
 	EXPECT_EQ(1.0f, status.download_progress);
-	EXPECT_EQ(TEST_TORRENT_PIECES, status.num_pieces);
+	EXPECT_EQ(TEST_TORRENT1_PIECES, status.num_pieces);
 	EXPECT_EQ(1, status.num_peers);
 	EXPECT_EQ(0, status.num_seeds);
 	EXPECT_EQ(0, status.num_connected_peers);
@@ -88,9 +91,9 @@ TEST(BTStreamTest, GetStatus) {
 	EXPECT_EQ(-1, status.distributed_copies);
 	EXPECT_EQ(0, status.seconds_to_next_announce);
 
-	ASSERT_EQ(TEST_TORRENT_PIECES, status.pieces.size());
+	ASSERT_EQ(TEST_TORRENT1_PIECES, status.pieces.size());
 
-	boost::dynamic_bitset<> bitset(TEST_TORRENT_PIECES);
+	boost::dynamic_bitset<> bitset(TEST_TORRENT1_PIECES);
 	bitset.flip();
 	EXPECT_EQ(bitset, status.pieces);
 }

@@ -22,11 +22,12 @@
  *      Author: gabriel
  */
 
-#include "videotorrentmanager.h"
-
 #include <gtest/gtest.h>
 
+#include "videotorrentmanager.h"
 #include "exception.h"
+
+#include "constants.h"
 
 namespace btstream {
 
@@ -39,9 +40,8 @@ TEST(VideoTorrentManagerTest, AddTorrentInvalid) {
 TEST(VideoTorrentManagerTest, AddTorrentValid) {
 	VideoTorrentManager video_torrent_manager;
 
-	int piece_number = 256;
-	std::string TEST_TORRENT = "testfile1.torrent";
-	ASSERT_EQ(piece_number, video_torrent_manager.add_torrent(TEST_TORRENT, 0, "."));
+	int num_pieces = video_torrent_manager.add_torrent(TEST_TORRENT1, 0, ".");
+	ASSERT_EQ(TEST_TORRENT1_PIECES, num_pieces);
 }
 
 } /* namespace btstream */

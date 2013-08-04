@@ -6,7 +6,9 @@ unittest_SOURCES = \
 	main.cpp \
 	btstreamtest.cpp \
 	videobuffertest.cpp \
-	videotorrentmanagertest.cpp
+	videotorrentmanagertest.cpp \
+	constants.cpp \
+	constants.h
 
 unittest_LDADD = \
 	$(top_builddir)/src/libbtstream.la \
