@@ -40,8 +40,11 @@ TEST(VideoTorrentManagerTest, AddTorrentInvalid) {
 TEST(VideoTorrentManagerTest, AddTorrentValid) {
 	VideoTorrentManager video_torrent_manager;
 
-	int num_pieces = video_torrent_manager.add_torrent(TEST_TORRENT1, 0, ".");
-	ASSERT_EQ(TEST_TORRENT1_PIECES, num_pieces);
+	boost::shared_ptr<VideoBuffer> video_buffer;
+	ASSERT_NO_THROW(video_buffer =
+			video_torrent_manager.add_torrent(TEST_TORRENT1, 0, "."));
+
+	EXPECT_TRUE(video_buffer);
 }
 
 } /* namespace btstream */

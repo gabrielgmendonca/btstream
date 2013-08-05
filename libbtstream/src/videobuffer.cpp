@@ -29,7 +29,7 @@
 namespace btstream {
 
 VideoBuffer::VideoBuffer(int num_pieces) throw (Exception) :
-		m_max_buffer_size(10), m_num_pieces(num_pieces), m_next_piece_index(0),
+		m_buffer_size(10), m_num_pieces(num_pieces), m_next_piece_index(0),
 		m_unlocked(false) {
 
 	if (num_pieces <= 0) {
@@ -47,7 +47,7 @@ void VideoBuffer::add_piece(int index, boost::shared_array<char> data, int size)
 		boost::unique_lock<boost::mutex> lock(m_mutex);
 
 		// Waits while buffer is full.
-		while (m_pieces.size() == m_max_buffer_size) {
+		while (m_pieces.size() == m_buffer_size) {
 			m_buffer_not_full.wait(lock);
 		}
 

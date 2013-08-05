@@ -72,29 +72,23 @@ public:
 	~VideoTorrentManager();
 
 	/**
-	 * Prepares the download of the torrent given by file_name and returns the
-	 * number of pieces. The address of a previously known seed may be provided.
+	 * Starts the download of the torrent given by file_name and returns the
+	 * VideoBuffer that will store downloaded pieces.
 	 *
 	 * With this method, a built-in piece selection algorithm can be chosen.
 	 */
-	int add_torrent(const std::string& file_name, const std::string& save_path,
-			Algorithm algorithm, int stream_length) throw (Exception);
+	boost::shared_ptr<VideoBuffer> add_torrent(const std::string& file_name,
+			const std::string& save_path, Algorithm algorithm,
+			int stream_length) throw (Exception);
 
 	/**
-	 * Prepares the download of the torrent given by file_name and returns the
-	 * number of pieces. The address of a previously known seed may be provided.
+	 * Starts the download of the torrent given by file_name and returns the
+	 * VideoBuffer that will store downloaded pieces.
 	 *
 	 * With this method, a custom piece selection algorithm can be provided.
 	 */
-	int add_torrent(const std::string& file_name, PiecePicker* piece_picker,
-			const std::string& save_path) throw (Exception);
-
-	/**
-	 * Starts download of the video file.
-	 * The downloaded pieces will be added to the given VideoBuffer.
-	 * A feeding thread will be started.
-	 */
-	void start_download(boost::shared_ptr<VideoBuffer> video_buffer)
+	boost::shared_ptr<VideoBuffer> add_torrent(const std::string& file_name,
+			PiecePicker* piece_picker, const std::string& save_path)
 			throw (Exception);
 
 	/**

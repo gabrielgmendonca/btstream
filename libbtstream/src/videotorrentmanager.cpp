@@ -61,9 +61,9 @@ VideoTorrentManager::~VideoTorrentManager() {
 	save_resume_data();
 }
 
-int VideoTorrentManager::add_torrent(const std::string& file_name,
-		const std::string& save_path, Algorithm algorithm, int stream_length)
-				throw (Exception) {
+boost::shared_ptr<VideoBuffer> VideoTorrentManager::add_torrent(
+		const std::string& file_name, const std::string& save_path,
+		Algorithm algorithm, int stream_length) throw (Exception) {
 
 	add_torrent(file_name, 0, save_path);
 
@@ -93,20 +93,19 @@ int VideoTorrentManager::add_torrent(const std::string& file_name,
 		break;
 	}
 
-	return m_num_pieces;
+	return m_video_buffer;
 }
 
-int VideoTorrentManager::add_torrent(const std::string& file_name,
-		PiecePicker* piece_picker, const std::string& save_path)
-				throw (Exception) {
+boost::shared_ptr<VideoBuffer> VideoTorrentManager::add_torrent(
+		const std::string& file_name, PiecePicker* piece_picker,
+		const std::string& save_path) throw (Exception) {
 
 	int num_pieces = 0;
 	try {
 		libtorrent::add_torrent_params params;
 		params.ti = read_torrent_file(file_name);
 		params.save_path = save_path;
-		params.paused = true;
-		params.auto_managed = false;
+//		params.auto_managed = false;
 		params.userdata = dynamic_cast<void*>(piece_picker);
 
 		std::string video_file_name = params.ti->name() + ".resume";
@@ -121,29 +120,22 @@ int VideoTorrentManager::add_torrent(const std::string& file_name,
 
 		m_torrent_handle = m_session.add_torrent(params);
 
-		num_pieces = params.ti.get()->num_pieces();
-
-		m_next_piece = 0;
-		m_num_pieces = num_pieces;
 		m_save_path = save_path;
+		m_num_pieces = params.ti.get()->num_pieces();
+		m_next_piece = 0;
+
+		m_video_buffer =
+				boost::shared_ptr<VideoBuffer>(new VideoBuffer(m_num_pieces));
+
+		// Starts VideoBuffer feeding thread that calls the feed_video_buffer method.
+		m_feeding_thread = boost::shared_ptr<boost::thread>(
+				new boost::thread(&VideoTorrentManager::feed_video_buffer, this));
 
 	} catch (std::exception& e) {
 		throw Exception(e.what());
 	}
 
-	return num_pieces;
-}
-
-void VideoTorrentManager::start_download(
-		boost::shared_ptr<VideoBuffer> video_buffer) throw (Exception) {
-	m_video_buffer = video_buffer;
-
-	// Starts torrent download.
-	m_torrent_handle.resume();
-
-	// Starts VideoBuffer feeding thread that calls the feed_video_buffer method.
-	m_feeding_thread = boost::shared_ptr<boost::thread>(
-			new boost::thread(&VideoTorrentManager::feed_video_buffer, this));
+	return m_video_buffer;
 }
 
 void VideoTorrentManager::feed_video_buffer() {

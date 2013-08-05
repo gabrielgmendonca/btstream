@@ -31,6 +31,24 @@
 
 namespace btstream {
 
+/**
+ * Simulates video playback.
+ * Called at a separate thread.
+ */
+void read_pieces(BTStream* btstream, int num_pieces, int piece_length) {
+	for (int i = 0; i < num_pieces; i++) {
+		boost::shared_ptr<Piece> piece;
+
+		piece = btstream->get_next_piece();
+		ASSERT_TRUE(piece);
+		EXPECT_EQ(i, piece->index);
+		EXPECT_EQ(piece_length, piece->size);
+	}
+
+	// After last piece returned, expect NULL
+	EXPECT_FALSE(btstream->get_next_piece());
+}
+
 TEST(BTStreamTest, CreateWithInvalidTorrent) {
 	ASSERT_THROW(BTStream btstream(""), Exception);
 }
@@ -58,32 +76,37 @@ TEST(DISABLED_BTStreamTest, AddTwoTorrents) {
 TEST(BTStreamTest, GetPieceWithTorrent) {
 	BTStream btstream(TEST_TORRENT1);
 
-	boost::shared_ptr<Piece> piece;
+	// Start playback thread.
+	boost::thread playback_thread(read_pieces, &btstream, TEST_TORRENT1_PIECES,
+			TEST_TORRENT1_PIECE_LENGTH);
 
-	for (int i = 0; i < TEST_TORRENT1_PIECES; i++) {
-		piece = btstream.get_next_piece();
-		ASSERT_TRUE(piece);
-		EXPECT_EQ(i, piece->index);
-		EXPECT_EQ(TEST_TORRENT1_PIECE_LENGTH, piece->size);
-	}
+	// Wait for playback thread to end.
+	boost::posix_time::time_duration td = boost::posix_time::seconds(1);
+	EXPECT_TRUE(playback_thread.timed_join(td));
 
-	// After last piece returned, expect NULL
-	piece = btstream.get_next_piece();
-	ASSERT_FALSE(piece);
+	// Stop playback thread in case it is still running.
+	playback_thread.interrupt();
+	playback_thread.join();
 }
 
 TEST(BTStreamTest, GetStatus) {
 	BTStream btstream(TEST_TORRENT1);
 
-	// Wait until pieces have been read.
-	btstream.get_next_piece();
+	// Start playback thread.
+	boost::thread playback_thread(read_pieces, &btstream, TEST_TORRENT1_PIECES,
+			TEST_TORRENT1_PIECE_LENGTH);
+
+	// Wait for playback thread to end.
+	boost::posix_time::time_duration td = boost::posix_time::seconds(1);
+	EXPECT_TRUE(playback_thread.timed_join(td));
 
 	Status status = btstream.get_status();
 
 	EXPECT_EQ(0, status.download_rate);
+	EXPECT_EQ(0, status.upload_rate);
 	EXPECT_EQ(1.0f, status.download_progress);
 	EXPECT_EQ(TEST_TORRENT1_PIECES, status.num_pieces);
-	EXPECT_EQ(1, status.num_peers);
+	EXPECT_EQ(0, status.num_peers);
 	EXPECT_EQ(0, status.num_seeds);
 	EXPECT_EQ(0, status.num_connected_peers);
 	EXPECT_EQ(0, status.num_connected_seeds);
@@ -96,6 +119,10 @@ TEST(BTStreamTest, GetStatus) {
 	boost::dynamic_bitset<> bitset(TEST_TORRENT1_PIECES);
 	bitset.flip();
 	EXPECT_EQ(bitset, status.pieces);
+
+	// Stop playback thread in case it is still running.
+	playback_thread.interrupt();
+	playback_thread.join();
 }
 
 } /* namespace btstream */

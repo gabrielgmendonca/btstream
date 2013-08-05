@@ -154,8 +154,6 @@ public:
 
 private:
 
-	void init(int num_pieces);
-
 	boost::shared_ptr<VideoTorrentManager> m_video_torrent_manager;
 	boost::shared_ptr<VideoBuffer> m_video_buffer;
 };

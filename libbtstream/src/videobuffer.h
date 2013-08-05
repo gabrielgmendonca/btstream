@@ -111,7 +111,7 @@ public:
 	bool unlocked();
 
 private:
-	const int m_max_buffer_size;
+	const int m_buffer_size;
 
 	std::queue<boost::shared_ptr<Piece> > m_pieces;
 	int m_num_pieces;

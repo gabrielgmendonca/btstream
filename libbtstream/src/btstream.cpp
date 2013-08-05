@@ -48,21 +48,15 @@ BTStream::BTStream(const std::string& torrent_path, PiecePicker* piece_picker,
 void BTStream::add_torrent(const std::string& torrent_path,
 		const std::string& save_path, Algorithm algorithm, int stream_length) {
 
-	int num_pieces;
-	num_pieces = m_video_torrent_manager->add_torrent(torrent_path, save_path,
-			algorithm, stream_length);
-
-	init(num_pieces);
+	m_video_buffer = m_video_torrent_manager->add_torrent(torrent_path,
+			save_path, algorithm, stream_length);
 }
 
 void BTStream::add_torrent(const std::string& torrent_path,
 		PiecePicker* piece_picker, const std::string& save_path) {
 
-	int num_pieces;
-	num_pieces = m_video_torrent_manager->add_torrent(torrent_path,
+	m_video_buffer = m_video_torrent_manager->add_torrent(torrent_path,
 			piece_picker, save_path);
-
-	init(num_pieces);
 }
 
 boost::shared_ptr<Piece> BTStream::get_next_piece() {
@@ -87,13 +81,6 @@ void BTStream::unlock() {
 
 bool BTStream::unlocked() {
 	return m_video_buffer->unlocked();
-}
-
-void BTStream::init(int num_pieces) {
-	m_video_buffer = boost::shared_ptr<VideoBuffer>(
-			new VideoBuffer(num_pieces));
-
-	m_video_torrent_manager->start_download(m_video_buffer);
 }
 
 } /* namespace btstream */
