@@ -10,7 +10,7 @@ unittest_SOURCES = \
 
 unittest_LDADD = \
 	$(top_builddir)/src/libbtstream.la \
-	libgtest.a \
+	gtest/libgtest.a \
 	@BOOST_THREAD_LIB@ \
 	@BOOST_SYSTEM_LIB@
 
