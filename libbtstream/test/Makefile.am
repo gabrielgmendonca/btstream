@@ -12,7 +12,8 @@ unittest_LDADD = \
 	$(top_builddir)/src/libbtstream.la \
 	gtest/libgtest.a \
 	@BOOST_THREAD_LIB@ \
-	@BOOST_SYSTEM_LIB@
+	@BOOST_SYSTEM_LIB@ \
+	@LIBTORRENT_LIBS@
 
 unittest_CXXFLAGS = \
 	-Igtest/include \
