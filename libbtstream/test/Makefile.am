@@ -27,6 +27,6 @@ unittest_CXXFLAGS = \
 # Programs run with "make check" 
 TESTS = $(check_PROGRAMS)
 
-EXTRA_DIST = testfile testfile.torrent
+EXTRA_DIST = testfile1 testfile2 testfile1.torrent testfile2.torrent
 
 SUBDIRS=gtest
