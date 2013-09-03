@@ -47,7 +47,7 @@ AC_PROG_CXX
 PKG_PROG_PKG_CONFIG([0.20])
 
 # Check libraries
-PKG_CHECK_MODULES([LIBTORRENT], [libtorrent-rasterbar >= 0.15])
+PKG_CHECK_MODULES([LIBTORRENT], [libtorrent-rasterbar >= 0.16])
 AC_SUBST([LIBTORRENT_LIBS])
 AC_SUBST([LIBTORRENT_CFLAGS])
 
