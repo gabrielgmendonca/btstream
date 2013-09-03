@@ -121,6 +121,8 @@ private:
 
 	libtorrent::torrent_info* read_torrent_file(const std::string& file_name);
 	void save_resume_data();
+	void stop_feeding_thread();
+	void clear_alerts();
 
 	libtorrent::session m_session;
 	libtorrent::torrent_handle m_torrent_handle;

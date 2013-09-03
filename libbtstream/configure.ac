@@ -33,7 +33,7 @@ dnl  REVISION is set to 0, otherwise REVISION is incremented.
 dnl ---------------------------------------------------------------------------
 
 m4_define([VERSION_INFO_CURRENT],[2])
-m4_define([VERSION_INFO_REVISION],[2])
+m4_define([VERSION_INFO_REVISION],[3])
 m4_define([VERSION_INFO_AGE],[0])
 INTERFACE_VERSION_INFO=VERSION_INFO_CURRENT:VERSION_INFO_REVISION:VERSION_INFO_AGE
 AC_SUBST(INTERFACE_VERSION_INFO)

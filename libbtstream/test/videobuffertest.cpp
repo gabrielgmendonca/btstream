@@ -167,6 +167,13 @@ TEST(VideoBufferTest, AddPieceConcurrent) {
 	EXPECT_TRUE(producer_thread.timed_join(td));
 	EXPECT_TRUE(consumer_thread.timed_join(td));
 
+	// Stop threads in case they are still running.
+	producer_thread.interrupt();
+	consumer_thread.interrupt();
+	producer_thread.join();
+	consumer_thread.join();
+
+
 	// Adding last piece.
 	int index = num_pieces;
 	int size = 1;
@@ -229,6 +236,10 @@ TEST(VideoBufferTest, UnlockRunningGetNextPiece) {
 	// Threads shoudn't take too long to stop.
 	boost::posix_time::time_duration td = boost::posix_time::seconds(1);
 	EXPECT_TRUE(consumer_thread.timed_join(td));
+
+	// Stop consumer thread in case it is still running.
+	consumer_thread.interrupt();
+	consumer_thread.join();
 
 	ASSERT_FALSE(null_piece);
 }

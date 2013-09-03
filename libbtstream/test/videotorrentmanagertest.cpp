@@ -47,4 +47,21 @@ TEST(VideoTorrentManagerTest, AddTorrentValid) {
 	EXPECT_TRUE(video_buffer);
 }
 
+TEST(VideoTorrentManagerTest, AddTwoTorrents) {
+	VideoTorrentManager video_torrent_manager;
+	boost::shared_ptr<VideoBuffer> video_buffer;
+
+	// Add first torrent.
+	ASSERT_NO_THROW(video_buffer =
+			video_torrent_manager.add_torrent(TEST_TORRENT1, 0, "."));
+
+	EXPECT_TRUE(video_buffer);
+
+	// Add second torrent.
+	ASSERT_NO_THROW(video_buffer =
+			video_torrent_manager.add_torrent(TEST_TORRENT2, 0, "."));
+
+	EXPECT_TRUE(video_buffer);
+}
+
 } /* namespace btstream */

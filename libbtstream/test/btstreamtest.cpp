@@ -35,18 +35,41 @@ namespace btstream {
  * Simulates video playback.
  * Called at a separate thread.
  */
-void read_pieces(BTStream* btstream, int num_pieces, int piece_length) {
+void read_pieces(BTStream* btstream, int num_pieces, int piece_length,
+	bool check) {
+
 	for (int i = 0; i < num_pieces; i++) {
 		boost::shared_ptr<Piece> piece;
 
 		piece = btstream->get_next_piece();
-		ASSERT_TRUE(piece);
-		EXPECT_EQ(i, piece->index);
-		EXPECT_EQ(piece_length, piece->size);
+
+		if (check) {
+			ASSERT_TRUE(piece);
+			EXPECT_EQ(i, piece->index);
+			EXPECT_EQ(piece_length, piece->size);
+		}
 	}
 
-	// After last piece returned, expect NULL
-	EXPECT_FALSE(btstream->get_next_piece());
+	if (check) {
+		// After last piece returned, expect NULL
+		EXPECT_FALSE(btstream->get_next_piece());
+	}
+}
+
+void run_playback_thread(BTStream* btstream, int num_pieces, int
+	piece_length, bool check) {
+
+	// Start playback thread.
+	boost::thread playback_thread(read_pieces, btstream, num_pieces,
+			piece_length, check);
+
+	// Wait for playback thread to end.
+	boost::posix_time::time_duration td = boost::posix_time::seconds(20);
+	EXPECT_TRUE(playback_thread.timed_join(td));
+
+	// Stop playback thread in case it is still running.
+	playback_thread.interrupt();
+	playback_thread.join();
 }
 
 TEST(BTStreamTest, CreateWithInvalidTorrent) {
@@ -67,7 +90,7 @@ TEST(BTStreamTest, AddValidTorrent) {
 	ASSERT_NO_THROW(btstream.add_torrent(TEST_TORRENT1));
 }
 
-TEST(DISABLED_BTStreamTest, AddTwoTorrents) {
+TEST(BTStreamTest, AddTwoTorrents) {
 	BTStream btstream;
 	ASSERT_NO_THROW(btstream.add_torrent(TEST_TORRENT1));
 	ASSERT_NO_THROW(btstream.add_torrent(TEST_TORRENT2));
@@ -76,29 +99,50 @@ TEST(DISABLED_BTStreamTest, AddTwoTorrents) {
 TEST(BTStreamTest, GetPieceWithTorrent) {
 	BTStream btstream(TEST_TORRENT1);
 
-	// Start playback thread.
-	boost::thread playback_thread(read_pieces, &btstream, TEST_TORRENT1_PIECES,
-			TEST_TORRENT1_PIECE_LENGTH);
+	bool check = true;
+	run_playback_thread(&btstream, TEST_TORRENT1_PIECES,
+		TEST_TORRENT1_PIECE_LENGTH, check);
+}
 
-	// Wait for playback thread to end.
-	boost::posix_time::time_duration td = boost::posix_time::seconds(1);
-	EXPECT_TRUE(playback_thread.timed_join(td));
+TEST(BTStreamTest, GetPieceFromTwoTorrents) {
+	BTStream btstream;
+	bool check = true;
 
-	// Stop playback thread in case it is still running.
-	playback_thread.interrupt();
-	playback_thread.join();
+	// Test first torrent.
+	btstream.add_torrent(TEST_TORRENT1);
+
+	run_playback_thread(&btstream, TEST_TORRENT1_PIECES,
+		TEST_TORRENT1_PIECE_LENGTH, check);
+
+
+	// Test second torrent.
+	btstream.add_torrent(TEST_TORRENT2);
+
+	run_playback_thread(&btstream, TEST_TORRENT2_PIECES,
+		TEST_TORRENT2_PIECE_LENGTH, check);
+}
+
+TEST(BTStreamTest, GetPieceAfterTwoTorrents) {
+	BTStream btstream;
+	bool check = true;
+
+	// Add first torrent.
+	btstream.add_torrent(TEST_TORRENT1);
+
+	// Add second torrent.
+	btstream.add_torrent(TEST_TORRENT2);
+
+	// Pieces on buffer should be from torrent 2.
+	run_playback_thread(&btstream, TEST_TORRENT2_PIECES,
+		TEST_TORRENT2_PIECE_LENGTH, check);
 }
 
 TEST(BTStreamTest, GetStatus) {
 	BTStream btstream(TEST_TORRENT1);
 
-	// Start playback thread.
-	boost::thread playback_thread(read_pieces, &btstream, TEST_TORRENT1_PIECES,
-			TEST_TORRENT1_PIECE_LENGTH);
-
-	// Wait for playback thread to end.
-	boost::posix_time::time_duration td = boost::posix_time::seconds(1);
-	EXPECT_TRUE(playback_thread.timed_join(td));
+	bool check = false;
+	run_playback_thread(&btstream, TEST_TORRENT1_PIECES,
+		TEST_TORRENT1_PIECE_LENGTH, check);
 
 	Status status = btstream.get_status();
 
@@ -119,10 +163,6 @@ TEST(BTStreamTest, GetStatus) {
 	boost::dynamic_bitset<> bitset(TEST_TORRENT1_PIECES);
 	bitset.flip();
 	EXPECT_EQ(bitset, status.pieces);
-
-	// Stop playback thread in case it is still running.
-	playback_thread.interrupt();
-	playback_thread.join();
 }
 
 } /* namespace btstream */

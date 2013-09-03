@@ -49,13 +49,8 @@ VideoTorrentManager::VideoTorrentManager() :
 }
 
 VideoTorrentManager::~VideoTorrentManager() {
-	if (m_feeding_thread) {
-		// Stops feeding thread.
-		m_feeding_thread->interrupt();
-		m_feeding_thread->join();
-	}
+	stop_feeding_thread();
 
-	// Stops session.
 	m_session.pause();
 
 	save_resume_data();
@@ -105,7 +100,7 @@ boost::shared_ptr<VideoBuffer> VideoTorrentManager::add_torrent(
 		libtorrent::add_torrent_params params;
 		params.ti = read_torrent_file(file_name);
 		params.save_path = save_path;
-//		params.auto_managed = false;
+		params.auto_managed = true;
 		params.userdata = dynamic_cast<void*>(piece_picker);
 
 		std::string video_file_name = params.ti->name() + ".resume";
@@ -118,16 +113,25 @@ boost::shared_ptr<VideoBuffer> VideoTorrentManager::add_torrent(
 			params.resume_data = &buffer;
 		}
 
+		// Clear old alerts before adding new torrent.
+		stop_feeding_thread();
+//		clear_alerts();
+
+		// Add torrent to session.
 		m_torrent_handle = m_session.add_torrent(params);
+		m_torrent_handle.resume();
 
 		m_save_path = save_path;
 		m_num_pieces = params.ti.get()->num_pieces();
 		m_next_piece = 0;
+		m_last_played_piece = 0;
+		m_deadlines_mode = false;
 
 		m_video_buffer =
 				boost::shared_ptr<VideoBuffer>(new VideoBuffer(m_num_pieces));
 
-		// Starts VideoBuffer feeding thread that calls the feed_video_buffer method.
+		// Starts new VideoBuffer feeding thread that calls the feed_video_buffer
+		// method.
 		m_feeding_thread = boost::shared_ptr<boost::thread>(
 				new boost::thread(&VideoTorrentManager::feed_video_buffer, this));
 
@@ -144,7 +148,7 @@ void VideoTorrentManager::feed_video_buffer() {
 
 			// Tries to get an alert from alert queue.
 			const libtorrent::alert* new_alert = m_session.wait_for_alert(
-					libtorrent::seconds(30));
+					libtorrent::seconds(10));
 
 			if (new_alert) {
 				// Tries to cast alert pointer to different alert types.
@@ -156,12 +160,16 @@ void VideoTorrentManager::feed_video_buffer() {
 								new_alert);
 
 				if (finished_alert) {
-					if (finished_alert->piece_index == m_next_piece) {
+					if (finished_alert->handle == m_torrent_handle &&
+						finished_alert->piece_index == m_next_piece) {
+
 						m_torrent_handle.read_piece(m_next_piece);
 					}
 
 				} else if (read_alert) {
-					if (read_alert->piece == m_next_piece) {
+					if (read_alert->handle == m_torrent_handle &&
+						read_alert->piece == m_next_piece) {
+
 						// Adds piece to VideoBuffer.
 						int index = read_alert->piece;
 						boost::shared_array<char> data = read_alert->buffer;
@@ -181,6 +189,9 @@ void VideoTorrentManager::feed_video_buffer() {
 				// Removes alert from queue.
 				m_session.pop_alert();
 			}
+
+			// Allow thread to be interrupted.
+//			boost::this_thread::interruption_point();
 		}
 	} catch (boost::thread_interrupted& e) {
 		// Thread will stop.
@@ -272,6 +283,7 @@ libtorrent::torrent_info* VideoTorrentManager::read_torrent_file(
 
 void VideoTorrentManager::save_resume_data() {
 	if (m_torrent_handle.is_valid()) {
+		m_torrent_handle.auto_managed(false);
 		m_torrent_handle.pause();
 		m_torrent_handle.save_resume_data();
 
@@ -280,7 +292,7 @@ void VideoTorrentManager::save_resume_data() {
 
 		while (outstanding_resume_data > 0) {
 			libtorrent::alert const* new_alert = m_session.wait_for_alert(
-					libtorrent::seconds(20));
+					libtorrent::seconds(10));
 
 			if (new_alert) {
 				libtorrent::save_resume_data_alert const* resume_alert =
@@ -288,7 +300,8 @@ void VideoTorrentManager::save_resume_data() {
 								new_alert);
 
 				// Saves resume data file.
-				if (resume_alert) {
+				if (resume_alert && resume_alert->resume_data
+						&& resume_alert->handle == m_torrent_handle) {
 					std::string save_path = m_save_path;
 					std::string torrent_name =
 							m_torrent_handle.get_torrent_info().name();
@@ -311,6 +324,21 @@ void VideoTorrentManager::save_resume_data() {
 				m_session.pop_alert();
 			}
 		}
+	}
+}
+
+void VideoTorrentManager::stop_feeding_thread() {
+	if (m_feeding_thread) {
+		m_feeding_thread->interrupt();
+		m_feeding_thread->join();
+	}
+}
+
+void VideoTorrentManager::clear_alerts() {
+	std::auto_ptr<libtorrent::alert> alert = m_session.pop_alert();
+
+	while (alert.get()) {
+		alert = m_session.pop_alert();
 	}
 }
 
