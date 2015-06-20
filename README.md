@@ -7,7 +7,7 @@ It consists of three tools:
 
   * *BTStreamSrc* - a [GStreamer](http://gstreamer.freedesktop.org/) plugin that uses libbtstream to define a source element that can be used to easily build multimedia streaming applications with the [GStreamer](http://gstreamer.freedesktop.org/) framework.
 
-  * *BTStreamClient* - a P2P VoD client that can be used to watch video files distributed in BitTorrent swarms. The client is developed with [GStreamer](http://gstreamer.freedesktop.org/) and uses the BTStreamSrc plugin. Also, it can be used for experimental evaluation of BitTorrent extensions, providing statistics like download and upload rate, time to start playback and number of playback interruptions.
+  * *BTStreamClient* - a simple P2P VoD client written in Python that can be used to watch video files distributed in BitTorrent swarms. The client is developed with [GStreamer](http://gstreamer.freedesktop.org/) and uses the BTStreamSrc plugin. Also, it can be used for experimental evaluation of BitTorrent extensions, providing statistics like download and upload rate, time to start playback and number of playback interruptions.
 
 All three tools are compatible with existing BitTorrent software and allow streaming of video files distributed in ordinary swarms.
 
